@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quinnipiac Bobcats | Performance Dashboards</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #00205B;
+  --gold: #E8A900;
+  --gl:   #F5C842;
+  --bg:   #040812;
+  --s1:   #080E1E;
+  --s2:   #0C1428;
+  --br:   rgba(232,169,0,.18);
+  --br2:  rgba(255,255,255,.07);
+  --tx:   #E8EAF0;
+  --tm:   #7A8299;
+  --td:   #4A5268;
+  --blue: #90CAF9;
+  --r:    8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: Barlow, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────────────── */
+header {
+  background: var(--s1);
+  border-bottom: 3px solid var(--gold);
+  padding: 28px 32px 24px;
+  text-align: center;
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+.logo-svg { width: 64px; height: 64px; flex-shrink: 0; }
+.school-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: 36px;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.school-sub {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.header-desc {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--tm);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* ── MAIN ────────────────────────────────────────────────────────────── */
+main {
+  flex: 1;
+  padding: 48px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--td);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ── CARDS ───────────────────────────────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--s1);
+  border: 1px solid var(--br2);
+  border-radius: 14px;
+  padding: 24px 26px;
+  text-decoration: none;
+  color: var(--tx);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent, var(--gold));
+  border-radius: 14px 14px 0 0;
+}
+.card:hover {
+  border-color: var(--accent, var(--gold));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+}
+.card-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--s2);
+  border: 1px solid var(--br2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+.card-body { flex: 1; }
+.card-team {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent, var(--gold));
+  margin-bottom: 4px;
+}
+.card-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.card-meta {
+  font-size: 12px;
+  color: var(--tm);
+  line-height: 1.5;
+}
+.card-arrow {
+  font-size: 20px;
+  color: var(--td);
+  transition: color .2s, transform .2s;
+  flex-shrink: 0;
+}
+.card:hover .card-arrow {
+  color: var(--accent, var(--gold));
+  transform: translateX(4px);
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────────────── */
+footer {
+  background: var(--s1);
+  border-top: 1px solid var(--br2);
+  padding: 20px 32px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--td);
+  font-family: "Barlow Condensed", sans-serif;
+  letter-spacing: 1px;
+}
+footer span { color: var(--tm); }
+
+@media (max-width: 600px) {
+  .school-name { font-size: 26px; }
+  .cards { grid-template-columns: 1fr; }
+  main { padding: 28px 16px; }
+  header { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#E8A900" stroke="#00205B" stroke-width="2.5"/>
+      <circle cx="32" cy="32" r="25" fill="none" stroke="#00205B" stroke-width="2"/>
+      <text x="32" y="41" text-anchor="middle" font-family="Arial Black,sans-serif"
+            font-weight="900" font-size="27" fill="#00205B">Q</text>
+      <path d="M20 13 Q32 8 44 13" stroke="#00205B" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M17 12 L21 18 M47 12 L43 18" stroke="#00205B" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="school-name">QUINNIPIAC BOBCATS</div>
+      <div class="school-sub">Athletics &middot; Performance Dashboards</div>
+    </div>
+  </div>
+  <p class="header-desc">
+    Select a team to open their performance dashboard. Each dashboard includes
+    fitness testing data, player profiles, leaderboards, wellness tracking,
+    and annual load planning.
+  </p>
+</header>
+
+<main>
+  <div class="section-label">Select a Team</div>
+
+  <div class="cards">
+
+    <!-- Men's Hockey -->
+    <a class="card" href="QUMHOC_Dashboard_v9.html" style="--accent: #E8A900;">
+      <div class="card-icon">🏒</div>
+      <div class="card-body">
+        <div class="card-team">Ice Hockey</div>
+        <div class="card-title">Men&rsquo;s Hockey</div>
+        <div class="card-meta">
+          FWD &middot; DEF &middot; GK &nbsp;|&nbsp;
+          Fitness &middot; Wellness &middot; Weekly Plan
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <!-- Women's Hockey -->
+    <a class="card" href="QUWIHOC_Dashboard.html" style="--accent: #90CAF9;">
+      <div class="card-icon">🏒</div>
+      <div class="card-body">
+        <div class="card-team" style="color:#90CAF9;">Ice Hockey</div>
+        <div class="card-title">Women&rsquo;s Hockey</div>
+        <div class="card-meta">
+          FWD &middot; DEF &middot; GK &nbsp;|&nbsp;
+          Fitness &middot; Wellness &middot; Weekly Plan
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <!-- Men's Basketball -->
+    <a class="card" href="QUMBB_Dashboard.html" style="--accent: #E8A900;">
+      <div class="card-icon">🏀</div>
+      <div class="card-body">
+        <div class="card-team">Basketball</div>
+        <div class="card-title">Men&rsquo;s Basketball</div>
+        <div class="card-meta">
+          Guard &middot; Forward &nbsp;|&nbsp;
+          Fitness &middot; Wellness &middot; Weekly Plan
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <!-- Women's Basketball -->
+    <a class="card" href="QUWBB_Dashboard.html" style="--accent: #90CAF9;">
+      <div class="card-icon">🏀</div>
+      <div class="card-body">
+        <div class="card-team" style="color:#90CAF9;">Basketball</div>
+        <div class="card-title">Women&rsquo;s Basketball</div>
+        <div class="card-meta">
+          Guard &middot; Forward &nbsp;|&nbsp;
+          Fitness &middot; Wellness &middot; Weekly Plan
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <span>Quinnipiac University Athletics &middot; Performance Science</span>
+  &nbsp;&middot;&nbsp; Data is stored locally in your browser &middot; Import new data via the dashboard CSV import
+</footer>
+
+</body>
+</html>
