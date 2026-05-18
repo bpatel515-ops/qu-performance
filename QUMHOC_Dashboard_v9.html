@@ -417,6 +417,16 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .ebtn:hover{background:var(--gold);color:var(--navy);}
 @media(max-width:700px){.ebtn{font-size:10px;padding:5px 9px;}}
 
+
+/* ── HOME BUTTON ───────────────────────────────────────────────────── */
+.hbtn{background:var(--s2);border:1px solid var(--br2);color:var(--tm);
+  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+  transition:all .15s;}
+.hbtn:hover{border-color:var(--gold);color:var(--gold);}
+@media(max-width:700px){.hbtn{font-size:10px;padding:5px 9px;}}
+
 </style>
 </head>
 <body>
@@ -435,6 +445,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
     <div><div class="tn">QUINNIPIAC BOBCATS</div><div class="ts">Men&#39;s Hockey &middot; Performance Dashboard</div></div>
   </div>
   <div class="tbr">
+    <a class="hbtn" href="index.html">&#8962; Home</a>
     <button class="ebtn" id="exportBtn" onclick="exportDashboard()">&#8681; Save &amp; Export</button>
     <div class="badge" id="topBadge">PRE-SEASON 25-26</div>
     <button class="pbtn" onclick="window.print()">Print</button>
@@ -672,7 +683,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   <!-- RECENT ENTRIES -->
   <div id="wrecent" class="sp2">
     <div class="sync-bar" id="syncBar"><div class="sync-dot loading" id="syncDot"></div><span id="syncMsg">Connecting to cloud…</span></div>
-    <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div><button class="tb" id="refreshWLog" style="margin-left:8px;" onclick="updateSyncStatus('loading');loadWLog(function(){renderWLog();updateSyncStatus('ok');})">&#8635; Refresh</button>
+    <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div><button class="tb" id="refreshWLog" style="margin-left:8px;" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button>
     <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Lift</option><option>Skate</option><option>Practice</option><option>Game</option><option>Conditioning</option><option>Recovery</option><option>Off</option></select></div></div>
     <div class="pills" id="wPills"></div>
     <div class="ll" id="wLog"><div style="color:var(--td);font-size:12px;text-align:center;padding:20px;">No entries yet.</div></div>
@@ -854,8 +865,8 @@ var TEAM_ID = 'MHOC';
 var LOCAL_KEY = 'qumhoc_w5';
 
 // --- SUPABASE CONFIG ---
-var SB_URL = 'https://qpqvrekiujpcfugjqpft.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwcXZyZWtpdWpwY2Z1Z2pxcGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjMyODgsImV4cCI6MjA5NDU5OTI4OH0.g-mlooOha_GhaSAOH0Gurnl0cQzDzHTX8YveU6pFBSE';
+var SB_URL   = 'https://qpqvrekiujpcfugjqpft.supabase.co';
+var SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwcXZyZWtpdWpwY2Z1Z2pxcGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjMyODgsImV4cCI6MjA5NDU5OTI4OH0.g-mlooOha_GhaSAOH0Gurnl0cQzDzHTX8YveU6pFBSE';
 var SB_TABLE = 'wellness_log';
 
 function sbH() {
@@ -867,54 +878,99 @@ function sbH() {
   };
 }
 
-function updateSyncStatus(state) {
-  var dot = ge('syncDot'), msg = ge('syncMsg');
-  if (!dot || !msg) return;
+function updateSyncStatus(state, msg) {
+  var dot = ge('syncDot'), el = ge('syncMsg');
+  if (!dot || !el) return;
   dot.className = 'sync-dot ' + state;
-  if (state === 'ok') { msg.textContent = 'Cloud sync active - entries visible on all devices'; }
-  else if (state === 'err') { msg.textContent = 'Cloud sync offline - check connection or use Refresh'; }
-  else { msg.textContent = 'Connecting...'; }
+  if (msg) { el.textContent = msg; return; }
+  if (state === 'ok')      el.textContent = 'Cloud sync active - entries visible on all devices';
+  else if (state === 'err') el.textContent = 'Cloud sync offline - showing cached data. Tap Refresh to retry.';
+  else                      el.textContent = 'Connecting to cloud...';
 }
 
-function loadWLog(callback) {
+// Warm up Supabase cold start with a cheap HEAD request
+// Fires immediately on page load so the real fetch finds a warm connection
+function warmSupabase() {
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?team=eq.' + TEAM_ID + '&limit=1', {
+    method: 'HEAD',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  }).catch(function() {}); // ignore errors - this is just a warmup ping
+}
+
+function loadWLog(callback, forceRefresh) {
   var team = TEAM_ID;
+
+  // Step 1: show cache instantly so UI is never empty
   try {
     var cached = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
     if (cached.length) { wLog = cached; if (callback) callback(); }
   } catch(e) {}
-  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?team=eq.' + team + '&order=date.desc,id.desc&limit=500', {
+
+  // Step 2: throttle - skip re-fetch if recent (unless forced)
+  var now = Date.now();
+  if (!forceRefresh && loadWLog._lastFetch && (now - loadWLog._lastFetch) < 10000) {
+    updateSyncStatus('ok');
+    if (!wLog.length && callback) callback();
+    return;
+  }
+  loadWLog._lastFetch = now;
+  updateSyncStatus('loading', 'Syncing with cloud...');
+
+  // Step 3: fetch with 5s timeout
+  var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timeoutId  = controller ? setTimeout(function() { controller.abort(); }, 5000) : null;
+  var t0         = Date.now();
+
+  // Select only columns we need (smaller payload = faster)
+  var cols = 'id,athlete,date,session,rpe,sleep,soreness,energy,mood,wellness,duration,load,notes';
+
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE
+    + '?team=eq.' + encodeURIComponent(team)
+    + '&select=' + cols
+    + '&order=date.desc,id.desc&limit=200', {
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
       'Accept': 'application/json'
-    }
+    },
+    signal: controller ? controller.signal : undefined
   })
   .then(function(r) {
+    if (timeoutId) clearTimeout(timeoutId);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
   .then(function(rows) {
     if (!Array.isArray(rows)) throw new Error('Bad response');
+    var ms = Date.now() - t0;
     wLog = rows.map(function(r) {
       return {
-        id: r.id, athlete: r.athlete, date: r.date, session: r.session,
-        rpe: r.rpe, sleep: r.sleep, soreness: r.soreness, energy: r.energy,
-        mood: r.mood, wellness: r.wellness, duration: r.duration,
-        load: r.load, notes: r.notes || ''
+        id: r.id,           athlete:  r.athlete,
+        date: r.date,       session:  r.session,
+        rpe: r.rpe,         sleep:    r.sleep,
+        soreness: r.soreness, energy: r.energy,
+        mood: r.mood,       wellness: r.wellness,
+        duration: r.duration, load:   r.load,
+        notes: r.notes || ''
       };
     });
     try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
-    updateSyncStatus('ok');
+    updateSyncStatus('ok', 'Synced ' + wLog.length + ' entries (' + ms + 'ms)');
+    setTimeout(function() { updateSyncStatus('ok'); }, 3000);
     if (callback) callback();
   })
   .catch(function(err) {
-    console.warn('Supabase unreachable, showing cached data:', err.message);
+    if (timeoutId) clearTimeout(timeoutId);
+    var isTimeout = err.name === 'AbortError';
+    console.warn(isTimeout ? 'Supabase timeout after 5s' : 'Supabase: ' + err.message);
     updateSyncStatus('err');
     if (!wLog.length) {
-          }
-    if (callback) callback();
+      try { wLog = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { wLog = []; }
+      if (callback) callback();
+    }
   });
 }
+loadWLog._lastFetch = 0;
 
 function saveToSupabase(entry, onSuccess, onError) {
   var row = {
@@ -925,37 +981,31 @@ function saveToSupabase(entry, onSuccess, onError) {
     notes: entry.notes || ''
   };
   fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
-    method: 'POST',
-    headers: sbH(),
-    body: JSON.stringify(row)
+    method: 'POST', headers: sbH(), body: JSON.stringify(row)
   })
   .then(function(r) {
     if (r.ok || r.status === 201) {
       try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
       if (onSuccess) onSuccess();
-    } else {
-      r.text().then(function(t) { if (onError) onError(t); });
-    }
+    } else { r.text().then(function(t) { if (onError) onError(t); }); }
   })
   .catch(function(err) { if (onError) onError(err); });
 }
 
 function deleteFromSupabase(id, onSuccess, onError) {
   fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?id=eq.' + id + '&team=eq.' + TEAM_ID, {
-    method: 'DELETE',
-    headers: sbH()
+    method: 'DELETE', headers: sbH()
   })
   .then(function(r) {
     if (r.ok) {
       wLog = wLog.filter(function(e) { return e.id !== id; });
       try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
       if (onSuccess) onSuccess();
-    } else {
-      r.text().then(function(t) { if (onError) onError(t); });
-    }
+    } else { r.text().then(function(t) { if (onError) onError(t); }); }
   })
   .catch(function(err) { if (onError) onError(err); });
 }
+
 
 
 
@@ -1124,7 +1174,7 @@ function showTab(id, el) {
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
-  if (id === 'wellness')   renderWLog();
+  if (id === 'wellness')   { loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
   if (id === 'trends')     renderTrends();
   if (id === 'planner')    setTimeout(renderPlanner, 0);
 }
@@ -1571,7 +1621,7 @@ ge('wSubmit').addEventListener('click', function() {
       sessionData = [{type:'Lift', mins:60, rpe:3, notes:''}];
       buildSessionBlocks();
       ge('wNotes').value = '';
-      loadWLog(function() { renderWLog(); showSub('wrecent', document.querySelectorAll('.stab')[1]); });
+      loadWLog._lastFetch = 0; loadWLog(function() { renderWLog(); showSub('wrecent', document.querySelectorAll('.stab')[1]); }, true);
     }
   }
   entries.forEach(function(entry) {
@@ -2015,6 +2065,7 @@ function parsePlanCSV(text) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 function initApp() {
+  warmSupabase(); // wake Supabase cold start immediately
   fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason']);
   fillAthletes();
   populateDates();
@@ -2848,6 +2899,7 @@ function parsePlanCSV(text) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 function initApp() {
+  warmSupabase(); // wake Supabase cold start immediately
   fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason']);
   fillAthletes();
   populateDates();
