@@ -157,8 +157,8 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .note{font-size:10px;color:var(--td);text-align:center;padding:8px;border-top:1px solid var(--br2);}
 .psel{background:var(--s2);border:1px solid var(--br2);color:var(--tx);padding:7px 10px;border-radius:var(--r);font-family:Barlow,sans-serif;font-size:13px;width:100%;outline:none;cursor:pointer;margin-bottom:10px;}
 .psel:focus{border-color:var(--gold);}
-@media(max-width:900px){.pgrid,.wg,.cg{grid-template-columns:1fr;}}
-@media(max-width:600px){.main{padding:10px;}.kg{grid-template-columns:repeat(2,1fr);}}
+
+
 @media print{.topbar,.nav,.fbar,.ibtn,.pbtn,.iovl{display:none!important;}.main{padding:4px;}body,td,th{color:#000!important;}body{background:#fff!important;}}
 
 /* ── MULTI-SESSION WELLNESS ─────────────────────────────────────── */
@@ -283,6 +283,142 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .sync-dot.loading { background: var(--gold); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
+
+/* ════════════════════════════════════════════════
+   MOBILE-FIRST RESPONSIVE
+   ════════════════════════════════════════════════ */
+
+/* Topbar: stack on small screens */
+@media(max-width:700px){
+  .topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}
+  .tbl{gap:8px;}
+  .tn{font-size:15px;}
+  .ts{font-size:9px;letter-spacing:2px;}
+  .logo-wrap{width:36px;height:36px;}
+  .tbr{flex-wrap:wrap;gap:5px;}
+  .tbr .badge{font-size:10px;padding:4px 8px;}
+  .tbr .ibtn,.tbr .pbtn{font-size:10px;padding:5px 10px;}
+}
+
+/* Nav: scrollable pill row, bigger tap targets */
+@media(max-width:700px){
+  .nav{padding:0 8px;gap:0;-webkit-overflow-scrolling:touch;}
+  .ntab{padding:10px 11px;font-size:10px;letter-spacing:1px;}
+}
+
+/* Main padding */
+@media(max-width:700px){
+  .main{padding:8px;}
+}
+
+/* KPI cards: 2-col on mobile */
+@media(max-width:700px){
+  .kg{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .kv{font-size:22px;}
+  .kl{font-size:9px;}
+}
+
+/* Filter bar: scrollable on mobile */
+@media(max-width:700px){
+  .fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
+  .fg{flex-shrink:0;}
+  .fl{font-size:9px;}
+  .fs{font-size:11px;padding:3px 6px;}
+  .tb{font-size:9px;padding:3px 8px;}
+}
+
+/* Tables: horizontal scroll */
+@media(max-width:700px){
+  .tw{border-radius:var(--r);}
+  th{font-size:9px;padding:6px 7px;letter-spacing:1px;}
+  td{font-size:11px;padding:6px 7px;}
+  .av{width:22px;height:22px;font-size:9px;}
+  .sp{font-size:10px;min-width:28px;}
+  .mn{font-size:10px;}
+}
+
+/* Player profile: single column */
+@media(max-width:700px){
+  .pgrid{grid-template-columns:1fr;}
+  .srw{flex-direction:column;align-items:flex-start;gap:8px;}
+  .sring{width:54px;height:54px;}
+  .srv{font-size:30px;}
+  .ameta{grid-template-columns:1fr 1fr;}
+  .mr{grid-template-columns:100px 1fr 55px;gap:5px;}
+  .mn2{font-size:9px;}
+  #radarC{width:100%;height:auto;}
+}
+
+/* Compare: single column */
+@media(max-width:700px){
+  .cg{grid-template-columns:1fr;}
+  .cd{display:none;}
+}
+
+/* Wellness: single column */
+@media(max-width:700px){
+  .wg{grid-template-columns:1fr;}
+  .sc5{gap:3px;}
+  .s5{padding:5px 2px;}
+  .s5n{font-size:15px;}
+  .s5i{font-size:13px;}
+  .s5l{font-size:7px;}
+  .sess-row{grid-template-columns:1fr 1fr;gap:4px;}
+  .sess-row .mini-inp:last-child{grid-column:1/-1;}
+}
+
+/* Log entries: compact */
+@media(max-width:700px){
+  .le{flex-wrap:wrap;gap:4px;padding:6px 8px;}
+  .ld{font-size:9px;min-width:48px;}
+  .lb2{font-size:10px;padding:2px 5px;}
+  .ln{font-size:10px;}
+  .del-btn{padding:2px 5px;font-size:11px;}
+}
+
+/* Positions grid */
+@media(max-width:700px){
+  .posg{grid-template-columns:1fr;}
+}
+
+/* Weekly plan chart */
+@media(max-width:700px){
+  .plan-chart-area{height:140px;}
+  .wd-days{grid-template-columns:repeat(4,1fr);}
+  .week-wrap{max-height:360px;}
+  .week-row{grid-template-columns:80px 70px 1fr;}
+  .wc{padding:6px 6px;}
+  .wc-week{font-size:11px;}
+  .wc-opp{font-size:9px;}
+  .plan-legend{gap:6px;}
+  .leg-item{font-size:9px;}
+  .plan-filter-bar{flex-wrap:wrap;gap:6px;}
+}
+
+/* Trends charts */
+@media(max-width:700px){
+  .lg{grid-template-columns:1fr;}
+  .acwrg{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Import modal */
+@media(max-width:700px){
+  .imod{padding:16px;width:95%;}
+  .imp-tab{font-size:10px;padding:7px;}
+}
+
+/* Stabs */
+@media(max-width:700px){
+  .stab{font-size:10px;padding:6px 10px;}
+}
+
+/* ── SAVE & EXPORT BUTTON ─────────────────────────────────────────────── */
+.ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);
+  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.ebtn:hover{background:var(--gold);color:var(--navy);}
+@media(max-width:700px){.ebtn{font-size:10px;padding:5px 9px;}}
+
 </style>
 </head>
 <body>
@@ -301,6 +437,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
     <div><div class="tn">QUINNIPIAC BOBCATS</div><div class="ts">Men&#39;s Basketball &middot; Performance Dashboard</div></div>
   </div>
   <div class="tbr">
+    <button class="ebtn" id="exportBtn" onclick="exportDashboard()">&#8681; Save &amp; Export</button>
     <div class="badge" id="topBadge">PRE-SEASON 25-26</div>
     <button class="pbtn" onclick="window.print()">Print</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
@@ -3226,6 +3363,42 @@ function renderPlanInsights(weeks) {
 // initApp extension handled above
 window.renderPlanner = renderPlanner;
 window.renderWLog = renderWLog;
+
+// --- SAVE & EXPORT ---
+function exportDashboard() {
+  var btn = ge('exportBtn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  // Get current HTML
+  var fullHtml = document.documentElement.outerHTML;
+
+  // Replace the embedded DATA with current DATA (in case CSV was imported this session)
+  var dataJson = JSON.stringify(DATA);
+  fullHtml = fullHtml.replace(/var DATA = \[[\s\S]*?\];/, 'var DATA = ' + dataJson + ';');
+
+  // Replace PLAN with current PLAN
+  var planJson = JSON.stringify(PLAN);
+  fullHtml = fullHtml.replace(/var PLAN = \[[\s\S]*?\];/, 'var PLAN = ' + planJson + ';');
+
+  // Create download
+  var blob = new Blob(['<!DOCTYPE html>\n' + fullHtml], {type: 'text/html;charset=utf-8'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = document.title.replace(/[^a-zA-Z0-9]/g, '_') + '_updated.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  btn.textContent = '\u2713 Saved!';
+  setTimeout(function() {
+    btn.textContent = '\u21E9 Save & Export';
+    btn.disabled = false;
+  }, 2000);
+}
+
 initApp();
 
 })(); // end IIFE
