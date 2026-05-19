@@ -15,7 +15,7 @@
   --r:6px;--rl:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;overflow-x:hidden;}
+body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;}
 .topbar{background:var(--s1);border-bottom:2px solid var(--gold);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tbl{display:flex;align-items:center;gap:12px;}
 .logo-wrap{width:46px;height:46px;flex-shrink:0;}
@@ -428,6 +428,12 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   transition:all .15s;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
 @media(max-width:700px){.hbtn{font-size:10px;padding:5px 9px;}}
+
+
+/* ── PROFILE HISTORY TABLE — always horizontally scrollable ─── */
+.pgrid > div:last-child { min-width: 0; }
+.tw { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+.prof-hist-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
 </style>
 </head>
