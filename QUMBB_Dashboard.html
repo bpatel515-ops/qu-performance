@@ -239,6 +239,23 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .ebtn:hover{background:var(--gold);color:var(--navy);}
 @media(max-width:700px){.hbtn,.ebtn{font-size:10px;padding:5px 9px;}}
 
+
+/* ── SYNC BAR + REFRESH ─────────────────────────────────────────────── */
+.sync-bar{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);
+  padding:6px 14px;font-family:"Barlow Condensed",sans-serif;font-size:11px;
+  font-weight:600;letter-spacing:1px;color:var(--tm);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--td);flex-shrink:0;transition:background .3s;}
+.sync-dot.ok{background:var(--elite);}
+.sync-dot.err{background:var(--dev);}
+.sync-dot.loading{background:var(--gold);animation:sdpulse 1s infinite;}
+@keyframes sdpulse{0%,100%{opacity:1}50%{opacity:.35}}
+.sync-msg{flex:1;}
+.sync-refresh{margin-left:auto;background:none;border:1px solid var(--br2);
+  color:var(--tm);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;
+  cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;transition:all .15s;}
+.sync-refresh:hover{border-color:var(--gold);color:var(--gold);}
+
 </style>
 </head>
 <body>
@@ -501,6 +518,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 
   <!-- RECENT ENTRIES -->
   <div id="wrecent" class="sp2">
+    <div class="sync-bar"><div class="sync-dot loading" id="syncDot"></div><span class="sync-msg" id="syncMsg">Connecting to cloud...</span><button class="sync-refresh" id="refreshWLog" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button></div>
     <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Lift</option><option>Skate</option><option>Practice</option><option>Game</option><option>Conditioning</option><option>Recovery</option><option>Off</option></select></div></div>
     <div class="pills" id="wPills"></div>
@@ -651,37 +669,11 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
         <div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;color:var(--tm);">Click or drag &amp; drop Fitness CSV</div>
       </div>
       <input type="file" id="fileIn" accept=".csv" style="display:none">
-      <div class="imp-result" id="fitResult"></div>
-    </div>
+      <div class="imp-result" id="f
 
-    <!-- Plan panel -->
-    <div class="imp-panel" id="impPanelPlan">
-      <div class="imp-hint">
-        <strong>How to export:</strong> In your planning workbook, go to the <code>Weekly Plan</code>
-        sheet &rarr; File &rarr; Save As &rarr; CSV UTF-8.<br><br>
-        <strong>Expected columns:</strong> <code>Date</code>, <code>Week</code>, <code>Opponent</code>,
-        then for each day (Sun&rarr;Sat): <code>Volume</code>, <code>Session</code>, <code>Time</code>.
-        Columns 25&ndash;26 should be <code>Weekly Total</code> and <code>A:C</code> (EWMA).<br><br>
-        <strong>Tip:</strong> The file can have up to 3 header rows — the importer will auto-detect
-        the row containing <code>Date</code> and <code>Week</code>.
-      </div>
-      <div class="dz" id="dropZPlan">
-        <div style="font-size:24px;margin-bottom:5px;">&#128197;</div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;color:var(--tm);">Click or drag &amp; drop Weekly Plan CSV</div>
-      </div>
-      <input type="file" id="fileInPlan" accept=".csv" style="display:none">
-      <div class="imp-result" id="planResult"></div>
-    </div>
-
-    <div class="mbtns" style="margin-top:14px;">
-      <button class="bc" id="cancelImport">Close</button>
-    </div>
-  </div>
-</div>
 
 <script>
-
-
+<script>
 (function() {
 'use strict';
 
@@ -1010,7 +1002,7 @@ function showTab(id, el) {
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
-  if (id === 'wellness')   { loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
+  if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); if(typeof renderAnthroTrends==='function') renderAnthroTrends(ge('anthroSel')?ge('anthroSel').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
 }
@@ -1509,7 +1501,10 @@ function renderWLog() {
       + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+(e.duration||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
+      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
+      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
+      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
       + '</div>';
   }).join('');
 }
@@ -2110,7 +2105,10 @@ function renderWLog() {
       + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
+      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
+      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
+      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
       + '</div>';
   }).join('');
 }
@@ -2944,7 +2942,10 @@ function renderWLog() {
       + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
+      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
+      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
+      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
       + '</div>';
   }).join('');
 }
@@ -3335,6 +3336,34 @@ function renderAnthroTrends(athlete){
   var metrics=[
     {l:'Body Weight',k:'Bodyweight',u:'lbs',up:'bad'},
     {l:'Lean Mass',k:'Lean Mass',u:'lbs',up:'good'},
+    {l:'Body Fat %',k:'Bodyfat',u:'%',up:'bad'},
+  ];
+  el.innerHTML=metrics.map(function(m){
+    var v=recs.filter(function(r){return r[m.k]!=null;});
+    if(v.length<2) return '';
+    var f=v[0][m.k],la=v[v.length-1][m.k],diff=la-f;
+    var pct=((diff/f)*100).toFixed(1);
+    var good=(diff>0&&m.up==='good')||(diff<0&&m.up==='bad');
+    var cls=diff===0?'ad-neu':good?'ad-good':'ad-bad';
+    var sign=diff>0?'+':'';
+    return '<div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:12px;margin-bottom:8px;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+      +'<span style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--tm);">'+m.l.toUpperCase()+'</span>'
+      +'<span class="anthro-delta '+cls+'">'+sign+diff.toFixed(1)+m.u+' ('+sign+pct+'%) vs pre-season</span>'
+      +'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;">'
+      +'<span style="color:var(--tm)">Pre: <strong style="color:var(--tx)">'+f.toFixed(1)+m.u+'</strong></span>'
+      +'<span style="color:var(--tm)">Now: <strong style="color:var(--tx)">'+la.toFixed(1)+m.u+'</strong></span>'
+      +'</div></div>';
+  }).join('');
+}
+window.renderAnthroTrends=renderAnthroTrends;
+
+initApp();
+
+})(); // end IIFE
+</script>
+',u:'lbs',up:'good'},
     {l:'Body Fat %',k:'Bodyfat',u:'%',up:'bad'},
   ];
   el.innerHTML=metrics.map(function(m){
