@@ -275,7 +275,6 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   <div class="ntab" data-tab="wellness">Wellness</div>
   <div class="ntab" data-tab="trends">Load &amp; Trends</div>
   <div class="ntab" data-tab="planner">Weekly Plan</div>
-  <button class="ntab" data-tab="injury">Injury Log</button>
 </nav>
 
 <main class="main">
@@ -625,56 +624,6 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   <div class="lg" id="planInsights"></div>
 </div>
 
-<!-- INJURY LOG -->
-<div id="injury" class="sec">
-  <div class="inj-form">
-    <div class="st" style="margin-bottom:12px;">LOG <span>INJURY</span></div>
-    <div class="inj-grid">
-      <div><div class="inj-lbl">Athlete</div><select class="inj-inp" id="injAthl"></select></div>
-      <div><div class="inj-lbl">Date of Injury</div><input type="date" class="inj-inp" id="injDate"></div>
-      <div><div class="inj-lbl">Est. Return Date</div><input type="date" class="inj-inp" id="injRTP"></div>
-    </div>
-    <div class="inj-row2">
-      <div><div class="inj-lbl">Body Part</div>
-        <select class="inj-inp" id="injPart"><option value="">Select...</option>
-          <option>Ankle</option><option>Knee</option><option>Hip</option><option>Hamstring</option>
-          <option>Quad</option><option>Groin</option><option>Low Back</option><option>Shoulder</option>
-          <option>Elbow</option><option>Wrist / Hand</option><option>Head / Concussion</option><option>Other</option>
-        </select>
-      </div>
-      <div><div class="inj-lbl">Injury Type</div>
-        <select class="inj-inp" id="injType"><option value="">Select...</option>
-          <option>Strain</option><option>Sprain</option><option>Contusion</option>
-          <option>Fracture</option><option>Tendinopathy</option><option>Concussion</option>
-          <option>Overuse</option><option>Other</option>
-        </select>
-      </div>
-    </div>
-    <div style="margin-bottom:10px;">
-      <div class="inj-lbl">Severity</div>
-      <div class="inj-sev">
-        <button class="sev-btn s1" data-sev="1">1 &mdash; Mild<br><span style="font-size:9px;font-weight:400">&lt;7 days</span></button>
-        <button class="sev-btn s2" data-sev="2">2 &mdash; Moderate<br><span style="font-size:9px;font-weight:400">7-28 days</span></button>
-        <button class="sev-btn s3" data-sev="3">3 &mdash; Severe<br><span style="font-size:9px;font-weight:400">&gt;28 days</span></button>
-      </div>
-    </div>
-    <div style="margin-bottom:10px;"><div class="inj-lbl">Notes</div>
-      <input type="text" class="inj-inp" id="injNotes" placeholder="Mechanism, context, treatment...">
-    </div>
-    <button class="inj-sub" id="injSubmit">+ Log Injury</button>
-  </div>
-  <div class="fbar" style="margin-bottom:10px;">
-    <div class="fg"><span class="fl">Athlete</span>
-      <select class="fs" id="injFilter" onchange="renderInjuries()"><option value="All">All Athletes</option></select></div>
-    <div class="fg"><span class="fl">Severity</span>
-      <select class="fs" id="injSevFilter" onchange="renderInjuries()">
-        <option value="All">All</option><option value="1">Mild</option>
-        <option value="2">Moderate</option><option value="3">Severe</option>
-      </select></div>
-  </div>
-  <div id="injSummary" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;"></div>
-  <div id="injList"></div>
-</div>
 
 </main>
 
@@ -967,7 +916,7 @@ function fillAthletes() {
   var names = uniq(DATA.map(function(d) { return d['Athlete Name']; })).sort();
   var opts = names.map(function(n) { return '<option value="' + n + '">' + dn(n) + '</option>'; }).join('');
   var optAll = '<option value="All">All Athletes</option>' + opts;
-  ['profSel', 'cmpA', 'wAthl', 'injAthl', 'injFilter', 'anthroSel'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
+  ['profSel', 'cmpA', 'wAthl', 'anthroSel'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
   ['wFA', 'trAthl'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = optAll; });
   ge('cmpB').innerHTML = names.map(function(n, i) {
     return '<option value="' + n + '"' + (i === 1 ? ' selected' : '') + '>' + dn(n) + '</option>';
@@ -1064,7 +1013,6 @@ function showTab(id, el) {
   if (id === 'wellness')   { loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); if(typeof renderAnthroTrends==='function') renderAnthroTrends(ge('anthroSel')?ge('anthroSel').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
-  if (id === 'injury')     { if(typeof loadInjuries==='function'){loadInjuries();renderInjuries();} }
 }
 function showSub(id, el) {
   document.querySelectorAll('.stab').forEach(function(t) { t.classList.remove('on'); });
@@ -1538,7 +1486,7 @@ function renderWLog() {
   var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
   var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
   var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
-  var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
+  var tM   = entries.map(function(e){return e.duration||0;}).reduce(function(a,b){return a+b;},0);
   var hv   = entries.filter(function(e){return e.hrv;});
   var sv   = entries.filter(function(e){return e.sleep_hrs;});
   var aHRV = hv.length ? (hv.reduce(function(a,e){return a+e.hrv;},0)/hv.length).toFixed(0) : null;
@@ -1558,7 +1506,7 @@ function renderWLog() {
       + '<div class="ld">'+e.date+'</div>'
       + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
       + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
-      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
+      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+(e.duration||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
@@ -3376,71 +3324,6 @@ function checkRiskFlag(athlete) {
 window.checkRiskFlag = checkRiskFlag;
 
 
-// --- INJURY LOG ---
-var injLog = [];
-var injSev = null;
-function loadInjuries(){
-  try{injLog=JSON.parse(localStorage.getItem(LOCAL_KEY+'_inj')||'[]');}catch(e){injLog=[];}
-}
-function saveInjuries(){
-  try{localStorage.setItem(LOCAL_KEY+'_inj',JSON.stringify(injLog));}catch(e){}
-}
-function renderInjuries(){
-  var fa=ge('injFilter')?ge('injFilter').value:'All';
-  var fs=ge('injSevFilter')?ge('injSevFilter').value:'All';
-  var list=injLog.slice();
-  if(fa!=='All')list=list.filter(function(i){return i.athlete===fa;});
-  if(fs!=='All')list=list.filter(function(i){return String(i.sev)===fs;});
-  list.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  var days=list.reduce(function(acc,i){
-    if(i.rtp&&i.date){var d=Math.round((new Date(i.rtp)-new Date(i.date))/86400000);return acc+(d>0?d:0);}
-    return acc;
-  },0);
-  ge('injSummary').innerHTML=
-    '<div class="pill"><div class="pv">'+list.length+'</div><div class="pl2">Total</div></div>'
-  + '<div class="pill"><div class="pv" style="color:var(--elite)">'+list.filter(function(i){return i.sev===1;}).length+'</div><div class="pl2">Mild</div></div>'
-  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+list.filter(function(i){return i.sev===2;}).length+'</div><div class="pl2">Moderate</div></div>'
-  + '<div class="pill"><div class="pv" style="color:var(--dev)">'+list.filter(function(i){return i.sev===3;}).length+'</div><div class="pl2">Severe</div></div>'
-  + '<div class="pill"><div class="pv">'+days+'</div><div class="pl2">Days Lost</div></div>';
-  if(!list.length){ge('injList').innerHTML='<div style="color:var(--td);font-size:12px;text-align:center;padding:20px;">No injuries logged.</div>';return;}
-  ge('injList').innerHTML=list.map(function(inj){
-    var sc='inj-s'+inj.sev;
-    var sl=inj.sev===1?'Mild':inj.sev===2?'Moderate':'Severe';
-    var d=inj.rtp&&inj.date?Math.round((new Date(inj.rtp)-new Date(inj.date))/86400000):0;
-    return '<div class="inj-entry" data-injid="'+inj.id+'">'
-      +'<div class="ld">'+inj.date+'</div>'
-      +'<div style="font-weight:600;font-size:13px;">'+dn(inj.athlete).split(' ')[0]+'</div>'
-      +'<div class="lb2" style="background:var(--s2);color:var(--tx)">'+inj.part+'</div>'
-      +'<div class="lb2" style="background:var(--s2);color:var(--tm)">'+inj.type+'</div>'
-      +'<div class="inj-badge '+sc+'">'+sl+'</div>'
-      +(d>0?'<div class="inj-days">'+d+' days missed</div>':'')
-      +(inj.notes?'<div class="ln" style="width:100%;margin-top:2px;">'+inj.notes+'</div>':'')
-      +'<button class="inj-del" data-delinj="'+inj.id+'">✕</button>'
-      +'</div>';
-  }).join('');
-}
-document.addEventListener('click',function(e){
-  var sv=e.target.closest('[data-sev]');
-  if(sv){injSev=parseInt(sv.getAttribute('data-sev'));
-    document.querySelectorAll('.sev-btn').forEach(function(b){b.classList.remove('on');});
-    sv.classList.add('on');return;}
-  var dl=e.target.closest('[data-delinj]');
-  if(dl){var id=parseFloat(dl.getAttribute('data-delinj'));
-    if(!confirm('Delete injury record?'))return;
-    injLog=injLog.filter(function(i){return i.id!==id;});saveInjuries();renderInjuries();}
-});
-ge('injSubmit')&&ge('injSubmit').addEventListener('click',function(){
-  var a=ge('injAthl').value,d=ge('injDate').value,p=ge('injPart').value,t=ge('injType').value;
-  if(!a||!d||!p||!t||!injSev){alert('Fill in all required fields and select severity.');return;}
-  injLog.unshift({id:Date.now(),athlete:a,date:d,rtp:ge('injRTP').value||'',
-    part:p,type:t,sev:injSev,notes:ge('injNotes').value||''});
-  saveInjuries();
-  ge('injPart').value='';ge('injType').value='';ge('injRTP').value='';
-  ge('injNotes').value='';injSev=null;
-  document.querySelectorAll('.sev-btn').forEach(function(b){b.classList.remove('on');});
-  renderInjuries();
-});
-window.renderInjuries=renderInjuries;
 
 
 function renderAnthroTrends(athlete){
