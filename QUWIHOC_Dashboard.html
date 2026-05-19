@@ -15,7 +15,7 @@
   --r:6px;--rl:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;}
+body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{background:var(--s1);border-bottom:2px solid var(--gold);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tbl{display:flex;align-items:center;gap:12px;}
 .logo-wrap{width:46px;height:46px;flex-shrink:0;}
@@ -157,8 +157,8 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .note{font-size:10px;color:var(--td);text-align:center;padding:8px;border-top:1px solid var(--br2);}
 .psel{background:var(--s2);border:1px solid var(--br2);color:var(--tx);padding:7px 10px;border-radius:var(--r);font-family:Barlow,sans-serif;font-size:13px;width:100%;outline:none;cursor:pointer;margin-bottom:10px;}
 .psel:focus{border-color:var(--gold);}
-
-
+@media(max-width:900px){.pgrid,.wg,.cg{grid-template-columns:1fr;}}
+@media(max-width:600px){.main{padding:10px;}.kg{grid-template-columns:repeat(2,1fr);}}
 @media print{.topbar,.nav,.fbar,.ibtn,.pbtn,.iovl{display:none!important;}.main{padding:4px;}body,td,th{color:#000!important;}body{background:#fff!important;}}
 
 /* ── MULTI-SESSION WELLNESS ─────────────────────────────────────── */
@@ -226,245 +226,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .imp-hint code{background:var(--s3);padding:1px 5px;border-radius:3px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--good);}
 .imp-result{font-size:11px;color:var(--elite);margin-top:8px;min-height:16px;font-family:"Barlow Condensed",sans-serif;font-weight:600;letter-spacing:1px;}
 
-
-/* ── SORTABLE TABLE HEADERS ────────────────────────────── */
-.sh-col { cursor:pointer; user-select:none; transition:color .15s; }
-.sh-col:hover { color:var(--gold); }
-.sh-col.sort-asc::after  { content:" \2191"; color:var(--gold); }
-.sh-col.sort-desc::after { content:" \2193"; color:var(--gold); }
-
-:root {
-  --gold: #E8A900;
-  --gl: #F5C842;
-  --accent2: #90CAF9;
-  --accent2-dim: rgba(144,202,249,0.15);
-}
-/* Light blue accents for women's teams */
-.ntab.active { color: #90CAF9; border-bottom-color: #90CAF9; }
-.badge { color: #90CAF9; border-color: rgba(144,202,249,0.25); }
-.topbar { border-bottom-color: #90CAF9; }
-.kc:before { background: var(--acc, #90CAF9); }
-.stitle span { color: #90CAF9; }
-.wt { color: #90CAF9; }
-.lct span:first-child { color: var(--tm); }
-.imp-tab.on { color: #90CAF9; border-bottom-color: #90CAF9; }
-.stab.on { color: #90CAF9; border-bottom-color: #90CAF9; }
-.rtab.on { background: #90CAF9; color: var(--navy); border-color: #90CAF9; }
-.tb.on { background: #90CAF9; color: var(--navy); border-color: #90CAF9; }
-.wsub { background: #90CAF9; color: var(--navy); }
-.wsub:hover { background: #BBDEFB; }
-.ibtn { background: #90CAF9; color: var(--navy); }
-.ibtn:hover { background: #BBDEFB; }
-.wc-week { color: #90CAF9; }
-.plan-chart-title { color: var(--tm); }
-.add-session-btn:hover { border-color: #90CAF9; color: #90CAF9; }
-th:hover { color: #90CAF9; }
-th.sa:after, th.sd:after { color: #90CAF9; }
-.sh-col:hover { color: #90CAF9; }
-.sh-col.sort-asc::after, .sh-col.sort-desc::after { color: #90CAF9; }
-.ntab:hover { color: var(--tx); }
-
-
-/* ── WELLNESS DELETE BUTTON ─────────────────────────────────────────── */
-.le { position: relative; }
-.del-btn {
-  background: rgba(239,83,80,.08);
-  border: 1px solid rgba(239,83,80,.3);
-  color: var(--dev);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 3px 8px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  min-width: 28px;
-  transition: all .15s;
-  line-height: 1;
-  margin-left: auto;
-}
-.del-btn:hover { border-color: var(--dev); background: rgba(239,83,80,.2); }
-
-
-/* ── SUPABASE SYNC STATUS ──────────────────────────────────────────────── */
-.sync-bar {
-  background: var(--s2);
-  border: 1px solid var(--br2);
-  border-radius: var(--r);
-  padding: 6px 14px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: var(--tm);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sync-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--td);
-  flex-shrink: 0;
-  transition: background .3s;
-}
-.sync-dot.ok    { background: var(--elite); }
-.sync-dot.err   { background: var(--dev); }
-.sync-dot.local { background: var(--tm); }
-.sync-dot.loading { background: var(--gold); animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-
-/* ════════════════════════════════════════════════
-   MOBILE-FIRST RESPONSIVE
-   ════════════════════════════════════════════════ */
-
-/* Topbar: stack on small screens */
-@media(max-width:700px){
-  .topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}
-  .tbl{gap:8px;}
-  .tn{font-size:15px;}
-  .ts{font-size:9px;letter-spacing:2px;}
-  .logo-wrap{width:36px;height:36px;}
-  .tbr{flex-wrap:wrap;gap:5px;}
-  .tbr .badge{font-size:10px;padding:4px 8px;}
-  .tbr .ibtn,.tbr .pbtn{font-size:10px;padding:5px 10px;}
-}
-
-/* Nav: scrollable pill row, bigger tap targets */
-@media(max-width:700px){
-  .nav{padding:0 8px;gap:0;-webkit-overflow-scrolling:touch;}
-  .ntab{padding:10px 11px;font-size:10px;letter-spacing:1px;}
-}
-
-/* Main padding */
-@media(max-width:700px){
-  .main{padding:8px;}
-}
-
-/* KPI cards: 2-col on mobile */
-@media(max-width:700px){
-  .kg{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .kv{font-size:22px;}
-  .kl{font-size:9px;}
-}
-
-/* Filter bar: scrollable on mobile */
-@media(max-width:700px){
-  .fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
-  .fg{flex-shrink:0;}
-  .fl{font-size:9px;}
-  .fs{font-size:11px;padding:3px 6px;}
-  .tb{font-size:9px;padding:3px 8px;}
-}
-
-/* Tables: horizontal scroll */
-@media(max-width:700px){
-  .tw{border-radius:var(--r);}
-  th{font-size:9px;padding:6px 7px;letter-spacing:1px;}
-  td{font-size:11px;padding:6px 7px;}
-  .av{width:22px;height:22px;font-size:9px;}
-  .sp{font-size:10px;min-width:28px;}
-  .mn{font-size:10px;}
-}
-
-/* Player profile: single column */
-@media(max-width:700px){
-  .pgrid{grid-template-columns:1fr;}
-  .srw{flex-direction:column;align-items:flex-start;gap:8px;}
-  .sring{width:54px;height:54px;}
-  .srv{font-size:30px;}
-  .ameta{grid-template-columns:1fr 1fr;}
-  .mr{grid-template-columns:100px 1fr 55px;gap:5px;}
-  .mn2{font-size:9px;}
-  #radarC{width:100%;height:auto;}
-}
-
-/* Compare: single column */
-@media(max-width:700px){
-  .cg{grid-template-columns:1fr;}
-  .cd{display:none;}
-}
-
-/* Wellness: single column */
-@media(max-width:700px){
-  .wg{grid-template-columns:1fr;}
-  .sc5{gap:3px;}
-  .s5{padding:5px 2px;}
-  .s5n{font-size:15px;}
-  .s5i{font-size:13px;}
-  .s5l{font-size:7px;}
-  .sess-row{grid-template-columns:1fr 1fr;gap:4px;}
-  .sess-row .mini-inp:last-child{grid-column:1/-1;}
-}
-
-/* Log entries: compact */
-@media(max-width:700px){
-  .le{flex-wrap:wrap;gap:4px;padding:6px 8px;}
-  .ld{font-size:9px;min-width:48px;}
-  .lb2{font-size:10px;padding:2px 5px;}
-  .ln{font-size:10px;}
-  .del-btn{padding:2px 5px;font-size:11px;}
-}
-
-/* Positions grid */
-@media(max-width:700px){
-  .posg{grid-template-columns:1fr;}
-}
-
-/* Weekly plan chart */
-@media(max-width:700px){
-  .plan-chart-area{height:140px;}
-  .wd-days{grid-template-columns:repeat(4,1fr);}
-  .week-wrap{max-height:360px;}
-  .week-row{grid-template-columns:80px 70px 1fr;}
-  .wc{padding:6px 6px;}
-  .wc-week{font-size:11px;}
-  .wc-opp{font-size:9px;}
-  .plan-legend{gap:6px;}
-  .leg-item{font-size:9px;}
-  .plan-filter-bar{flex-wrap:wrap;gap:6px;}
-}
-
-/* Trends charts */
-@media(max-width:700px){
-  .lg{grid-template-columns:1fr;}
-  .acwrg{grid-template-columns:repeat(2,1fr);}
-}
-
-/* Import modal */
-@media(max-width:700px){
-  .imod{padding:16px;width:95%;}
-  .imp-tab{font-size:10px;padding:7px;}
-}
-
-/* Stabs */
-@media(max-width:700px){
-  .stab{font-size:10px;padding:6px 10px;}
-}
-
-/* ── SAVE & EXPORT BUTTON ─────────────────────────────────────────────── */
-.ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);
-  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
-.ebtn:hover{background:var(--gold);color:var(--navy);}
-@media(max-width:700px){.ebtn{font-size:10px;padding:5px 9px;}}
-
-
-/* ── HOME BUTTON ───────────────────────────────────────────────────── */
-.hbtn{background:var(--s2);border:1px solid var(--br2);color:var(--tm);
-  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:5px;
-  transition:all .15s;}
-.hbtn:hover{border-color:var(--gold);color:var(--gold);}
-@media(max-width:700px){.hbtn{font-size:10px;padding:5px 9px;}}
-
-
-/* ── PROFILE HISTORY TABLE — always horizontally scrollable ─── */
-.pgrid > div:last-child { min-width: 0; }
-.tw { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
-.prof-hist-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
-
+.ntab.active{color:#90CAF9;border-bottom-color:#90CAF9;}.tb.on{background:#90CAF9;color:var(--navy);border-color:#90CAF9;}.wsub{background:#90CAF9;color:var(--navy);}.ibtn{background:#90CAF9;color:var(--navy);}.sh-col:hover{color:#90CAF9;}
 </style>
 </head>
 <body>
@@ -483,9 +245,7 @@ th.sa:after, th.sd:after { color: #90CAF9; }
     <div><div class="tn">QUINNIPIAC BOBCATS</div><div class="ts">Women&#39;s Ice Hockey &middot; Performance Dashboard</div></div>
   </div>
   <div class="tbr">
-    <a class="hbtn" href="index.html">&#8962; Home</a>
-    <button class="ebtn" id="exportBtn" onclick="exportDashboard()">&#8681; Save &amp; Export</button>
-    <div class="badge" id="topBadge">PRE-SEASON 26-27</div>
+    <div class="badge" id="topBadge">PRE-SEASON 25-26</div>
     <button class="pbtn" onclick="window.print()">Print</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
     <button class="ibtn" onclick="openImport()">&#8679; Import Fitness CSV</button>
@@ -501,6 +261,7 @@ th.sa:after, th.sd:after { color: #90CAF9; }
   <div class="ntab" data-tab="wellness">Wellness</div>
   <div class="ntab" data-tab="trends">Load &amp; Trends</div>
   <div class="ntab" data-tab="planner">Weekly Plan</div>
+  <button class="ntab" data-tab="injury">Injury Log</button>
 </nav>
 
 <main class="main">
@@ -562,7 +323,7 @@ th.sa:after, th.sd:after { color: #90CAF9; }
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Pwr W</th><th>10yd</th><th>ProAg</th><th>Beep</th><th>200yd</th><th>200 Sc%</th><th>Reed</th><th>Reed Sc%</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>CMJ</th><th>10yd</th><th>ProAg</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table></div>
     </div>
@@ -584,24 +345,13 @@ th.sa:after, th.sd:after { color: #90CAF9; }
       <select class="fs" id="lbMetric" onchange="renderLB()">
         <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option>
         <option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option>
-        <option value="Score CONDITIONING">Conditioning</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option>
-        <option value="Bench Press Max">Bench Press</option><option value="VJ Vertec Best (in)">VJ Vertec (in)</option>
-        <option value="Approach Jump Best (in)">Approach Jump (in)</option>
-        <option value="NCMJ Mat Best (in)">NCMJ (in)</option>
-        <option value="CMJ Best (in)">CMJ (in)</option>
-        <option value="Power W (Mat)">Power W (watts)</option>
+        <option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option>
+        <option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option>
+        <option value="Bench Press Max">Bench Press</option><option value="CMJ Best (in)">CMJ (in)</option>
         <option value="Broad Jump Best (in)">Broad Jump</option>
         <option value="10 yd Best (s)">10 yd (s) lower=better</option>
         <option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option>
-        <option value="Grip Right">Grip Right (lbs)</option>
-        <option value="Grip Left">Grip Left (lbs)</option>
-        <option value="Beep Test">Beep Test</option>
-        <option value="200 Min">200yd Shuttle (s) ↓ lower=better</option>
-        <option value="Score 200 % Score">200yd Shuttle Score</option>
-        <option value="200 Decrement%">200yd Decrement % ↓ lower=better</option>
-        <option value="On-ice Reed Min (s)2">On-Ice Reed Best (s) ↓ lower=better</option>
-        <option value="Score On-Ice Reed % Score">On-Ice Reed Score</option>
-        <option value="On-ice Reed % Decrement">On-Ice Reed Decrement % ↓ lower=better</option><option value="Power Quotient">Power Quotient</option>
+        <option value="Beep Test">Beep Test</option><option value="Power Quotient">Power Quotient</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -701,7 +451,18 @@ th.sa:after, th.sd:after { color: #90CAF9; }
         <div class="wp">
           <div class="wt">Mood / Stress <span style="font-size:10px;color:var(--tm)">(1=very stressed, 5=great)</span></div>
           <div class="sc5" id="scMood"></div>
-          <div class="wl2" style="margin-top:8px;">General Notes (optional)</div>
+                  <div class="wp">
+          <div class="wt">Morning Readiness <span style="font-size:10px;color:var(--tm)">(optional)</span></div>
+          <div class="hrv-row">
+            <div class="hrv-field"><div class="hrv-label">HRV (ms)</div>
+              <input type="number" class="hrv-inp" id="wHRV" placeholder="68" min="20" max="200" step="1"></div>
+            <div class="hrv-field"><div class="hrv-label">Resting HR (bpm)</div>
+              <input type="number" class="hrv-inp" id="wRestHR" placeholder="52" min="30" max="120" step="1"></div>
+            <div class="hrv-field"><div class="hrv-label">Sleep Hours</div>
+              <input type="number" class="hrv-inp" id="wSleepHrs" placeholder="7.5" min="2" max="14" step="0.5"></div>
+          </div>
+        </div>
+        <div class="wl2" style="margin-top:8px;">General Notes (optional)</div>
           <input type="text" class="wi" id="wNotes" placeholder="Any comments..." style="margin-bottom:0;">
         </div>
       </div>
@@ -727,8 +488,7 @@ th.sa:after, th.sd:after { color: #90CAF9; }
 
   <!-- RECENT ENTRIES -->
   <div id="wrecent" class="sp2">
-    <div class="sync-bar" id="syncBar"><div class="sync-dot loading" id="syncDot"></div><span id="syncMsg">Connecting to cloud…</span></div>
-    <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div><button class="tb" id="refreshWLog" style="margin-left:8px;" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button>
+    <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Lift</option><option>Skate</option><option>Practice</option><option>Game</option><option>Conditioning</option><option>Recovery</option><option>Off</option></select></div></div>
     <div class="pills" id="wPills"></div>
     <div class="ll" id="wLog"><div style="color:var(--td);font-size:12px;text-align:center;padding:20px;">No entries yet.</div></div>
@@ -737,6 +497,7 @@ th.sa:after, th.sd:after { color: #90CAF9; }
 
 <!-- TRENDS -->
 <div id="trends" class="sec">
+  <div class="risk-banner" id="riskBanner"></div>
   <div class="fbar">
     <div class="fg"><span class="fl">Athlete</span><select class="fs" id="trAthl" onchange="renderTrends()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Season</span><select class="fs" id="trSeason" onchange="renderTrends()"></select></div>
@@ -847,6 +608,56 @@ th.sa:after, th.sd:after { color: #90CAF9; }
   <div class="lg" id="planInsights"></div>
 </div>
 
+<!-- INJURY LOG -->
+<div id="injurysec" class="sec" style="display:none;">
+  <div class="inj-form">
+    <div class="st" style="margin-bottom:12px;">LOG <span>INJURY</span></div>
+    <div class="inj-grid">
+      <div><div class="inj-lbl">Athlete</div><select class="inj-inp" id="injAthl"></select></div>
+      <div><div class="inj-lbl">Date of Injury</div><input type="date" class="inj-inp" id="injDate"></div>
+      <div><div class="inj-lbl">Est. Return Date</div><input type="date" class="inj-inp" id="injRTP"></div>
+    </div>
+    <div class="inj-row2">
+      <div><div class="inj-lbl">Body Part</div>
+        <select class="inj-inp" id="injPart"><option value="">Select...</option>
+          <option>Ankle</option><option>Knee</option><option>Hip</option><option>Hamstring</option>
+          <option>Quad</option><option>Groin</option><option>Low Back</option><option>Shoulder</option>
+          <option>Elbow</option><option>Wrist / Hand</option><option>Head / Concussion</option><option>Other</option>
+        </select>
+      </div>
+      <div><div class="inj-lbl">Injury Type</div>
+        <select class="inj-inp" id="injType"><option value="">Select...</option>
+          <option>Strain</option><option>Sprain</option><option>Contusion</option>
+          <option>Fracture</option><option>Tendinopathy</option><option>Concussion</option>
+          <option>Overuse</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <div class="inj-lbl">Severity</div>
+      <div class="inj-sev">
+        <button class="sev-btn s1" data-sev="1">1 &mdash; Mild<br><span style="font-size:9px;font-weight:400">&lt;7 days</span></button>
+        <button class="sev-btn s2" data-sev="2">2 &mdash; Moderate<br><span style="font-size:9px;font-weight:400">7-28 days</span></button>
+        <button class="sev-btn s3" data-sev="3">3 &mdash; Severe<br><span style="font-size:9px;font-weight:400">&gt;28 days</span></button>
+      </div>
+    </div>
+    <div style="margin-bottom:10px;"><div class="inj-lbl">Notes</div>
+      <input type="text" class="inj-inp" id="injNotes" placeholder="Mechanism, context, treatment...">
+    </div>
+    <button class="inj-sub" id="injSubmit">+ Log Injury</button>
+  </div>
+  <div class="fbar" style="margin-bottom:10px;">
+    <div class="fg"><span class="fl">Athlete</span>
+      <select class="fs" id="injFilter" onchange="renderInjuries()"><option value="All">All Athletes</option></select></div>
+    <div class="fg"><span class="fl">Severity</span>
+      <select class="fs" id="injSevFilter" onchange="renderInjuries()">
+        <option value="All">All</option><option value="1">Mild</option>
+        <option value="2">Moderate</option><option value="3">Severe</option>
+      </select></div>
+  </div>
+  <div id="injSummary" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;"></div>
+  <div id="injList"></div>
+</div>
 
 </main>
 
@@ -903,6 +714,8 @@ th.sa:after, th.sd:after { color: #90CAF9; }
 </div>
 
 <script>
+
+
 (function() {
 'use strict';
 
@@ -964,7 +777,7 @@ function loadWLog(callback, forceRefresh) {
   // Step 3: fetch with 5s timeout flag (no AbortController - Safari compatible)
   var done    = false;
   var t0      = Date.now();
-  var cols    = 'id,athlete,date,session,rpe,sleep,soreness,energy,mood,wellness,duration,load,notes';
+  var cols    = 'id,athlete,date,session,rpe,sleep,soreness,energy,mood,wellness,duration,load,notes,hrv,resting_hr,sleep_hrs';
   var timeoutId = setTimeout(function() {
     if (done) return;
     done = true;
@@ -1004,7 +817,8 @@ function loadWLog(callback, forceRefresh) {
         soreness: r.soreness, energy: r.energy,
         mood: r.mood,       wellness: r.wellness,
         duration: r.duration, load:   r.load,
-        notes: r.notes || ''
+        notes: r.notes || '',
+        hrv: r.hrv || null, resting_hr: r.resting_hr || null, sleep_hrs: r.sleep_hrs || null
       };
     });
     try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
@@ -1032,7 +846,9 @@ function saveToSupabase(entry, onSuccess, onError) {
     session: entry.session, rpe: entry.rpe, sleep: entry.sleep,
     soreness: entry.soreness, energy: entry.energy, mood: entry.mood,
     wellness: entry.wellness, duration: entry.duration, load: entry.load,
-    notes: entry.notes || ''
+    notes: entry.notes || '',
+    hrv: entry.hrv || null, resting_hr: entry.resting_hr || null,
+    sleep_hrs: entry.sleep_hrs || null
   };
   fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
     method: 'POST', headers: sbH(), body: JSON.stringify(row)
@@ -1134,7 +950,7 @@ function fillAthletes() {
   var names = uniq(DATA.map(function(d) { return d['Athlete Name']; })).sort();
   var opts = names.map(function(n) { return '<option value="' + n + '">' + dn(n) + '</option>'; }).join('');
   var optAll = '<option value="All">All Athletes</option>' + opts;
-  ['profSel', 'cmpA', 'wAthl'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
+  ['profSel', 'cmpA', 'wAthl', 'injAthl', 'injFilter'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
   ['wFA', 'trAthl'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = optAll; });
   ge('cmpB').innerHTML = names.map(function(n, i) {
     return '<option value="' + n + '"' + (i === 1 ? ' selected' : '') + '>' + dn(n) + '</option>';
@@ -1676,11 +1492,15 @@ ge('wSubmit').addEventListener('click', function() {
   btn.textContent = 'Saving...';
   btn.disabled = true;
   var entries = validSessions.map(function(s) {
+    var _hrv  = ge('wHRV')      ? (parseInt(ge('wHRV').value)      || null) : null;
+    var _rhr  = ge('wRestHR')   ? (parseInt(ge('wRestHR').value)   || null) : null;
+    var _slh  = ge('wSleepHrs') ? (parseFloat(ge('wSleepHrs').value) || null) : null;
     return { id: Date.now() + Math.round(Math.random()*9999),
       athlete: athl, date: date, session: s.type, rpe: parseInt(s.rpe)||3,
       sleep: sel.sleep, soreness: sel.sore, energy: sel.energy, mood: sel.mood,
       wellness: parseFloat(ws.toFixed(2)),
       duration: parseInt(s.mins)||0, load: (parseInt(s.rpe)||3)*(parseInt(s.mins)||0),
+      hrv: _hrv, resting_hr: _rhr, sleep_hrs: _slh,
       notes: s.notes || notes };
   });
   var saved = 0, errors = 0;
@@ -1722,9 +1542,15 @@ function renderWLog() {
   var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
   var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
   var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
+  var hv   = entries.filter(function(e){return e.hrv;});
+  var sv   = entries.filter(function(e){return e.sleep_hrs;});
+  var aHRV = hv.length ? (hv.reduce(function(a,e){return a+e.hrv;},0)/hv.length).toFixed(0) : null;
+  var aSLP = sv.length ? (sv.reduce(function(a,e){return a+e.sleep_hrs;},0)/sv.length).toFixed(1) : null;
   ge('wPills').innerHTML =
     '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
   + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
+  + (aHRV ? '<div class="pill"><div class="pv" style="color:#4FC3F7">'+aHRV+'ms</div><div class="pl2">Avg HRV</div></div>' : '')
+  + (aSLP ? '<div class="pill"><div class="pv" style="color:var(--elite)">'+aSLP+'h</div><div class="pl2">Avg Sleep</div></div>' : '')
   + '<div class="pill"><div class="pv" style="color:var(--gold)">'+tL.toLocaleString()+'</div><div class="pl2">Total Load (AU)</div></div>'
   + '<div class="pill"><div class="pv">'+tM+'</div><div class="pl2">Total Mins</div></div>'
   + '<div class="pill"><div class="pv">'+entries.length+'</div><div class="pl2">Sessions</div></div>';
@@ -3530,9 +3356,106 @@ function exportDashboard() {
   }, 2000);
 }
 
+
+function checkRiskFlag(athlete) {
+  var banner = ge('riskBanner');
+  if (!banner) return;
+  var today   = new Date();
+  var weekAgo = new Date(today - 7*86400000);
+  var ents = wLog.filter(function(e){
+    return (athlete==='All'||e.athlete===athlete) && new Date(e.date)>=weekAgo;
+  });
+  if (!ents.length) { banner.className='risk-banner'; return; }
+  var avgW = ents.reduce(function(a,e){return a+e.wellness;},0)/ents.length;
+  var acwr = computeACWR(athlete);
+  var highACWR = acwr!==null && acwr>1.3;
+  var lowWell  = avgW<3.0;
+  var msgs=[];
+  if (highACWR&&lowWell)
+    msgs.push('⚠ HIGH RISK: ACWR '+acwr.toFixed(2)+' AND avg wellness '+avgW.toFixed(1)+'/5 — peak injury risk. Consider reducing load now.');
+  else if (highACWR)
+    msgs.push('⚠ CAUTION: ACWR '+acwr.toFixed(2)+' (>1.3) — monitor training load closely.');
+  else if (lowWell)
+    msgs.push('⚠ CAUTION: Avg wellness '+avgW.toFixed(1)+'/5 (<3.0) this week — athletes reporting significant fatigue.');
+  if (msgs.length) {
+    banner.className='risk-banner show';
+    banner.innerHTML='<div class="rb-title">Risk Alert — '+(athlete==='All'?'Team':dn(athlete))+'</div>'+msgs.join('<br>');
+  } else { banner.className='risk-banner'; }
+}
+window.checkRiskFlag = checkRiskFlag;
+
+
+// --- INJURY LOG ---
+var injLog = [];
+var injSev = null;
+function loadInjuries(){
+  try{injLog=JSON.parse(localStorage.getItem(LOCAL_KEY+'_inj')||'[]');}catch(e){injLog=[];}
+}
+function saveInjuries(){
+  try{localStorage.setItem(LOCAL_KEY+'_inj',JSON.stringify(injLog));}catch(e){}
+}
+function renderInjuries(){
+  var fa=ge('injFilter')?ge('injFilter').value:'All';
+  var fs=ge('injSevFilter')?ge('injSevFilter').value:'All';
+  var list=injLog.slice();
+  if(fa!=='All')list=list.filter(function(i){return i.athlete===fa;});
+  if(fs!=='All')list=list.filter(function(i){return String(i.sev)===fs;});
+  list.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  var days=list.reduce(function(acc,i){
+    if(i.rtp&&i.date){var d=Math.round((new Date(i.rtp)-new Date(i.date))/86400000);return acc+(d>0?d:0);}
+    return acc;
+  },0);
+  ge('injSummary').innerHTML=
+    '<div class="pill"><div class="pv">'+list.length+'</div><div class="pl2">Total</div></div>'
+  + '<div class="pill"><div class="pv" style="color:var(--elite)">'+list.filter(function(i){return i.sev===1;}).length+'</div><div class="pl2">Mild</div></div>'
+  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+list.filter(function(i){return i.sev===2;}).length+'</div><div class="pl2">Moderate</div></div>'
+  + '<div class="pill"><div class="pv" style="color:var(--dev)">'+list.filter(function(i){return i.sev===3;}).length+'</div><div class="pl2">Severe</div></div>'
+  + '<div class="pill"><div class="pv">'+days+'</div><div class="pl2">Days Lost</div></div>';
+  if(!list.length){ge('injList').innerHTML='<div style="color:var(--td);font-size:12px;text-align:center;padding:20px;">No injuries logged.</div>';return;}
+  ge('injList').innerHTML=list.map(function(inj){
+    var sc='inj-s'+inj.sev;
+    var sl=inj.sev===1?'Mild':inj.sev===2?'Moderate':'Severe';
+    var d=inj.rtp&&inj.date?Math.round((new Date(inj.rtp)-new Date(inj.date))/86400000):0;
+    return '<div class="inj-entry" data-injid="'+inj.id+'">'
+      +'<div class="ld">'+inj.date+'</div>'
+      +'<div style="font-weight:600;font-size:13px;">'+dn(inj.athlete).split(' ')[0]+'</div>'
+      +'<div class="lb2" style="background:var(--s2);color:var(--tx)">'+inj.part+'</div>'
+      +'<div class="lb2" style="background:var(--s2);color:var(--tm)">'+inj.type+'</div>'
+      +'<div class="inj-badge '+sc+'">'+sl+'</div>'
+      +(d>0?'<div class="inj-days">'+d+' days missed</div>':'')
+      +(inj.notes?'<div class="ln" style="width:100%;margin-top:2px;">'+inj.notes+'</div>':'')
+      +'<button class="inj-del" data-delinj="'+inj.id+'">✕</button>'
+      +'</div>';
+  }).join('');
+}
+document.addEventListener('click',function(e){
+  var sv=e.target.closest('[data-sev]');
+  if(sv){injSev=parseInt(sv.getAttribute('data-sev'));
+    document.querySelectorAll('.sev-btn').forEach(function(b){b.classList.remove('on');});
+    sv.classList.add('on');return;}
+  var dl=e.target.closest('[data-delinj]');
+  if(dl){var id=parseFloat(dl.getAttribute('data-delinj'));
+    if(!confirm('Delete injury record?'))return;
+    injLog=injLog.filter(function(i){return i.id!==id;});saveInjuries();renderInjuries();}
+});
+ge('injSubmit')&&ge('injSubmit').addEventListener('click',function(){
+  var a=ge('injAthl').value,d=ge('injDate').value,p=ge('injPart').value,t=ge('injType').value;
+  if(!a||!d||!p||!t||!injSev){alert('Fill in all required fields and select severity.');return;}
+  injLog.unshift({id:Date.now(),athlete:a,date:d,rtp:ge('injRTP').value||'',
+    part:p,type:t,sev:injSev,notes:ge('injNotes').value||''});
+  saveInjuries();
+  ge('injPart').value='';ge('injType').value='';ge('injRTP').value='';
+  ge('injNotes').value='';injSev=null;
+  document.querySelectorAll('.sev-btn').forEach(function(b){b.classList.remove('on');});
+  renderInjuries();
+});
+window.renderInjuries=renderInjuries;
+
 initApp();
 
 })(); // end IIFE
+
+
 
 </script>
 </body>
