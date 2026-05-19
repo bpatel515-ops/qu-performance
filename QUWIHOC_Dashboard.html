@@ -227,6 +227,19 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .imp-result{font-size:11px;color:var(--elite);margin-top:8px;min-height:16px;font-family:"Barlow Condensed",sans-serif;font-weight:600;letter-spacing:1px;}
 
 .ntab.active{color:#90CAF9;border-bottom-color:#90CAF9;}.tb.on{background:#90CAF9;color:var(--navy);border-color:#90CAF9;}.wsub{background:#90CAF9;color:var(--navy);}.ibtn{background:#90CAF9;color:var(--navy);}.sh-col:hover{color:#90CAF9;}
+
+/* ── HOME + EXPORT BUTTONS ─────────────────────────────────────────── */
+.hbtn{background:var(--s2);border:1px solid var(--br2);color:var(--tm);
+  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+.hbtn:hover{border-color:var(--gold);color:var(--gold);}
+.ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);
+  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.ebtn:hover{background:var(--gold);color:var(--navy);}
+@media(max-width:700px){.hbtn,.ebtn{font-size:10px;padding:5px 9px;}}
+
 </style>
 </head>
 <body>
@@ -245,6 +258,8 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
     <div><div class="tn">QUINNIPIAC BOBCATS</div><div class="ts">Women&#39;s Ice Hockey &middot; Performance Dashboard</div></div>
   </div>
   <div class="tbr">
+    <a class="hbtn" href="index.html">&#8962; Home</a>
+    <button class="ebtn" id="exportBtn" onclick="exportDashboard()">&#8681; Save &amp; Export</button>
     <div class="badge" id="topBadge">PRE-SEASON 25-26</div>
     <button class="pbtn" onclick="window.print()">Print</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
@@ -1045,8 +1060,9 @@ function showTab(id, el) {
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
   if (id === 'wellness')   { loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
-  if (id === 'trends')     renderTrends();
+  if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
+  if (id === 'injury')     { if(typeof loadInjuries==='function'){loadInjuries();renderInjuries();} }
 }
 function showSub(id, el) {
   document.querySelectorAll('.stab').forEach(function(t) { t.classList.remove('on'); });
