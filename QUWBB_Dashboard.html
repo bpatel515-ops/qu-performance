@@ -373,6 +373,9 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
         <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>CMJ</th><th>10yd</th><th>ProAg</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table></div>
+  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;">
+  <div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div>
+  <div id="deltaTable"></div></div>
     </div>
   </div>
 </div>
@@ -536,6 +539,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   <!-- RECENT ENTRIES -->
   <div id="wrecent" class="sp2">
     <div class="sync-bar"><div class="sync-dot loading" id="syncDot"></div><span class="sync-msg" id="syncMsg">Connecting to cloud...</span><button class="sync-refresh" id="refreshWLog" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button></div>
+    <div id="compliancePanel" style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;"></div>
     <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Lift</option><option>Skate</option><option>Practice</option><option>Game</option><option>Conditioning</option><option>Recovery</option><option>Off</option></select></div></div>
     <div class="pills" id="wPills"></div>
@@ -546,6 +550,8 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 <!-- TRENDS -->
 <div id="trends" class="sec">
   <div class="risk-banner" id="riskBanner"></div>
+  
+  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;" id="monotonyPanel"></div>
   <div class="fbar">
     <div class="fg"><span class="fl">Athlete</span><select class="fs" id="trAthl" onchange="renderTrends()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Season</span><select class="fs" id="trSeason" onchange="renderTrends()"></select></div>
@@ -1042,7 +1048,7 @@ function showTab(id, el) {
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
-  if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); }); }
+  if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); renderCompliance(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
 }
@@ -1274,6 +1280,7 @@ function renderProfile() {
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?fmt(val,dec)+m.u:'—')+' '+ds+'</div></div>';
   }).join('');
 
+  renderDeltaTable(name);
   ge('histBody').innerHTML = allRecs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);}).map(function(d) {
     return '<tr>'
       + '<td style="color:var(--gold);font-family:Barlow Condensed,sans-serif;font-weight:700">'+(d.Season||'—')+'</td>'
@@ -1572,12 +1579,18 @@ function getFilteredPlan() {
 
 function computeACWR(athlete) {
   var data = athlete==='All' ? wLog : wLog.filter(function(e){return e.athlete===athlete;});
-  if (!data.length) return {acute:0,chronic:0,ratio:0};
+  if (!data.length) return {acute:0,chronic:0,ratio:null,insufficient:true};
   var now=new Date(), d7=new Date(now), d28=new Date(now);
   d7.setDate(d7.getDate()-7); d28.setDate(d28.getDate()-28);
+  // Need at least 7 days of data spread over at least 14 days for meaningful ACWR
+  var dates = data.map(function(e){return e.date;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+  var spanDays = dates.length > 1 ? Math.round((new Date(dates[dates.length-1])-new Date(dates[0]))/86400000) : 0;
   var a7  = data.filter(function(e){return new Date(e.date)>=d7; }).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/7;
   var c28 = data.filter(function(e){return new Date(e.date)>=d28;}).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/28;
-  return {acute:Math.round(a7), chronic:Math.round(c28), ratio:c28>0?parseFloat((a7/c28).toFixed(2)):0};
+  var ratio = c28 > 0 ? parseFloat((a7/c28).toFixed(2)) : null;
+  // Flag as insufficient if less than 14 days of data spread
+  var insufficient = spanDays < 14;
+  return {acute:Math.round(a7), chronic:Math.round(c28), ratio:ratio, insufficient:insufficient, spanDays:spanDays};
 }
 function acwrCo(r) { return r<0.8?'var(--good)':r<=1.3?'var(--elite)':r<=1.5?'var(--gold)':'var(--dev)'; }
 function acwrZn(r) { return r===0?'No Data':r<0.8?'Under-training':r<=1.3?'Optimal Zone':r<=1.5?'Caution':'High Risk'; }
@@ -1593,7 +1606,20 @@ function renderTrends() {
   entries = entries.filter(function(e){return new Date(e.date)>=cutoff;}).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
 
   if (athl !== 'All') {
-    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(r);
+    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(r||0);
+    var ms=computeMonotonyStrain(athl);
+    var mpanel=ge('monotonyPanel');
+    if(mpanel){
+      var mColor=ms.monotony===null?'var(--td)':ms.monotony>2?'var(--dev)':ms.monotony>1.5?'var(--gold)':'var(--elite)';
+      var sColor=ms.strain===null?'var(--td)':ms.strain>6000?'var(--dev)':ms.strain>4000?'var(--gold)':'var(--elite)';
+      mpanel.innerHTML='<div class="st" style="margin-bottom:10px;">LOAD <span>QUALITY</span></div>'
+        +'<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+        +'<div class="pill"><div class="pv" style="color:'+mColor+'">'+(ms.monotony!==null?ms.monotony.toFixed(2):'--')+'</div><div class="pl2">Monotony</div></div>'
+        +'<div class="pill"><div class="pv" style="color:'+sColor+'">'+(ms.strain!==null?ms.strain.toLocaleString():'--')+'</div><div class="pl2">Strain (AU)</div></div>'
+        +'<div class="pill"><div class="pv">'+(ms.weekTotal||0).toLocaleString()+'</div><div class="pl2">Week Load (AU)</div></div>'
+        +(ms.monotony!==null&&ms.monotony>2?'<div style="color:var(--dev);font-size:11px;font-weight:600;align-self:center;">&#9888; High monotony - vary training stimulus</div>':'')
+        +'</div>';
+    }
     ge('acwrGrid').innerHTML = '<div class="mi" style="border:1px solid '+cl+';border-radius:var(--rl);padding:14px;grid-column:span 2">'
       + '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
       + '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:44px;font-weight:900;color:'+cl+'">'+r.toFixed(2)+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:'+cl+'">'+acwrZn(r)+'</div></div>'
@@ -2348,9 +2374,115 @@ function renderPlanInsights(weeks) {
 // initApp extension handled above
 window.renderPlanner = renderPlanner;
 
+
+// ─── MONOTONY & STRAIN ────────────────────────────────────────────────────────
+function computeMonotonyStrain(athlete) {
+  var now = new Date(), d7 = new Date(now);
+  d7.setDate(d7.getDate() - 7);
+  var data = (athlete === 'All' ? wLog : wLog.filter(function(e){ return e.athlete === athlete; }))
+    .filter(function(e){ return new Date(e.date) >= d7; });
+  if (data.length < 2) return { monotony: null, strain: null, weekTotal: 0 };
+  var byDay = {};
+  data.forEach(function(e){ byDay[e.date] = (byDay[e.date]||0) + (e.load||0); });
+  var loads = Object.values(byDay);
+  var avg = loads.reduce(function(a,b){return a+b;},0) / loads.length;
+  var sd  = Math.sqrt(loads.map(function(l){return Math.pow(l-avg,2);}).reduce(function(a,b){return a+b;},0) / loads.length);
+  var monotony = sd > 0 ? parseFloat((avg/sd).toFixed(2)) : null;
+  var strain   = monotony !== null ? Math.round(avg * loads.length * monotony) : null;
+  return { monotony: monotony, strain: strain, weekTotal: Math.round(avg * loads.length) };
+}
+
+// ─── COMPLIANCE TRACKER ───────────────────────────────────────────────────────
+function renderCompliance() {
+  var el = ge('compliancePanel'); if (!el) return;
+  var now = new Date(), d7 = new Date(now);
+  d7.setDate(d7.getDate() - 7);
+  var allAthletes = [], seen = {};
+  DATA.forEach(function(d) {
+    var n = d['Athlete Name'];
+    if (n && !seen[n]) { seen[n] = true; allAthletes.push(n); }
+  });
+  if (!allAthletes.length) { el.innerHTML = ''; return; }
+  var logged = {};
+  wLog.filter(function(e){ return new Date(e.date) >= d7; })
+      .forEach(function(e){ logged[e.athlete] = true; });
+  var loggedCount = Object.keys(logged).length;
+  var total       = allAthletes.length;
+  var pct         = Math.round(loggedCount / total * 100);
+  var notLogged   = allAthletes.filter(function(n){ return !logged[n]; });
+  var color       = pct >= 80 ? 'var(--elite)' : pct >= 60 ? 'var(--gold)' : 'var(--dev)';
+  el.innerHTML =
+    '<div class="st" style="margin-bottom:10px;">WELLNESS <span>COMPLIANCE</span>'
+    + ' <span style="font-size:10px;color:var(--tm);font-weight:400;letter-spacing:0">(last 7 days)</span></div>'
+    + '<div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;">'
+    + '<div style="text-align:center;min-width:60px;">'
+    + '<div style="font-size:34px;font-weight:800;color:'+color+';font-family:\'Barlow Condensed\',sans-serif;line-height:1;">'+pct+'%</div>'
+    + '<div style="font-size:9px;color:var(--tm);letter-spacing:1.5px;font-weight:700;text-transform:uppercase;">Compliance</div></div>'
+    + '<div style="font-size:12px;color:var(--tm);">'+loggedCount+' / '+total+' athletes logged</div></div>'
+    + (notLogged.length
+        ? '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--dev);margin-bottom:5px;">NOT LOGGED ('+notLogged.length+'):</div>'
+          + '<div style="display:flex;flex-wrap:wrap;gap:4px;">'
+          + notLogged.map(function(n){ return '<span class="lb2" style="background:rgba(239,83,80,.12);color:var(--dev);">'+dn(n).split(',')[0].trim()+'</span>'; }).join('')
+          + '</div>'
+        : '<div style="color:var(--elite);font-size:12px;font-weight:600;">&#10003; Full team compliance this week!</div>');
+}
+window.renderCompliance = renderCompliance;
+
+// ─── PRE/POST DELTA TABLE ─────────────────────────────────────────────────────
+function renderDeltaTable(athlete) {
+  var el = ge('deltaTable'); if (!el) return;
+  var recs = DATA.filter(function(d){
+    return (athlete === 'All' || d['Athlete Name'] === athlete) && d.Date;
+  }).sort(function(a,b){ return new Date(a.Date) - new Date(b.Date); });
+  if (recs.length < 2) {
+    el.innerHTML = '<div style="color:var(--td);font-size:12px;padding:10px;">Need 2+ test sessions.</div>';
+    return;
+  }
+  var first = recs[0], last = recs[recs.length-1];
+  var metrics = [
+    {l:'Overall Score', k:'Score OVERALL',     u:'',    hi:true},
+    {l:'Power Score',   k:'Score POWER',        u:'',    hi:true},
+    {l:'Strength',      k:'Score STRENGTH',     u:'',    hi:true},
+    {l:'Speed',         k:'Score SPEED',        u:'',    hi:true},
+    {l:'Conditioning',  k:'Score CONDITIONING', u:'',    hi:true},
+    {l:'Lean Mass',     k:'Lean Mass',          u:' lbs',hi:true},
+    {l:'Body Fat %',    k:'Bodyfat',            u:'%',   hi:false},
+  ];
+  var rows = metrics.map(function(m) {
+    var fv = first[m.k], lv = last[m.k];
+    if (fv == null || lv == null) return '';
+    var diff    = lv - fv;
+    var neutral = Math.abs(diff) < 0.5;
+    var good    = m.hi ? diff > 0 : diff < 0;
+    var color   = neutral ? 'var(--tm)' : (good ? 'var(--elite)' : 'var(--dev)');
+    var arrow   = neutral ? '\u2013' : (diff > 0 ? '\u25b2' : '\u25bc');
+    var sign    = diff > 0 ? '+' : '';
+    return '<tr style="border-bottom:1px solid var(--br2);">'
+      + '<td style="padding:7px 10px;font-size:12px;color:var(--tm);">'+m.l+'</td>'
+      + '<td style="text-align:right;padding:7px 10px;font-size:12px;">'+fmt(fv,1)+m.u+'</td>'
+      + '<td style="text-align:right;padding:7px 10px;font-size:12px;">'+fmt(lv,1)+m.u+'</td>'
+      + '<td style="text-align:right;padding:7px 10px;font-size:12px;font-weight:700;color:'+color+';">'+arrow+' '+sign+fmt(diff,1)+m.u+'</td>'
+      + '</tr>';
+  }).filter(Boolean).join('');
+
+  el.innerHTML = rows
+    ? '<table style="width:100%;border-collapse:collapse;">'
+      + '<thead><tr style="border-bottom:2px solid var(--br2);">'
+      + '<th style="text-align:left;font-size:9px;letter-spacing:1.5px;color:var(--tm);padding:5px 10px;">METRIC</th>'
+      + '<th style="text-align:right;font-size:9px;letter-spacing:1.5px;color:var(--tm);padding:5px 10px;">FIRST<br><span style="font-weight:400;font-size:9px;">'+first.Date+'</span></th>'
+      + '<th style="text-align:right;font-size:9px;letter-spacing:1.5px;color:var(--tm);padding:5px 10px;">LATEST<br><span style="font-weight:400;font-size:9px;">'+last.Date+'</span></th>'
+      + '<th style="text-align:right;font-size:9px;letter-spacing:1.5px;color:var(--tm);padding:5px 10px;">CHANGE</th>'
+      + '</tr></thead><tbody>'+rows+'</tbody></table>'
+    : '<div style="color:var(--td);font-size:12px;padding:10px;">No matching data across sessions.</div>';
+}
+window.renderDeltaTable = renderDeltaTable;
+
+
 initApp();
 
 })(); // end IIFE
+
+
 </script>
 </body>
 </html>
