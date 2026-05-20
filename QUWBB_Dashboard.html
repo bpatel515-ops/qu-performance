@@ -229,33 +229,49 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .ntab.active{color:#90CAF9;border-bottom-color:#90CAF9;}.tb.on{background:#90CAF9;color:var(--navy);border-color:#90CAF9;}.wsub{background:#90CAF9;color:var(--navy);}.ibtn{background:#90CAF9;color:var(--navy);}.sh-col:hover{color:#90CAF9;}
 
 /* ── HOME + EXPORT BUTTONS ─────────────────────────────────────────── */
-.hbtn{background:var(--s2);border:1px solid var(--br2);color:var(--tm);
-  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+.hbtn{background:var(--s2);border:1px solid var(--br2);color:var(--tm);padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
-.ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);
-  padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
 .ebtn:hover{background:var(--gold);color:var(--navy);}
-@media(max-width:700px){.hbtn,.ebtn{font-size:10px;padding:5px 9px;}}
-
-
-/* ── SYNC BAR + REFRESH ─────────────────────────────────────────────── */
-.sync-bar{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);
-  padding:6px 14px;font-family:"Barlow Condensed",sans-serif;font-size:11px;
-  font-weight:600;letter-spacing:1px;color:var(--tm);margin-bottom:10px;
-  display:flex;align-items:center;gap:8px;}
+/* ── SYNC BAR ──────────────────────────────────────────────────────── */
+.sync-bar{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:6px 14px;font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--tm);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--td);flex-shrink:0;transition:background .3s;}
-.sync-dot.ok{background:var(--elite);}
-.sync-dot.err{background:var(--dev);}
+.sync-dot.ok{background:var(--elite);}.sync-dot.err{background:var(--dev);}
 .sync-dot.loading{background:var(--gold);animation:sdpulse 1s infinite;}
 @keyframes sdpulse{0%,100%{opacity:1}50%{opacity:.35}}
-.sync-msg{flex:1;}
-.sync-refresh{margin-left:auto;background:none;border:1px solid var(--br2);
-  color:var(--tm);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;
-  cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;transition:all .15s;}
+.sync-refresh{margin-left:auto;background:none;border:1px solid var(--br2);color:var(--tm);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;transition:all .15s;}
 .sync-refresh:hover{border-color:var(--gold);color:var(--gold);}
+/* ── HRV FIELDS ────────────────────────────────────────────────────── */
+.hrv-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
+.hrv-field{display:flex;flex-direction:column;gap:3px;}
+.hrv-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);}
+.hrv-inp{background:var(--s2);border:1px solid var(--br2);border-radius:5px;color:var(--tx);font-size:14px;font-family:Barlow,sans-serif;padding:6px 8px;width:100%;text-align:center;}
+.hrv-inp:focus{outline:none;border-color:var(--gold);}
+.hrv-inp::placeholder{color:var(--td);}
+/* ── RISK BANNER ───────────────────────────────────────────────────── */
+.risk-banner{display:none;background:rgba(239,83,80,.12);border:1px solid var(--dev);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--dev);font-weight:600;line-height:1.5;}
+.risk-banner.show{display:block;}
+.risk-banner .rb-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+/* ── ANTHRO DELTA ──────────────────────────────────────────────────── */
+.anthro-delta{font-size:10px;padding:2px 7px;border-radius:4px;margin-left:6px;}
+.ad-good{background:rgba(102,187,106,.12);color:var(--elite);}
+.ad-bad{background:rgba(239,83,80,.12);color:var(--dev);}
+.ad-neu{background:var(--s2);color:var(--tm);}
+/* ── MOBILE ────────────────────────────────────────────────────────── */
+@media(max-width:700px){
+  .topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}
+  .tbl{gap:8px;} .tn{font-size:15px;} .ts{font-size:9px;}
+  .tbr{flex-wrap:wrap;gap:5px;}
+  .nav{padding:0 8px;} .ntab{padding:10px 11px;font-size:10px;}
+  .main{padding:8px;}
+  .kg{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;}
+  .pgrid{grid-template-columns:1fr;}
+  .wg{grid-template-columns:1fr;}
+  .hrv-row{grid-template-columns:1fr 1fr;}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .pgrid>div:last-child{min-width:0;}
+}
 
 </style>
 </head>
@@ -667,10 +683,34 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
         <div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;color:var(--tm);">Click or drag &amp; drop Fitness CSV</div>
       </div>
       <input type="file" id="fileIn" accept=".csv" style="display:none">
-      <div class="imp-result" id="f
+      <div class="imp-result" id="fitResult"></div>
+    </div>
 
+    <!-- Plan panel -->
+    <div class="imp-panel" id="impPanelPlan">
+      <div class="imp-hint">
+        <strong>How to export:</strong> In your planning workbook, go to the <code>Weekly Plan</code>
+        sheet &rarr; File &rarr; Save As &rarr; CSV UTF-8.<br><br>
+        <strong>Expected columns:</strong> <code>Date</code>, <code>Week</code>, <code>Opponent</code>,
+        then for each day (Sun&rarr;Sat): <code>Volume</code>, <code>Session</code>, <code>Time</code>.
+        Columns 25&ndash;26 should be <code>Weekly Total</code> and <code>A:C</code> (EWMA).<br><br>
+        <strong>Tip:</strong> The file can have up to 3 header rows — the importer will auto-detect
+        the row containing <code>Date</code> and <code>Week</code>.
+      </div>
+      <div class="dz" id="dropZPlan">
+        <div style="font-size:24px;margin-bottom:5px;">&#128197;</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;color:var(--tm);">Click or drag &amp; drop Weekly Plan CSV</div>
+      </div>
+      <input type="file" id="fileInPlan" accept=".csv" style="display:none">
+      <div class="imp-result" id="planResult"></div>
+    </div>
 
-<script>
+    <div class="mbtns" style="margin-top:14px;">
+      <button class="bc" id="cancelImport">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function() {
 'use strict';
@@ -842,6 +882,8 @@ var DATA = [{"Athlete Name":"Girardi, Paige","Season":"23-24","Date":"8/28/23","
 var posFilter = 'All';
 var viewMode = 'scores';
 var sortSt = {};
+var ovSortCol = -1;
+var ovSortAsc = false;
 var wLog = []; // loaded from Supabase on init
 var sel = { rpe:null, sleep:null, sore:null, energy:null, mood:null };
 var radSeason = 'All';
@@ -994,8 +1036,8 @@ document.addEventListener('click', function(e) {
 function showTab(id, el) {
   document.querySelectorAll('.sec').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.ntab').forEach(function(t) { t.classList.remove('active'); });
-  ge(id).classList.add('active');
-  el.classList.add('active');
+  if (ge(id)) ge(id).classList.add('active');
+  if (el) el.classList.add('active');
   if (id === 'profile')    renderProfile();
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
@@ -1928,12 +1970,17 @@ function initApp() {
       + names.map(function(n){return '<option value="'+n+'">'+dn(n)+'</option>';}).join('');
   }
   renderKPIs(); renderOvTable(); renderLB(); renderCmp(); renderPos();
+  // Activate the overview tab on load
+  var firstTab = document.querySelector('.ntab');
+  if (firstTab) firstTab.classList.add('active');
+  var ovSec = ge('overview');
+  if (ovSec) ovSec.classList.add('active');
 }
 
 
 
 // ─── WEEKLY PLAN DATA ─────────────────────────────────────────────────────────
-var PLAN = [{"date":"2025-08-25","week":"Week 1","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Wednesday","vol":0.45,"session":"Practice & S/C","mins":81},{"day":"Thursday","vol":0.65,"session":"Practice","mins":117},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":540,"weeklyVol":3.0,"ewma":null},{"date":"2025-09-01","week":"Week 2","opponent":"","days":[{"day":"Sunday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":null},{"date":"2025-09-08","week":"Week 3","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":null},{"date":"2025-09-15","week":"Week 4","opponent":"","days":[{"day":"Sunday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":1.008},{"date":"2025-09-22","week":"Week 5","opponent":"practice starts","days":[{"day":"Sunday","vol":0.5,"session":"Practice","mins":90},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.5,"session":"Practice","mins":90},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.5,"session":"Practice","mins":90}],"weeklyMins":486,"weeklyVol":2.7,"ewma":0.9},{"date":"2025-09-29","week":"Week 6","opponent":"get better  '@BC/@Providence (exhib)","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":0.35,"session":"Practice","mins":63}],"weeklyMins":675,"weeklyVol":3.75,"ewma":1.186},{"date":"2025-10-06","week":"Week 7","opponent":"vs. Alaska, Icebreaker/vs. TBA, Icebreaker","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.15,"session":"S/C","mins":27},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":747,"weeklyVol":4.15,"ewma":1.212},{"date":"2025-10-13","week":"Week 8","opponent":"vs. Maine","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":639,"weeklyVol":3.55,"ewma":1.004},{"date":"2025-10-20","week":"Week 9","opponent":"@ Holy Cross/@Merrimack/@UNH","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"Practice","mins":54},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.2,"session":"Recovery","mins":36},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":675,"weeklyVol":3.75,"ewma":0.987},{"date":"2025-10-27","week":"Week 10","opponent":"Bye","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Saturday","vol":0.5,"session":"Practice","mins":90}],"weeklyMins":621,"weeklyVol":3.45,"ewma":0.926},{"date":"2025-11-03","week":"Week 11","opponent":"vs. Alaska/@Yale/@Brown","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.25,"session":"Practice","mins":45},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":720,"weeklyVol":4.0,"ewma":1.085},{"date":"2025-11-10","week":"Week 12","opponent":"vs. BU","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":603,"weeklyVol":3.35,"ewma":0.921},{"date":"2025-11-17","week":"Week 13","opponent":"vs. Clarkson/vs. SLU","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.4,"session":"Practice","mins":72},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":729,"weeklyVol":4.05,"ewma":1.091},{"date":"2025-11-24","week":"Week 14","opponent":"vs. Holy Cross/vs. Stone Hill","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.3,"session":"Practice","mins":54},{"day":"Wednesday","vol":1.0,"session":"Game","mins":180},{"day":"Thursday","vol":0.35,"session":"Off","mins":63},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":621,"weeklyVol":3.45,"ewma":0.929},{"date":"2025-12-01","week":"Week 15","opponent":"@RPI/@Union","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":639,"weeklyVol":3.55,"ewma":0.986},{"date":"2025-12-08","week":"Week 16","opponent":"BREAK (FINALS)","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"On own","mins":63},{"day":"Tuesday","vol":0.35,"session":"On own","mins":63},{"day":"Wednesday","vol":0.35,"session":"On own","mins":63},{"day":"Thursday","vol":0.35,"session":"On own","mins":63},{"day":"Friday","vol":0.35,"session":"On own","mins":63},{"day":"Saturday","vol":0.35,"session":"On own","mins":63}],"weeklyMins":378,"weeklyVol":2.1,"ewma":0.639},{"date":"2025-12-15","week":"Week 17","opponent":"BREAK","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"On own","mins":63},{"day":"Tuesday","vol":0.35,"session":"On own","mins":63},{"day":"Wednesday","vol":0.35,"session":"On own","mins":63},{"day":"Thursday","vol":0.35,"session":"On own","mins":63},{"day":"Friday","vol":0.35,"session":"On own","mins":63},{"day":"Saturday","vol":0.45,"session":"Practice","mins":81}],"weeklyMins":396,"weeklyVol":2.2,"ewma":0.779},{"date":"2025-12-22","week":"Week 18","opponent":"get better","days":[{"day":"Sunday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Monday","vol":0.6,"session":"Practice","mins":108},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.35,"session":"Practice","mins":63},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Saturday","vol":0.35,"session":"Practice","mins":63}],"weeklyMins":630,"weeklyVol":3.5,"ewma":1.233},{"date":"2025-12-29","week":"Week 19","opponent":"Concordia (Exhib)","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":792,"weeklyVol":4.4,"ewma":1.443},{"date":"2026-01-05","week":"Week 20","opponent":"vs. Union/vs. RPI","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.2,"session":"Practice","mins":36},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":1.072},{"date":"2026-01-12","week":"Week 21","opponent":"@ Colgate/@ Cornell","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":0.967},{"date":"2026-01-19","week":"Week 22","opponent":"CT ICE (at Yale)","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":0.955},{"date":"2026-01-26","week":"Week 23","opponent":"@SLU/@Clarkson","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":1.0},{"date":"2026-02-02","week":"Week 24","opponent":"vs. Brown, vs. Yale","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":594,"weeklyVol":3.3,"ewma":0.917},{"date":"2026-02-09","week":"Week 25","opponent":"vs. Princeton","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.5,"session":"Practice","mins":90},{"day":"Wednesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":558,"weeklyVol":3.1,"ewma":0.899},{"date":"2026-02-16","week":"Week 26","opponent":"@ Princeton vs. Cornell/vs. Colgate","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":711,"weeklyVol":3.95,"ewma":1.125},{"date":"2026-02-23","week":"Week 27","opponent":"@Dartmouth/@Harvard","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":630,"weeklyVol":3.5,"ewma":1.011},{"date":"2026-03-02","week":"Week 28","opponent":"ECAC 1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"Practice","mins":63},{"day":"Tuesday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Friday","vol":0.45,"session":"Practice","mins":81},{"day":"Saturday","vol":0.45,"session":"Practice","mins":81}],"weeklyMins":558,"weeklyVol":3.1,"ewma":0.908},{"date":"2026-03-09","week":"Week 29","opponent":"ECAC Q","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.2,"session":"Recovery","mins":36},{"day":"Wednesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Thursday","vol":0.18,"session":"Practice","mins":32},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":617,"weeklyVol":3.43,"ewma":0.981},{"date":"2026-03-16","week":"Week 30","opponent":"ECAC S/F","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Wednesday","vol":0.4,"session":"Practice","mins":72},{"day":"Thursday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":441,"weeklyVol":2.45,"ewma":0.785},{"date":"2026-03-23","week":"Week 31","opponent":"NCAA","days":[{"day":"Sunday","vol":0.35,"session":"Practice","mins":63},{"day":"Monday","vol":0.4,"session":"Practice & S/C","mins":72},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.25,"session":"Practice","mins":45},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":585,"weeklyVol":3.25,"ewma":1.063},{"date":"2026-03-30","week":"Week 32","opponent":"BYE","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":180,"weeklyVol":1.0,"ewma":0.395},{"date":"2026-04-06","week":"Week 33","opponent":"FF","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":0.828},{"date":"2026-04-13","week":"Week 34","opponent":"POST 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.3,"session":"S/C","mins":54},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.3,"session":"S/C","mins":54},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.3,"session":"S/C","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":0.8},{"date":"2026-04-20","week":"Week 35","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"OFF","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":1.167},{"date":"2026-04-27","week":"Week 36","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":1.037},{"date":"2026-05-04","week":"Week 37","opponent":"POST 2/FINALS","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.4,"session":"S/C","mins":72},{"day":"Tuesday","vol":0.4,"session":"S/C","mins":72},{"day":"Wednesday","vol":0.4,"session":"S/C","mins":72},{"day":"Thursday","vol":0.4,"session":"S/C","mins":72},{"day":"Friday","vol":0.4,"session":"S/C","mins":72},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":360,"weeklyVol":2.0,"ewma":1.143},{"date":"2026-05-11","week":"Week 38","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.3,"session":"On own","mins":54},{"day":"Tuesday","vol":0.3,"session":"On own","mins":54},{"day":"Wednesday","vol":0.3,"session":"On own","mins":54},{"day":"Thursday","vol":0.3,"session":"On own","mins":54},{"day":"Friday","vol":0.3,"session":"On own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":0.857},{"date":"2026-05-18","week":"Week 39","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.255},{"date":"2026-05-25","week":"Week 40","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.157},{"date":"2026-06-01","week":"Week 41","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.103},{"date":"2026-06-08","week":"Week 42","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.061},{"date":"2026-06-15","week":"Week 43","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.04},{"date":"2026-06-22","week":"Week 44","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.02},{"date":"2026-06-29","week":"Week 45","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":342,"weeklyVol":1.9,"ewma":0.784},{"date":"2026-07-06","week":"Week 46","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.102},{"date":"2026-07-13","week":"Week 47","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.091},{"date":"2026-07-20","week":"Week 48","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.08},{"date":"2026-07-27","week":"Week 49","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-03","week":"Week 50","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-10","week":"Week 51","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-17","week":"Week 52","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":342,"weeklyVol":1.9,"ewma":0.76}];
+var PLAN = [{"date":"2026-08-24","week":"Week 1","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"On Own","mins":63},{"day":"Tuesday","vol":0.35,"session":"On Own","mins":63},{"day":"Wednesday","vol":0.45,"session":"S/C","mins":81},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.35,"session":"On Own","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":351,"weeklyVol":1.95,"ewma":null},{"date":"2026-08-31","week":"Week 2","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Tuesday","vol":0.67,"session":"S/C","mins":120},{"day":"Wednesday","vol":0.2,"session":"Recovery","mins":36},{"day":"Thursday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Friday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":516,"weeklyVol":2.88,"ewma":null},{"date":"2026-09-07","week":"Week 3","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Friday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Saturday","vol":0.2,"session":"On Own","mins":36}],"weeklyMins":504,"weeklyVol":2.81,"ewma":null},{"date":"2026-09-14","week":"Week 4","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Wednesday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Thursday","vol":0.67,"session":"Practice & S/C","mins":120},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.25,"session":"On Own","mins":45}],"weeklyMins":531,"weeklyVol":2.96,"ewma":null},{"date":"2026-09-21","week":"Week 5","opponent":"practice starts","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.5,"session":"Practice","mins":90},{"day":"Tuesday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Friday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":522,"weeklyVol":2.9,"ewma":null},{"date":"2026-09-28","week":"Week 6","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.875,"session":"Practice & S/C","mins":157},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Thursday","vol":0.6,"session":"Practice","mins":108},{"day":"Friday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Saturday","vol":0.65,"session":"Practice","mins":117}],"weeklyMins":670,"weeklyVol":3.725,"ewma":null},{"date":"2026-10-05","week":"Week 7","opponent":"Intersquad","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Tuesday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.7,"session":"Practice","mins":126},{"day":"Friday","vol":0.5,"session":"Practice","mins":90},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":711,"weeklyVol":3.95,"ewma":null},{"date":"2026-10-12","week":"Week 8","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Tuesday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Wednesday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Saturday","vol":0.85,"session":"Practice","mins":153}],"weeklyMins":765,"weeklyVol":4.25,"ewma":null},{"date":"2026-10-19","week":"Week 9","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Tuesday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Friday","vol":0.5,"session":"Practice","mins":90},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":738,"weeklyVol":4.1,"ewma":null},{"date":"2026-10-26","week":"Week 10","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Tuesday","vol":0.75,"session":"Practice","mins":135},{"day":"Wednesday","vol":0.9,"session":"Practice & S/C","mins":162},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.925,"session":"Practice & S/C","mins":166},{"day":"Saturday","vol":0.8,"session":"Practice","mins":144}],"weeklyMins":769,"weeklyVol":4.275,"ewma":null},{"date":"2026-11-02","week":"Week 11","opponent":"@BU/@Rutgers","days":[{"day":"Sunday","vol":0.5,"session":"Practice","mins":90},{"day":"Monday","vol":1.0,"session":"Game","mins":180},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.5,"session":"Practice","mins":90},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.8,"session":"Practice & S/C","mins":144}],"weeklyMins":792,"weeklyVol":4.4,"ewma":null},{"date":"2026-11-09","week":"Week 12","opponent":"vs. St. John's","days":[{"day":"Sunday","vol":0.65,"session":"Practice","mins":117},{"day":"Monday","vol":0.4,"session":"Practice","mins":72},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Friday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":657,"weeklyVol":3.65,"ewma":null},{"date":"2026-11-16","week":"Week 13","opponent":"@Yale/vs. College Charleston","days":[{"day":"Sunday","vol":0.65,"session":"Practice","mins":117},{"day":"Monday","vol":0.4,"session":"Practice","mins":72},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.6,"session":"Practice","mins":108},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":0.5,"session":"Practice & S/C","mins":90}],"weeklyMins":747,"weeklyVol":4.15,"ewma":null},{"date":"2026-11-23","week":"Week 14","opponent":"Colgate","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.2,"session":"Recovery","mins":36},{"day":"Tuesday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Wednesday","vol":0.35,"session":"On Own","mins":63},{"day":"Thursday","vol":0.35,"session":"On Own","mins":63},{"day":"Friday","vol":0.35,"session":"On Own","mins":63},{"day":"Saturday","vol":0.8,"session":"Practice & S/C","mins":144}],"weeklyMins":702,"weeklyVol":3.9,"ewma":null},{"date":"2026-11-30","week":"Week 15","opponent":"@BS/@Cornell","days":[{"day":"Sunday","vol":0.75,"session":"Practice","mins":135},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.4,"session":"Practice","mins":72},{"day":"Wednesday","vol":1.0,"session":"Game","mins":180},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.45,"session":"Practice","mins":81},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":792,"weeklyVol":4.4,"ewma":null},{"date":"2026-12-07","week":"Week 16","opponent":"Finals","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.75,"session":"Off","mins":135},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.75,"session":"Practice","mins":135},{"day":"Friday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Saturday","vol":0.5,"session":"Practice","mins":90}],"weeklyMins":630,"weeklyVol":3.5,"ewma":null},{"date":"2026-12-14","week":"Week 17","opponent":"vs. Maine/Manhattan","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.45,"session":"Practice","mins":81},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":0.35,"session":"Practice","mins":63}],"weeklyMins":783,"weeklyVol":4.35,"ewma":null},{"date":"2026-12-21","week":"Week 18","opponent":"@ Marist","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.45,"session":"On Own","mins":81},{"day":"Tuesday","vol":0.45,"session":"On Own","mins":81},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.35,"session":"On Own","mins":63},{"day":"Friday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Saturday","vol":0.8,"session":"Practice & S/C","mins":144}],"weeklyMins":684,"weeklyVol":3.8,"ewma":null},{"date":"2026-12-28","week":"Week 19","opponent":"@St. Peter's/vs. Iona/@Rider","days":[{"day":"Sunday","vol":0.4,"session":"Practice","mins":72},{"day":"Monday","vol":1.0,"session":"Game","mins":180},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.35,"session":"Practice","mins":63},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.3,"session":"Recovery + Film","mins":54},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":855,"weeklyVol":4.75,"ewma":null},{"date":"2027-01-04","week":"Week 20","opponent":"@MSM/vs. SHU","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.5,"session":"Practice","mins":90},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.3,"session":"Recovery + Film","mins":54},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":792,"weeklyVol":4.4,"ewma":null},{"date":"2027-01-11","week":"Week 21","opponent":"vs. Marist","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Friday","vol":0.45,"session":"Practice","mins":81},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":684,"weeklyVol":3.8,"ewma":null},{"date":"2027-01-18","week":"Week 22","opponent":"@Merrimack/vs. MSM/@Manhattan","days":[{"day":"Sunday","vol":0.3,"session":"Recovery + Film","mins":54},{"day":"Monday","vol":1.0,"session":"Game","mins":180},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.3,"session":"Recovery + Film","mins":54},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":738,"weeklyVol":4.1,"ewma":null},{"date":"2027-01-25","week":"Week 23","opponent":"@Fairfield/vs. Merrimack","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.2,"session":"Practice","mins":36},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":612,"weeklyVol":3.4,"ewma":null},{"date":"2027-02-01","week":"Week 24","opponent":"@Canisius/@Niagara","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.25,"session":"S/C","mins":45},{"day":"Tuesday","vol":0.85,"session":"Practice & S/C","mins":153},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.4,"session":"Practice","mins":72},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":711,"weeklyVol":3.95,"ewma":null},{"date":"2027-02-08","week":"Week 25","opponent":"vs. Siena/vs. Fairfield","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"Practice & S/C","mins":54},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.4,"session":"Practice","mins":72},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":702,"weeklyVol":3.9,"ewma":null},{"date":"2027-02-15","week":"Week 26","opponent":"@SHU","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"Practice & S/C","mins":54},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Friday","vol":0.4,"session":"Practice","mins":72},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":576,"weeklyVol":3.2,"ewma":null},{"date":"2027-02-22","week":"Week 27","opponent":"vs. Niagara/vs. Canisus","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.4,"session":"Practice","mins":72},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":639,"weeklyVol":3.55,"ewma":null},{"date":"2027-03-01","week":"Week 28","opponent":"MAAC","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"Practice & S/C","mins":54},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":0.4,"session":"Practice","mins":72},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":0.4,"session":"Practice","mins":72}],"weeklyMins":585,"weeklyVol":3.25,"ewma":null},{"date":"2027-03-08","week":"Week 29","opponent":"MAAC","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":1.0,"session":"Game","mins":180},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":495,"weeklyVol":2.75,"ewma":null},{"date":"2027-03-15","week":"Week 30","opponent":"WBIT","days":[{"day":"Sunday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Monday","vol":0.3,"session":"Practice","mins":54},{"day":"Tuesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Wednesday","vol":0.3,"session":"Practice","mins":54},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":495,"weeklyVol":2.75,"ewma":null},{"date":"2027-03-22","week":"Week 31","opponent":"NCAA","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":189,"weeklyVol":1.05,"ewma":null},{"date":"2027-03-29","week":"Week 32","opponent":"POST1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":432,"weeklyVol":2.4,"ewma":null},{"date":"2027-04-05","week":"Week 33","opponent":"POST1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.3,"session":"On Own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":162,"weeklyVol":0.9,"ewma":null},{"date":"2027-04-12","week":"Week 34","opponent":"POST2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":432,"weeklyVol":2.4,"ewma":null},{"date":"2027-04-19","week":"Week 35","opponent":"POST2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":432,"weeklyVol":2.4,"ewma":null},{"date":"2027-04-26","week":"Week 36","opponent":"POST2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"On Own","mins":54},{"day":"Tuesday","vol":0.3,"session":"On Own","mins":54},{"day":"Wednesday","vol":0.3,"session":"On Own","mins":54},{"day":"Thursday","vol":0.3,"session":"On Own","mins":54},{"day":"Friday","vol":0.3,"session":"On Own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":null},{"date":"2027-05-03","week":"Week 37","opponent":"POST2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"On Own","mins":54},{"day":"Tuesday","vol":0.3,"session":"On Own","mins":54},{"day":"Wednesday","vol":0.3,"session":"On Own","mins":54},{"day":"Thursday","vol":0.3,"session":"On Own","mins":54},{"day":"Friday","vol":0.3,"session":"On Own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":null},{"date":"2027-05-10","week":"Week 38","opponent":"OFF","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"On Own","mins":54},{"day":"Tuesday","vol":0.3,"session":"On Own","mins":54},{"day":"Wednesday","vol":0.3,"session":"On Own","mins":54},{"day":"Thursday","vol":0.3,"session":"On Own","mins":54},{"day":"Friday","vol":0.3,"session":"On Own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":null},{"date":"2027-05-17","week":"Week 39","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.42,"session":"S/C","mins":75},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.42,"session":"S/C","mins":75},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":396,"weeklyVol":2.21,"ewma":null},{"date":"2027-05-24","week":"Week 40","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.42,"session":"S/C","mins":75},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.42,"session":"S/C","mins":75},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":396,"weeklyVol":2.21,"ewma":null},{"date":"2027-05-31","week":"Week 41","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.37,"session":"S/C","mins":66},{"day":"Tuesday","vol":0.45,"session":"S/C","mins":81},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.37,"session":"S/C","mins":66},{"day":"Friday","vol":0.45,"session":"S/C","mins":81},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":360,"weeklyVol":2.01,"ewma":null},{"date":"2027-06-07","week":"Week 42","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.47,"session":"S/C","mins":84},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.47,"session":"S/C","mins":84},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":432,"weeklyVol":2.41,"ewma":null},{"date":"2027-06-14","week":"Week 43","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.47,"session":"S/C","mins":84},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.47,"session":"S/C","mins":84},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":432,"weeklyVol":2.41,"ewma":null},{"date":"2027-06-21","week":"Week 44","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.47,"session":"S/C","mins":84},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.47,"session":"S/C","mins":84},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":432,"weeklyVol":2.41,"ewma":null},{"date":"2027-06-28","week":"Week 45","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.37,"session":"S/C","mins":66},{"day":"Tuesday","vol":0.45,"session":"S/C","mins":81},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.37,"session":"S/C","mins":66},{"day":"Friday","vol":0.45,"session":"S/C","mins":81},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":360,"weeklyVol":2.01,"ewma":null},{"date":"2027-07-05","week":"Week 46","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-07-12","week":"Week 47","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-07-19","week":"Week 48","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-07-26","week":"Week 49","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-08-02","week":"Week 50","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-08-09","week":"Week 51","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null},{"date":"2027-08-16","week":"Week 52","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.52,"session":"S/C","mins":93},{"day":"Tuesday","vol":0.6,"session":"S/C","mins":108},{"day":"Wednesday","vol":0.17,"session":"Recovery","mins":30},{"day":"Thursday","vol":0.52,"session":"S/C","mins":93},{"day":"Friday","vol":0.6,"session":"S/C","mins":108},{"day":"Saturday","vol":0.2,"session":"Recovery","mins":36}],"weeklyMins":468,"weeklyVol":2.61,"ewma":null}];
 
 // ─── PLAN VIEW STATE ──────────────────────────────────────────────────────────
 var planView = 'vol';
@@ -2001,962 +2048,6 @@ function updateLoadTotals() {
   ge('ltAvgRPE').textContent = rpeCount ? (rpeSum/rpeCount).toFixed(1) : '—';
   ge('ltSessions').textContent = sessionData.filter(function(s){return (parseInt(s.mins)||0)>0;}).length;
 }
-
-// Delegate session block events
-document.addEventListener('change', function(e) {
-  var el = e.target;
-  if (el.hasAttribute('data-field') && el.hasAttribute('data-idx')) {
-    var idx = parseInt(el.getAttribute('data-idx'));
-    var field = el.getAttribute('data-field');
-    if (field === 'rpe') sessionData[idx][field] = parseInt(el.value);
-    else if (field === 'mins') sessionData[idx][field] = parseInt(el.value) || 0;
-    else sessionData[idx][field] = el.value;
-    updateLoadTotals();
-  }
-});
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('rm-session') || e.target.closest('.rm-session')) {
-    var btn = e.target.classList.contains('rm-session') ? e.target : e.target.closest('.rm-session');
-    var idx = parseInt(btn.getAttribute('data-idx'));
-    sessionData.splice(idx, 1);
-    buildSessionBlocks();
-    return;
-  }
-});
-
-// Add session button
-ge('addSessionBtn').addEventListener('click', function() {
-  sessionData.push({type:'Lift', mins:60, rpe:3, notes:''});
-  buildSessionBlocks();
-});
-
-// Save wellness entry (multi-session)
-ge('wSubmit').addEventListener('click', function() {
-  var athl = ge('wAthl').value;
-  var date = ge('wDate').value;
-  if (!athl || !date) { alert('Select athlete and date.'); return; }
-  if (!sel.sleep || !sel.sore || !sel.energy || !sel.mood) { alert('Complete all wellness scales.'); return; }
-  var validSessions = sessionData.filter(function(s){ return (parseInt(s.mins)||0) > 0; });
-  if (!validSessions.length) { alert('Add at least one session with a duration.'); return; }
-
-  var ws = (sel.sleep + sel.sore + sel.energy + sel.mood) / 4;
-  var notes = ge('wNotes').value;
-
-  // Save one entry per session block, shared wellness scores
-  validSessions.forEach(function(s) {
-    var entry = {
-      id: Date.now() + Math.random(),
-      athlete: athl, date: date,
-      session: s.type, rpe: parseInt(s.rpe) || 3,
-      mins: parseInt(s.mins) || 0,
-      sleep: sel.sleep, soreness: sel.sore, energy: sel.energy, mood: sel.mood,
-      wellness: parseFloat(ws.toFixed(2)),
-      load: (parseInt(s.rpe)||3) * (parseInt(s.mins)||0),
-      notes: s.notes || notes
-    };
-    wLog.unshift(entry);
-  });
-  localStorage.setItem('qumhoc_w5', JSON.stringify(wLog));
-
-  // Reset
-  sel = {rpe:null, sleep:null, sore:null, energy:null, mood:null};
-  ['scSleep','scSore','scEnergy','scMood'].forEach(function(id){
-    document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});
-  });
-  sessionData = [{type:'Lift',mins:60,rpe:3,notes:''}];
-  buildSessionBlocks();
-  ge('wNotes').value = '';
-  alert('Saved ' + validSessions.length + ' session(s)! Wellness avg: ' + ws.toFixed(1) + '/5');
-  showSub('wrecent', document.querySelectorAll('.stab')[1]);
-});
-
-// Override renderWLog to support session type filter
-function renderWLog() {
-  var fa   = ge('wFA')    ? ge('wFA').value    : 'All';
-  var fSess= ge('wFSess') ? ge('wFSess').value : 'All';
-  var entries = wLog.slice();
-  if (fa    !== 'All') entries = entries.filter(function(e){ return e.athlete === fa; });
-  if (fSess !== 'All') entries = entries.filter(function(e){ return e.session === fSess; });
-  if (!entries.length) {
-    ge('wLog').innerHTML = '<div style="color:var(--td);font-size:12px;text-align:center;padding:20px">No entries yet.</div>';
-    ge('wPills').innerHTML = '';
-    return;
-  }
-  var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
-  var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
-  ge('wPills').innerHTML =
-    '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
-  + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
-  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+tL.toLocaleString()+'</div><div class="pl2">Total Load (AU)</div></div>'
-  + '<div class="pill"><div class="pv">'+tM+'</div><div class="pl2">Total Mins</div></div>'
-  + '<div class="pill"><div class="pv">'+entries.length+'</div><div class="pl2">Sessions</div></div>';
-  ge('wLog').innerHTML = entries.slice(0,50).map(function(e) {
-    var rc = RC[e.rpe] || 'var(--gold)', wc = WC[Math.round(e.wellness)] || 'var(--gold)';
-    var sc = sessColor(e.session);
-    return '<div class="le">'
-      + '<div class="ld">'+e.date+'</div>'
-      + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
-      + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
-      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
-      + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
-      + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
-      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
-      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
-      + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
-      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
-      + '</div>';
-  }).join('');
-}
-
-// ─── WEEKLY PLANNER ───────────────────────────────────────────────────────────
-// Plan view buttons
-document.addEventListener('click', function(e) {
-  if (e.target.hasAttribute('data-planview')) {
-    planView = e.target.getAttribute('data-planview');
-    document.querySelectorAll('[data-planview]').forEach(function(b){b.classList.remove('on');});
-    e.target.classList.add('on');
-    renderPlanner();
-  }
-});
-
-function getFilteredPlan() {
-  var phase = ge('planPhase') ? ge('planPhase').value : 'All';
-  var weeks = PLAN.slice();
-  if (phase === 'pre')       weeks = weeks.filter(function(w,i){return i<6;});
-  else if (phase === 'inseason') weeks = weeks.filter(function(w,i){return i>=6&&i<28;});
-  else if (phase === 'post') weeks = weeks.filter(function(w,i){return i>=28&&i<33;});
-  else if (phase === 'offseason') weeks = weeks.filter(function(w,i){return i>=33;});
-  return weeks;
-}
-
-function renderPlanner() {
-  var weeks = getFilteredPlan();
-  if (ge('planWeekCount')) ge('planWeekCount').textContent = PLAN.length;
-  renderPlanChart(weeks);
-  renderWeekGrid(weeks);
-  renderPlanInsights(weeks);
-  if (selectedWeekIdx >= 0) {
-    var w = PLAN[selectedWeekIdx];
-    if (w) renderWeekDetail(w, selectedWeekIdx);
-  }
-}
-
-// ── Compute rolling 4-week ACWR for the full PLAN array ─────────────────────
-// Returns array of ACWR values aligned to PLAN indices.
-// ACWR[i] = PLAN[i].weeklyVol / avg(PLAN[i-4..i-1].weeklyVol)
-// Uses the globally filtered "weeks" slice but resolves indices against PLAN
-// for correct 4-week lookback even when a phase filter is active.
-function computeRollingACWR(planArr) {
-  // planArr is the full PLAN (not filtered) so lookback is always correct
-  return planArr.map(function(w, i) {
-    var chronic = 0, count = 0;
-    for (var j = Math.max(0, i - 4); j < i; j++) {
-      chronic += planArr[j].weeklyVol || 0;
-      count++;
-    }
-    if (count === 0) return null;          // no history yet
-    var avg4 = chronic / count;
-    if (avg4 === 0) return null;           // avoid divide-by-zero
-    return Math.round((planArr[i].weeklyVol / avg4) * 1000) / 1000;
-  });
-}
-
-// Bar fill color based on ACWR value
-function acwrBarColor(acwr) {
-  if (acwr == null) return 'rgba(122,130,153,0.5)';   // no data — muted grey
-  if (acwr < 0.8)   return 'rgba(79,195,247,0.75)';   // under-training — blue
-  if (acwr <= 1.3)  return 'rgba(0,200,150,0.75)';    // optimal — green
-  if (acwr <= 1.5)  return 'rgba(232,169,0,0.85)';    // caution — gold/amber
-  return 'rgba(239,83,80,0.85)';                       // high risk — red
-}
-
-function renderPlanChart(weeks) {
-  var el = ge('planChart'); if (!el) return;
-  if (!weeks.length) { el.innerHTML = ''; return; }
-
-  // Compute rolling ACWR for the full PLAN so lookback crosses phase boundaries
-  var allACWR = computeRollingACWR(PLAN);
-
-  var W = el.offsetWidth || 900, H = 200;
-  var pad = {t:14, b:32, l:42, r:36};
-  // Use hours (weeklyMins/60) for bar height and Y axis labels
-  var vols   = weeks.map(function(w){ return w.weeklyMins ? w.weeklyMins/60 : (w.weeklyVol*3); });
-  var maxVol = Math.max.apply(null, vols) || 1;
-  var maxACWR = 1.8;   // headroom above 1.5 high-risk line
-
-  var bw = Math.max(3, (W - pad.l - pad.r) / weeks.length - 2);
-  function sx(i) { return pad.l + (W - pad.l - pad.r) * (i / weeks.length) + bw / 2; }
-  function syV(v) { return pad.t + (H - pad.t - pad.b) * (1 - v / maxVol); }
-  function syA(v) { return pad.t + (H - pad.t - pad.b) * (1 - v / maxACWR); }
-
-  // ── Zone shading on ACWR scale (right axis) ──
-  var zoneH   = syA(0.8) - syA(1.3);
-  var zoneRect = '<rect x="'+pad.l+'" y="'+syA(1.3)+'" width="'+(W-pad.l-pad.r)+'" height="'+zoneH+'" fill="rgba(0,200,150,0.07)"/>';
-  var cautRect = '<rect x="'+pad.l+'" y="'+syA(1.5)+'" width="'+(W-pad.l-pad.r)+'" height="'+(syA(1.3)-syA(1.5))+'" fill="rgba(232,169,0,0.06)"/>';
-  var highRect = '<rect x="'+pad.l+'" y="'+syA(maxACWR)+'" width="'+(W-pad.l-pad.r)+'" height="'+(syA(1.5)-syA(maxACWR))+'" fill="rgba(239,83,80,0.05)"/>';
-
-  // ── Zone threshold lines ──
-  var zoneLines = [
-    {v:0.8, label:'0.8', col:'rgba(79,195,247,0.4)'},
-    {v:1.3, label:'1.3', col:'rgba(0,200,150,0.4)'},
-    {v:1.5, label:'1.5', col:'rgba(232,169,0,0.4)'},
-  ].map(function(z){
-    var y = syA(z.v);
-    return '<line x1="'+pad.l+'" y1="'+y+'" x2="'+(W-pad.r)+'" y2="'+y+'" stroke="'+z.col+'" stroke-width="1" stroke-dasharray="3,3"/>'
-         + '<text x="'+(W-pad.r+4)+'" y="'+(y+3)+'" fill="var(--td)" font-size="7" text-anchor="start">'+z.label+'</text>';
-  }).join('');
-
-  // ── Volume bars — colored by rolling ACWR ──
-  var bars = weeks.map(function(w, i) {
-    // Map this week back to its index in PLAN for the correct ACWR
-    var planIdx = PLAN.indexOf(w);
-    var acwr    = planIdx >= 0 ? allACWR[planIdx] : null;
-    var fill    = acwrBarColor(acwr);
-    var v  = w.weeklyMins ? w.weeklyMins/60 : (w.weeklyVol*3);
-    var y  = syV(v), bh = H - pad.b - y;
-    // Tooltip rect (invisible) for hover
-    return '<rect x="'+(sx(i)-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+Math.max(0,bh)+'" rx="2" fill="'+fill+'">'
-         + '<title>QUWBB | Performance Dashboard</title>'
-         + '</rect>';
-  }).join('');
-
-  // ── Rolling ACWR line ──
-  var linePath = '', firstV = true;
-  weeks.forEach(function(w, i) {
-    var planIdx = PLAN.indexOf(w);
-    var a = planIdx >= 0 ? allACWR[planIdx] : null;
-    if (a == null) return;
-    var x = sx(i), y = syA(a);
-    if (firstV) { linePath += 'M'+x+','+y; firstV = false; }
-    else linePath += ' L'+x+','+y;
-  });
-
-  // ── ACWR dots — colored by zone ──
-  var dots = weeks.map(function(w, i) {
-    var planIdx = PLAN.indexOf(w);
-    var a = planIdx >= 0 ? allACWR[planIdx] : null;
-    if (a == null) return '';
-    var x = sx(i), y = syA(a);
-    return '<circle cx="'+x+'" cy="'+y+'" r="3.5" fill="'+acwrBarColor(a)+'" stroke="var(--bg)" stroke-width="1.5">'
-         + '<title>QUWBB | Performance Dashboard</title>'
-         + '</circle>';
-  }).join('');
-
-  // ── X axis week labels (every 4) ──
-  var xlabels = weeks.map(function(w, i) {
-    if (i % 4 !== 0) return '';
-    return '<text x="'+sx(i)+'" y="'+(H-10)+'" text-anchor="middle" fill="var(--td)" font-size="8">'+w.week.replace('Week ','Wk')+'</text>';
-  }).join('');
-
-  // ── Left Y axis (volume) ──
-  var yticks = [0, maxVol*0.5, maxVol].map(function(v) {
-    return '<text x="'+(pad.l-4)+'" y="'+(syV(v)+3)+'" text-anchor="end" fill="var(--td)" font-size="8">'+v.toFixed(1)+'h</text>'
-         + '<line x1="'+(pad.l-2)+'" y1="'+syV(v)+'" x2="'+(W-pad.r)+'" y2="'+syV(v)+'" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
-  }).join('');
-
-  // ── Axis labels ──
-  var axisLabels =
-    '<text x="'+(pad.l-10)+'" y="'+(pad.t+((H-pad.t-pad.b)/2))+'" text-anchor="middle" fill="var(--td)" font-size="8" transform="rotate(-90,'+(pad.l-10)+','+(pad.t+((H-pad.t-pad.b)/2))+')">VOLUME</text>'
-  + '<text x="'+(W-pad.r+20)+'" y="'+(pad.t+((H-pad.t-pad.b)/2))+'" text-anchor="middle" fill="var(--td)" font-size="8" transform="rotate(90,'+(W-pad.r+20)+','+(pad.t+((H-pad.t-pad.b)/2))+')">ACWR</text>';
-
-  el.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:100%">'
-    + highRect + cautRect + zoneRect  // zones behind everything
-    + zoneLines + yticks              // grid lines
-    + bars                            // volume bars (ACWR-colored)
-    + (linePath ? '<path d="'+linePath+'" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round"/>' : '')
-    + dots                            // ACWR dots on top
-    + xlabels + axisLabels
-    + '</svg>';
-}
-
-function sessionTypeAbbr(s) {
-  var m = {
-    'Game':'GAME','Practice & S/C':'P+SC','Practice':'PRAC','S/C':'S/C',
-    'Lift':'LIFT','Conditioning':'COND','Recovery':'RCV','Off':'OFF',
-    'On own':'OWN','Video/Film':'VID','Skate':'SKT','off':'OFF'
-  };
-  return m[s] || (s||'').slice(0,4).toUpperCase();
-}
-
-function renderWeekGrid(weeks) {
-  // Compute rolling 4-week ACWR against full PLAN so lookback is correct
-  var allACWR = computeRollingACWR(PLAN);
-  ge('weekGridBody').innerHTML = weeks.map(function(w, i) {
-    var planIdx  = PLAN.indexOf(w);
-    var acwr     = planIdx >= 0 ? allACWR[planIdx] : w.ewma;
-    var acwrStr  = acwr != null ? acwr.toFixed(2) : '—';
-    var acwrCl   = acwr==null?'var(--td)':acwr<0.8?'var(--good)':acwr<=1.3?'var(--elite)':acwr<=1.5?'var(--gold)':'var(--dev)';
-    // Week-level color for vol view day cells
-    var weekACWRColor = acwrBarColor(acwr);
-    var dayCells = w.days.map(function(d) {
-      var sc = sessColor(d.session);
-      var abbr = sessionTypeAbbr(d.session);
-      var isOff = d.vol === 0 || d.session.toLowerCase() === 'off';
-      if (isOff) return '<div class="day-cell" style="opacity:.3"><div class="dc-sess" style="color:var(--td)">OFF</div></div>';
-      if (planView === 'vol') {
-        var pct = Math.min(1, d.vol);
-        // Use the week-level ACWR color for each active day cell
-        var cellBg = weekACWRColor;
-        return '<div class="day-cell" style="background:'+cellBg.replace('0.75',''+Math.max(0.08,pct*0.55+0.05))+')">'
-          + '<div class="dc-sess" style="color:var(--tx)">'+abbr+'</div>'
-          + '<div class="dc-vol">'+(Math.round(d.vol*100))+'%</div>'
-          + (d.mins?'<div class="dc-mins">'+d.mins+'m</div>':'')
-          + '</div>';
-      } else if (planView === 'acwr') {
-        return '<div class="day-cell" style="background:'+sc+'22">'
-          + '<div class="dc-sess" style="color:'+sc+'">'+abbr+'</div>'
-          + '<div class="dc-vol">'+(Math.round(d.vol*100))+'%</div>'
-          + '</div>';
-      } else {
-        return '<div class="day-cell" style="background:'+sc+'22">'
-          + '<div class="dc-sess" style="color:'+sc+'">'+abbr+'</div>'
-          + (d.mins?'<div class="dc-mins">'+d.mins+'m</div>':'')
-          + '</div>';
-      }
-    }).join('');
-
-    var globalIdx = PLAN.indexOf(w);
-    return '<div class="week-row" data-weekidx="'+globalIdx+'">'
-      + '<div class="wc"><div class="wc-week">'+w.week+'</div>'
-      + '<div style="font-size:9px;color:'+acwrCl+'">AC: '+acwrStr+'</div></div>'
-      + '<div class="wc"><div class="wc-opp" title="'+h(w.opponent)+'">'+h(w.opponent||'')+'</div>'
-      + '<div style="font-size:9px;color:var(--td)">'+w.date+'</div></div>'
-      + '<div class="day-cells" style="padding:4px 0;">'+dayCells+'</div>'
-      + '</div>';
-  }).join('');
-}
-
-// Click week row
-document.addEventListener('click', function(e) {
-  var row = e.target.closest('.week-row[data-weekidx]');
-  if (row) {
-    var idx = parseInt(row.getAttribute('data-weekidx'));
-    selectedWeekIdx = idx;
-    var w = PLAN[idx];
-    if (w) renderWeekDetail(w, idx);
-    // Scroll to detail
-    ge('weekDetail').scrollIntoView({behavior:'smooth', block:'nearest'});
-  }
-});
-
-function renderWeekDetail(w, idx) {
-  ge('weekDetail').style.display = 'block';
-  ge('weekDetailTitle').innerHTML = w.week + ' <span>' + w.date + '</span>';
-
-  // Use rolling 4-week ACWR (recompute for consistency)
-  var allACWRDetail = computeRollingACWR(PLAN);
-  var planIdxD = PLAN.indexOf(w);
-  var acwr = planIdxD >= 0 ? allACWRDetail[planIdxD] : w.ewma;
-  var flags = '';
-  if (acwr != null) {
-    if (acwr < 0.8) flags += '<span class="deload-flag">Under-training</span>';
-    else if (acwr > 1.5) flags += '<span class="spike-flag">High Risk</span>';
-    else if (acwr > 1.3) flags += '<span class="spike-flag">Caution</span>';
-    else flags += '<span class="deload-flag">Optimal Zone</span>';
-  }
-  if (w.days.filter(function(d){return d.session==='Game';}).length >= 2) flags += ' <span class="spike-flag">Double Game Week</span>';
-  if (w.days.every(function(d){return d.vol<0.2;})) flags += ' <span class="deload-flag">Deload Week</span>';
-  ge('weekDetailFlags').innerHTML = flags;
-
-  // Weekly total displayed as hours (from actual minutes) or % sum
-  var wkHrs = w.weeklyMins ? (w.weeklyMins / 60).toFixed(1) + ' hrs' : (w.weeklyVol ? (w.weeklyVol / 7 * 100).toFixed(0) + '% avg/day' : '—');
-  var wkMinsDisp = w.weeklyMins ? w.weeklyMins + ' min' : '—';
-  ge('wdVol').textContent  = wkHrs;
-  ge('wdMins').textContent = wkMinsDisp;
-  var acwrCl = acwr==null?'var(--td)':acwr<0.8?'var(--good)':acwr<=1.3?'var(--elite)':acwr<=1.5?'var(--gold)':'var(--dev)';
-  ge('wdACWR').textContent = acwr != null ? acwr.toFixed(2) : '—';
-  ge('wdACWR').style.color = acwrCl;
-  ge('wdOpp').textContent  = w.opponent || 'No game / context';
-
-  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  ge('weekDetailDays').innerHTML = w.days.map(function(d, i) {
-    var sc = sessColor(d.session);
-    var isOff = d.vol===0 || d.session.toLowerCase()==='off';
-    return '<div class="wd-day" style="border-top:3px solid '+(isOff?'var(--s3)':sc)+'">'
-      + '<div class="wd-dayname">'+days[i]+'</div>'
-      + '<div class="wd-sess" style="color:'+(isOff?'var(--td)':sc)+'">'+d.session+'</div>'
-      + (d.vol>0?'<div class="wd-vol">'+(Math.round(d.vol*100))+'%</div>':'')
-      + (d.mins>0?'<div class="wd-mins">'+d.mins+' min</div>':'')
-      + '</div>';
-  }).join('');
-}
-
-function renderPlanInsights(weeks) {
-  var el = ge('planInsights'); if (!el) return;
-  var vols = weeks.map(function(w){return w.weeklyVol||0;});
-  var avgVol = vols.reduce(function(a,b){return a+b;},0) / (vols.length||1);
-
-  // Find deload candidates (vol drops > 30% from previous week)
-  var deloads = [], spikes = [], games = [];
-  weeks.forEach(function(w, i) {
-    if (i === 0) return;
-    var prev = weeks[i-1].weeklyVol || 0;
-    var curr = w.weeklyVol || 0;
-    if (prev > 0 && curr < prev * 0.7) deloads.push({week:w.week, from:(prev/7*100).toFixed(0)+'%avg', to:(curr/7*100).toFixed(0)+'%avg'});
-    if (prev > 0 && curr > prev * 1.2) spikes.push({week:w.week, from:(prev/7*100).toFixed(0)+'%avg', to:(curr/7*100).toFixed(0)+'%avg', acwr:w.ewma});
-    var gameCt = w.days.filter(function(d){return d.session==='Game';}).length;
-    if (gameCt >= 2) games.push({week:w.week, count:gameCt, date:w.date, opp:w.opponent});
-  });
-
-  el.innerHTML = [
-    {title:'VOLUME <span>DIPS / DELOADS</span>', color:'var(--good)', items:deloads.slice(0,6),
-     render:function(d){return d.week+': <span style="color:var(--tm)">'+d.from+' → '+d.to+'</span>';}},
-    {title:'VOLUME <span>SPIKES</span>', color:'var(--blow)', items:spikes.slice(0,6),
-     render:function(d){return d.week+': <span style="color:var(--tm)">'+d.from+' → '+d.to+(d.acwr?' (ACWR '+d.acwr.toFixed(2)+')':'')+'</span>';}},
-    {title:'MULTI-GAME <span>WEEKS</span>', color:'var(--dev)', items:games.slice(0,6),
-     render:function(d){return d.week+' ('+d.count+' games): <span style="color:var(--tm)">'+d.opp+'</span>';}}
-  ].map(function(panel) {
-    var rows = panel.items.length
-      ? panel.items.map(function(d){ return '<div style="padding:5px 0;border-bottom:1px solid var(--br2);font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;color:var(--tx)">'+panel.render(d)+'</div>'; }).join('')
-      : '<div style="color:var(--td);font-size:11px;padding:8px 0">None detected</div>';
-    return '<div class="lc"><div class="lct" style="color:'+panel.color+'"><span>'+panel.title+'</span><span style="color:var(--td)">'+(panel.items.length)+'</span></div>'+rows+'</div>';
-  }).join('');
-}
-
-// planner rendering handled in showTab above
-
-// initApp extension handled above
-window.renderPlanner = renderPlanner;
-window.renderWLog = renderWLog;
-
-// ── Column sort for overview table ────────────────────────────────────────────
-var ovSortCol = -1;
-var ovSortAsc = false;
-
-function sortOv(col) {
-  // Toggle direction if same column, else default desc for numbers, asc for text
-  if (ovSortCol === col) {
-    ovSortAsc = !ovSortAsc;
-  } else {
-    ovSortCol = col;
-    // Default: numeric cols sort descending first (highest at top), text ascending
-    ovSortAsc = false;
-  }
-  var tbody = ge('ovBody'); if (!tbody) return;
-  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
-
-  rows.sort(function(a, b) {
-    var ac = a.cells[col], bc = b.cells[col];
-    var av = ac ? ac.textContent.trim() : '';
-    var bv = bc ? bc.textContent.trim() : '';
-    // Treat dash/em-dash as lowest value (push to bottom)
-    var aEmpty = av === '—' || av === '' || av === '--';
-    var bEmpty = bv === '—' || bv === '' || bv === '--';
-    if (aEmpty && bEmpty) return 0;
-    if (aEmpty) return 1;   // always push empties to bottom
-    if (bEmpty) return -1;
-    // Strip non-numeric chars except dot, minus, %
-    var an = parseFloat(av.replace(/[^\d.\-]/g, ''));
-    var bn = parseFloat(bv.replace(/[^\d.\-]/g, ''));
-    if (!isNaN(an) && !isNaN(bn)) {
-      return ovSortAsc ? an - bn : bn - an;
-    }
-    // Text sort
-    return ovSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
-  });
-
-  rows.forEach(function(r) { tbody.appendChild(r); });
-
-  // Update header indicators
-  var allTh = ge('ovHead') ? ge('ovHead').querySelectorAll('th') : [];
-  Array.prototype.forEach.call(allTh, function(th, i) {
-    th.classList.remove('sort-asc', 'sort-desc');
-    if (i === col) th.classList.add(ovSortAsc ? 'sort-asc' : 'sort-desc');
-  });
-}
-window.sortOv = sortOv;
-
-
-
-// ─── DELETE WELLNESS ENTRY (Supabase) ────────────────────────────────────────
-// --- WELLNESS DELETE ---
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('[data-delid]');
-  if (!btn) return;
-  var id = parseFloat(btn.getAttribute('data-delid'));
-  if (!confirm('Delete this entry? This cannot be undone.')) return;
-  btn.textContent = '...';
-  btn.disabled = true;
-  deleteFromSupabase(id, function() {
-    renderWLog();
-  }, function() {
-    alert('Could not delete. Check your connection.');
-    btn.textContent = '\u2715';
-    btn.disabled = false;
-  });
-});
-
-
-
-function openImport(tab) {
-  ge('importOvl').classList.add('open');
-  if (tab === 'plan') switchImpTab('plan');
-  else switchImpTab('fitness');
-}
-function closeImport() { ge('importOvl').classList.remove('open'); }
-
-function switchImpTab(tab) {
-  ['impTabFitness','impTabPlan'].forEach(function(id){ ge(id).classList.remove('on'); });
-  ['impPanelFitness','impPanelPlan'].forEach(function(id){ ge(id).classList.remove('on'); });
-  if (tab === 'plan') {
-    ge('impTabPlan').classList.add('on');
-    ge('impPanelPlan').classList.add('on');
-  } else {
-    ge('impTabFitness').classList.add('on');
-    ge('impPanelFitness').classList.add('on');
-  }
-}
-
-ge('impTabFitness').addEventListener('click', function(){ switchImpTab('fitness'); });
-ge('impTabPlan').addEventListener('click', function(){ switchImpTab('plan'); });
-ge('cancelImport').addEventListener('click', closeImport);
-ge('importPlanBtn').addEventListener('click', function(){ openImport('plan'); });
-document.addEventListener('click', function(e){
-  if (e.target && e.target.id === 'plannerImportBtn') openImport('plan');
-});
-
-// ── Fitness CSV drop zone ─────────────────────────────────────────────────────
-ge('dropZ').addEventListener('click', function(){ ge('fileIn').click(); });
-ge('dropZ').addEventListener('dragover', function(e){ e.preventDefault(); ge('dropZ').style.borderColor='var(--gold)'; });
-ge('dropZ').addEventListener('dragleave', function(){ ge('dropZ').style.borderColor=''; });
-ge('dropZ').addEventListener('drop', function(e){ e.preventDefault(); ge('dropZ').style.borderColor=''; hdlFitnessFile(e.dataTransfer.files[0]); });
-ge('fileIn').addEventListener('change', function(e){ hdlFitnessFile(e.target.files[0]); });
-
-function handleFile(e) { hdlFitnessFile(e.target ? e.target.files[0] : e); }
-
-function hdlFitnessFile(file) {
-  if (!file) return;
-  var result = ge('fitResult');
-  result.textContent = 'Reading...';
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    try {
-      var text = ev.target.result;
-      var rows = text.split('\n');
-      var hi = -1;
-      for (var i = 0; i < Math.min(rows.length, 8); i++) {
-        if (rows[i].toLowerCase().indexOf('athlete name') >= 0) { hi = i; break; }
-      }
-      if (hi < 0) { result.style.color='var(--dev)'; result.textContent='Error: Could not find "Athlete Name" header in first 8 rows.'; return; }
-      var headers = splitCSVRow(rows[hi]);
-      var parsed = [];
-      for (var i = hi+1; i < rows.length; i++) {
-        if (!rows[i].trim()) continue;
-        var vals = splitCSVRow(rows[i]);
-        var obj = {};
-        headers.forEach(function(h, j) {
-          var v = (vals[j] || '').trim();
-          obj[h] = (v !== '' && !isNaN(v)) ? parseFloat(v) : v;
-        });
-        if (obj['Athlete Name'] && String(obj['Athlete Name']).trim()) parsed.push(obj);
-      }
-      if (!parsed.length) { result.style.color='var(--dev)'; result.textContent='Error: No valid athlete rows found.'; return; }
-      DATA = parsed;
-      result.style.color = 'var(--elite)';
-      result.textContent = '✓ Loaded ' + parsed.length + ' records from ' + file.name;
-      initApp();
-    } catch(err) {
-      result.style.color='var(--dev)'; result.textContent='Error: ' + err.message;
-    }
-  };
-  reader.readAsText(file);
-}
-
-// ── Weekly Plan CSV drop zone ─────────────────────────────────────────────────
-ge('dropZPlan').addEventListener('click', function(){ ge('fileInPlan').click(); });
-ge('dropZPlan').addEventListener('dragover', function(e){ e.preventDefault(); ge('dropZPlan').style.borderColor='var(--gold)'; });
-ge('dropZPlan').addEventListener('dragleave', function(){ ge('dropZPlan').style.borderColor=''; });
-ge('dropZPlan').addEventListener('drop', function(e){ e.preventDefault(); ge('dropZPlan').style.borderColor=''; hdlPlanFile(e.dataTransfer.files[0]); });
-ge('fileInPlan').addEventListener('change', function(e){ hdlPlanFile(e.target.files[0]); });
-
-function hdlPlanFile(file) {
-  if (!file) return;
-  var result = ge('planResult');
-  result.textContent = 'Reading...';
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    try {
-      var text = ev.target.result;
-      var parsed = parsePlanCSV(text);
-      if (!parsed.length) {
-        result.style.color = 'var(--dev)';
-        result.textContent = 'Error: No valid week rows found. Make sure you exported the Weekly Plan sheet.';
-        return;
-      }
-      PLAN = parsed;
-      result.style.color = 'var(--elite)';
-      result.textContent = '\u2713 Loaded ' + parsed.length + ' weeks from ' + file.name;
-      // Re-render planner if it is visible
-      if (ge('planner').classList.contains('active')) renderPlanner();
-    } catch(err) {
-      result.style.color = 'var(--dev)';
-      result.textContent = 'Error: ' + err.message;
-    }
-  };
-  reader.readAsText(file);
-}
-
-// ── CSV parsers ───────────────────────────────────────────────────────────────
-function splitCSVRow(row) {
-  // Handles quoted fields with commas inside
-  var result = [], cur = '', inQ = false;
-  for (var i = 0; i < row.length; i++) {
-    var c = row[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
-    else { cur += c; }
-  }
-  result.push(cur.trim());
-  return result;
-}
-
-function parseTimeToMins(val) {
-  // Handles HH:MM:SS, HH:MM, decimal fraction of day, or empty
-  if (!val || val === '' || val === '0') return 0;
-  var s = String(val).trim();
-  // HH:MM:SS or H:MM:SS
-  var hms = s.match(/^(\d+):(\d{2}):(\d{2})$/);
-  if (hms) return parseInt(hms[1])*60 + parseInt(hms[2]) + Math.round(parseInt(hms[3])/60);
-  // HH:MM
-  var hm = s.match(/^(\d+):(\d{2})$/);
-  if (hm) return parseInt(hm[1])*60 + parseInt(hm[2]);
-  // Decimal fraction of day (Excel stores time as fraction of 24h)
-  var f = parseFloat(s);
-  if (!isNaN(f) && f > 0 && f < 1) return Math.round(f * 24 * 60);
-  // Already minutes as a whole number
-  if (!isNaN(f) && f >= 1) return Math.round(f);
-  return 0;
-}
-
-function parsePlanCSV(text) {
-  var lines = text.split('\n');
-  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-  // Auto-detect the header row: find the row with both "Date" and "Week" in it
-  var headerRow = -1;
-  for (var i = 0; i < Math.min(lines.length, 6); i++) {
-    var lower = lines[i].toLowerCase();
-    if (lower.indexOf('date') >= 0 && lower.indexOf('week') >= 0) {
-      headerRow = i;
-      break;
-    }
-  }
-  if (headerRow < 0) throw new Error('Could not find header row with "Date" and "Week" columns');
-
-  var headers = splitCSVRow(lines[headerRow]);
-  // Find column indices for each field
-  // Expected layout: Date(0), Week(1), Opponent(2), then 7 groups of 3: vol, session, time
-  // We find them by name or by position
-  var dateCol = -1, weekCol = -1, oppCol = -1;
-  headers.forEach(function(h, i) {
-    var hl = h.toLowerCase().trim();
-    if (hl === 'date' && dateCol < 0) dateCol = i;
-    if ((hl === 'week' || hl === 'week #') && weekCol < 0) weekCol = i;
-    if ((hl === 'opponent' || hl === 'opp') && oppCol < 0) oppCol = i;
-  });
-  // Fallback to positional if names not found
-  if (dateCol < 0) dateCol = 0;
-  if (weekCol < 0) weekCol = 1;
-  if (oppCol  < 0) oppCol  = 2;
-
-  // Day columns start at 3 in groups of 3: [vol, session, time] x7
-  var dayStartCol = 3;
-
-  // Find Weekly Total and EWMA columns - look for them in header or use cols 24,25
-  var wtCol = 24, ewmaCol = 25;
-  headers.forEach(function(h, i) {
-    var hl = h.toLowerCase().trim();
-    if (hl.indexOf('weekly') >= 0 && hl.indexOf('total') >= 0) wtCol = i;
-    if (hl === 'a:c' || hl === 'ewma' || hl === 'acwr') ewmaCol = i;
-  });
-
-  var weeks = [];
-  for (var r = headerRow + 1; r < lines.length; r++) {
-    var line = lines[r];
-    if (!line.trim()) continue;
-    var cols = splitCSVRow(line);
-    if (!cols[weekCol] || !String(cols[weekCol]).match(/week\s*\d+/i)) continue;
-
-    // Parse date
-    var dateRaw = (cols[dateCol] || '').trim();
-    var dateStr = '';
-    if (dateRaw) {
-      // Try ISO date
-      var dm = dateRaw.match(/(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})/);
-      if (dm) {
-        dateStr = dm[1].replace(/\//g, '-');
-      } else {
-        // Excel serial date or other format — just store as-is
-        dateStr = dateRaw;
-      }
-    }
-
-    var dayData = [];
-    for (var d = 0; d < 7; d++) {
-      var base = dayStartCol + d * 3;
-      var volRaw  = (cols[base]   || '').trim();
-      var sessRaw = (cols[base+1] || '').trim();
-      var timeRaw = (cols[base+2] || '').trim();
-
-      var vol = parseFloat(volRaw);
-      if (isNaN(vol)) vol = 0;
-
-      var sess = sessRaw || 'Off';
-      if (sess === '' || sess === '0' || sess === 'nan') sess = 'Off';
-
-      var mins = parseTimeToMins(timeRaw);
-      // If no time but we have volume, estimate: vol * 120min (2hr max session)
-      if (mins === 0 && vol > 0) mins = Math.round(vol * 120);
-
-      dayData.push({ day: days[d], vol: Math.round(vol*1000)/1000, session: sess, mins: mins });
-    }
-
-    var weeklyMinsRaw = (cols[wtCol] || '').trim();
-    var ewmaRaw       = (cols[ewmaCol] || '').trim();
-
-    var weeklyMins = parseTimeToMins(weeklyMinsRaw);
-    var ewma = parseFloat(ewmaRaw);
-    if (isNaN(ewma) || ewmaRaw === '' || ewmaRaw === ' ') ewma = null;
-    else ewma = Math.round(ewma * 1000) / 1000;
-
-    var weeklyVol = 0;
-    dayData.forEach(function(d){ weeklyVol += d.vol; });
-
-    var opp = (cols[oppCol] || '').trim();
-    if (opp === 'nan') opp = '';
-
-    weeks.push({
-      date: dateStr,
-      week: (cols[weekCol] || '').trim(),
-      opponent: opp,
-      days: dayData,
-      weeklyMins: weeklyMins,
-      weeklyVol: Math.round(weeklyVol * 1000) / 1000,
-      ewma: ewma
-    });
-  }
-  return weeks;
-}
-
-// ─── INIT ────────────────────────────────────────────────────────────────────
-function initApp() {
-  warmSupabase(); // wake Supabase cold start immediately
-  fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason']);
-  fillAthletes();
-  populateDates();
-  var pre = DATA.filter(function(d){return d['Time Period']==='PreSeason';});
-  if (pre.length) {
-    var ls = uniq(pre.map(function(d){return d.Season;})).sort(function(a,b){return b.localeCompare(a);})[0];
-    if (ge('ovSeason')) ge('ovSeason').value = ls;
-    if (ge('ovPeriod')) ge('ovPeriod').value = 'PreSeason';
-  }
-  updBadge();
-  buildScales();
-  ge('wDate').value = new Date().toISOString().slice(0,10);
-  // Init multi-session entry with one default block
-  sessionData = [{type:'Lift', mins:60, rpe:3, notes:''}];
-  buildSessionBlocks();
-  // Populate wFA (wellness filter) athlete dropdown
-  if (ge('wFA')) {
-    var names = uniq(DATA.map(function(d){return d['Athlete Name'];})).sort();
-    ge('wFA').innerHTML = '<option value="All">All Athletes</option>'
-      + names.map(function(n){return '<option value="'+n+'">'+dn(n)+'</option>';}).join('');
-  }
-  renderKPIs(); renderOvTable(); renderLB(); renderCmp(); renderPos();
-}
-
-
-
-// ─── WEEKLY PLAN DATA ─────────────────────────────────────────────────────────
-var PLAN = [{"date":"2025-08-25","week":"Week 1","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Wednesday","vol":0.45,"session":"Practice & S/C","mins":81},{"day":"Thursday","vol":0.65,"session":"Practice","mins":117},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":540,"weeklyVol":3.0,"ewma":null},{"date":"2025-09-01","week":"Week 2","opponent":"","days":[{"day":"Sunday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":null},{"date":"2025-09-08","week":"Week 3","opponent":"","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":null},{"date":"2025-09-15","week":"Week 4","opponent":"","days":[{"day":"Sunday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Wednesday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":558,"weeklyVol":3.1,"ewma":1.008},{"date":"2025-09-22","week":"Week 5","opponent":"practice starts","days":[{"day":"Sunday","vol":0.5,"session":"Practice","mins":90},{"day":"Monday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Tuesday","vol":0.5,"session":"Practice","mins":90},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.5,"session":"Practice","mins":90}],"weeklyMins":486,"weeklyVol":2.7,"ewma":0.9},{"date":"2025-09-29","week":"Week 6","opponent":"get better  '@BC/@Providence (exhib)","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":0.35,"session":"Practice","mins":63}],"weeklyMins":675,"weeklyVol":3.75,"ewma":1.186},{"date":"2025-10-06","week":"Week 7","opponent":"vs. Alaska, Icebreaker/vs. TBA, Icebreaker","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.15,"session":"S/C","mins":27},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":747,"weeklyVol":4.15,"ewma":1.212},{"date":"2025-10-13","week":"Week 8","opponent":"vs. Maine","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":639,"weeklyVol":3.55,"ewma":1.004},{"date":"2025-10-20","week":"Week 9","opponent":"@ Holy Cross/@Merrimack/@UNH","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.3,"session":"Practice","mins":54},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.2,"session":"Recovery","mins":36},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":675,"weeklyVol":3.75,"ewma":0.987},{"date":"2025-10-27","week":"Week 10","opponent":"Bye","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Saturday","vol":0.5,"session":"Practice","mins":90}],"weeklyMins":621,"weeklyVol":3.45,"ewma":0.926},{"date":"2025-11-03","week":"Week 11","opponent":"vs. Alaska/@Yale/@Brown","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.25,"session":"Practice","mins":45},{"day":"Tuesday","vol":1.0,"session":"Game","mins":180},{"day":"Wednesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":720,"weeklyVol":4.0,"ewma":1.085},{"date":"2025-11-10","week":"Week 12","opponent":"vs. BU","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.6,"session":"Practice","mins":108},{"day":"Wednesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":603,"weeklyVol":3.35,"ewma":0.921},{"date":"2025-11-17","week":"Week 13","opponent":"vs. Clarkson/vs. SLU","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Tuesday","vol":0.4,"session":"Practice","mins":72},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":729,"weeklyVol":4.05,"ewma":1.091},{"date":"2025-11-24","week":"Week 14","opponent":"vs. Holy Cross/vs. Stone Hill","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.3,"session":"Practice","mins":54},{"day":"Wednesday","vol":1.0,"session":"Game","mins":180},{"day":"Thursday","vol":0.35,"session":"Off","mins":63},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":621,"weeklyVol":3.45,"ewma":0.929},{"date":"2025-12-01","week":"Week 15","opponent":"@RPI/@Union","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":639,"weeklyVol":3.55,"ewma":0.986},{"date":"2025-12-08","week":"Week 16","opponent":"BREAK (FINALS)","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"On own","mins":63},{"day":"Tuesday","vol":0.35,"session":"On own","mins":63},{"day":"Wednesday","vol":0.35,"session":"On own","mins":63},{"day":"Thursday","vol":0.35,"session":"On own","mins":63},{"day":"Friday","vol":0.35,"session":"On own","mins":63},{"day":"Saturday","vol":0.35,"session":"On own","mins":63}],"weeklyMins":378,"weeklyVol":2.1,"ewma":0.639},{"date":"2025-12-15","week":"Week 17","opponent":"BREAK","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"On own","mins":63},{"day":"Tuesday","vol":0.35,"session":"On own","mins":63},{"day":"Wednesday","vol":0.35,"session":"On own","mins":63},{"day":"Thursday","vol":0.35,"session":"On own","mins":63},{"day":"Friday","vol":0.35,"session":"On own","mins":63},{"day":"Saturday","vol":0.45,"session":"Practice","mins":81}],"weeklyMins":396,"weeklyVol":2.2,"ewma":0.779},{"date":"2025-12-22","week":"Week 18","opponent":"get better","days":[{"day":"Sunday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Monday","vol":0.6,"session":"Practice","mins":108},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.35,"session":"Practice","mins":63},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Saturday","vol":0.35,"session":"Practice","mins":63}],"weeklyMins":630,"weeklyVol":3.5,"ewma":1.233},{"date":"2025-12-29","week":"Week 19","opponent":"Concordia (Exhib)","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":792,"weeklyVol":4.4,"ewma":1.443},{"date":"2026-01-05","week":"Week 20","opponent":"vs. Union/vs. RPI","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.2,"session":"Practice","mins":36},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":1.072},{"date":"2026-01-12","week":"Week 21","opponent":"@ Colgate/@ Cornell","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":0.967},{"date":"2026-01-19","week":"Week 22","opponent":"CT ICE (at Yale)","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":0.955},{"date":"2026-01-26","week":"Week 23","opponent":"@SLU/@Clarkson","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.75,"session":"Practice & S/C","mins":135},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":666,"weeklyVol":3.7,"ewma":1.0},{"date":"2026-02-02","week":"Week 24","opponent":"vs. Brown, vs. Yale","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":594,"weeklyVol":3.3,"ewma":0.917},{"date":"2026-02-09","week":"Week 25","opponent":"vs. Princeton","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Tuesday","vol":0.5,"session":"Practice","mins":90},{"day":"Wednesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":558,"weeklyVol":3.1,"ewma":0.899},{"date":"2026-02-16","week":"Week 26","opponent":"@ Princeton vs. Cornell/vs. Colgate","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.7,"session":"Practice & S/C","mins":126},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":711,"weeklyVol":3.95,"ewma":1.125},{"date":"2026-02-23","week":"Week 27","opponent":"@Dartmouth/@Harvard","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Wednesday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Thursday","vol":0.25,"session":"Practice","mins":45},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":630,"weeklyVol":3.5,"ewma":1.011},{"date":"2026-03-02","week":"Week 28","opponent":"ECAC 1","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"Practice","mins":63},{"day":"Tuesday","vol":0.8,"session":"Practice & S/C","mins":144},{"day":"Wednesday","vol":0.45,"session":"Practice","mins":81},{"day":"Thursday","vol":0.6,"session":"Practice & S/C","mins":108},{"day":"Friday","vol":0.45,"session":"Practice","mins":81},{"day":"Saturday","vol":0.45,"session":"Practice","mins":81}],"weeklyMins":558,"weeklyVol":3.1,"ewma":0.908},{"date":"2026-03-09","week":"Week 29","opponent":"ECAC Q","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.55,"session":"Practice & S/C","mins":99},{"day":"Tuesday","vol":0.2,"session":"Recovery","mins":36},{"day":"Wednesday","vol":0.5,"session":"Practice & S/C","mins":90},{"day":"Thursday","vol":0.18,"session":"Practice","mins":32},{"day":"Friday","vol":1.0,"session":"Game","mins":180},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":617,"weeklyVol":3.43,"ewma":0.981},{"date":"2026-03-16","week":"Week 30","opponent":"ECAC S/F","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Wednesday","vol":0.4,"session":"Practice","mins":72},{"day":"Thursday","vol":0.65,"session":"Practice & S/C","mins":117},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.75,"session":"Practice & S/C","mins":135}],"weeklyMins":441,"weeklyVol":2.45,"ewma":0.785},{"date":"2026-03-23","week":"Week 31","opponent":"NCAA","days":[{"day":"Sunday","vol":0.35,"session":"Practice","mins":63},{"day":"Monday","vol":0.4,"session":"Practice & S/C","mins":72},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.25,"session":"Practice","mins":45},{"day":"Thursday","vol":1.0,"session":"Game","mins":180},{"day":"Friday","vol":0.25,"session":"Practice","mins":45},{"day":"Saturday","vol":1.0,"session":"Game","mins":180}],"weeklyMins":585,"weeklyVol":3.25,"ewma":1.063},{"date":"2026-03-30","week":"Week 32","opponent":"BYE","days":[{"day":"Sunday","vol":1.0,"session":"Game","mins":180},{"day":"Monday","vol":0.0,"session":"Off","mins":0},{"day":"Tuesday","vol":0.0,"session":"Off","mins":0},{"day":"Wednesday","vol":0.0,"session":"Off","mins":0},{"day":"Thursday","vol":0.0,"session":"Off","mins":0},{"day":"Friday","vol":0.0,"session":"Off","mins":0},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":180,"weeklyVol":1.0,"ewma":0.395},{"date":"2026-04-06","week":"Week 33","opponent":"FF","days":[{"day":"Sunday","vol":0.0,"session":"Off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":0.828},{"date":"2026-04-13","week":"Week 34","opponent":"POST 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.3,"session":"S/C","mins":54},{"day":"Tuesday","vol":0.3,"session":"S/C","mins":54},{"day":"Wednesday","vol":0.3,"session":"S/C","mins":54},{"day":"Thursday","vol":0.3,"session":"S/C","mins":54},{"day":"Friday","vol":0.3,"session":"S/C","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":0.8},{"date":"2026-04-20","week":"Week 35","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"OFF","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":1.167},{"date":"2026-04-27","week":"Week 36","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.35,"session":"S/C","mins":63},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":315,"weeklyVol":1.75,"ewma":1.037},{"date":"2026-05-04","week":"Week 37","opponent":"POST 2/FINALS","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.4,"session":"S/C","mins":72},{"day":"Tuesday","vol":0.4,"session":"S/C","mins":72},{"day":"Wednesday","vol":0.4,"session":"S/C","mins":72},{"day":"Thursday","vol":0.4,"session":"S/C","mins":72},{"day":"Friday","vol":0.4,"session":"S/C","mins":72},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":360,"weeklyVol":2.0,"ewma":1.143},{"date":"2026-05-11","week":"Week 38","opponent":"POST 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.3,"session":"On own","mins":54},{"day":"Tuesday","vol":0.3,"session":"On own","mins":54},{"day":"Wednesday","vol":0.3,"session":"On own","mins":54},{"day":"Thursday","vol":0.3,"session":"On own","mins":54},{"day":"Friday","vol":0.3,"session":"On own","mins":54},{"day":"Saturday","vol":0.0,"session":"Off","mins":0}],"weeklyMins":270,"weeklyVol":1.5,"ewma":0.857},{"date":"2026-05-18","week":"Week 39","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.255},{"date":"2026-05-25","week":"Week 40","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.157},{"date":"2026-06-01","week":"Week 41","opponent":"PHASE 1","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.45,"session":"S/C","mins":81},{"day":"Tuesday","vol":0.5,"session":"S/C","mins":90},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.45,"session":"S/C","mins":81},{"day":"Friday","vol":0.5,"session":"S/C","mins":90},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":432,"weeklyVol":2.4,"ewma":1.103},{"date":"2026-06-08","week":"Week 42","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.061},{"date":"2026-06-15","week":"Week 43","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.04},{"date":"2026-06-22","week":"Week 44","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.5,"session":"S/C","mins":90},{"day":"Tuesday","vol":0.55,"session":"S/C","mins":99},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.5,"session":"S/C","mins":90},{"day":"Friday","vol":0.55,"session":"S/C","mins":99},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":468,"weeklyVol":2.6,"ewma":1.02},{"date":"2026-06-29","week":"Week 45","opponent":"PHASE 2","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":342,"weeklyVol":1.9,"ewma":0.784},{"date":"2026-07-06","week":"Week 46","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.102},{"date":"2026-07-13","week":"Week 47","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.091},{"date":"2026-07-20","week":"Week 48","opponent":"PHASE 3","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.08},{"date":"2026-07-27","week":"Week 49","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-03","week":"Week 50","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-10","week":"Week 51","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.525,"session":"S/C","mins":94},{"day":"Tuesday","vol":0.575,"session":"S/C","mins":103},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.525,"session":"S/C","mins":94},{"day":"Friday","vol":0.575,"session":"S/C","mins":103},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":486,"weeklyVol":2.7,"ewma":1.0},{"date":"2026-08-17","week":"Week 52","opponent":"PHASE 4","days":[{"day":"Sunday","vol":0.0,"session":"off","mins":0},{"day":"Monday","vol":0.35,"session":"S/C","mins":63},{"day":"Tuesday","vol":0.35,"session":"S/C","mins":63},{"day":"Wednesday","vol":0.25,"session":"Recovery","mins":45},{"day":"Thursday","vol":0.35,"session":"S/C","mins":63},{"day":"Friday","vol":0.35,"session":"S/C","mins":63},{"day":"Saturday","vol":0.25,"session":"Recovery","mins":45}],"weeklyMins":342,"weeklyVol":1.9,"ewma":0.76}];
-
-// ─── PLAN VIEW STATE ──────────────────────────────────────────────────────────
-var planView = 'vol';
-var selectedWeekIdx = -1;
-
-// ─── SESSION TYPES & COLORS ───────────────────────────────────────────────────
-var SESS_TYPES = ['Lift','Skate','Practice','Practice & S/C','Game','Conditioning','S/C','Recovery','Off','On own','Video/Film'];
-var SESS_COL = {
-  'Game':'#EF5350', 'Practice':'#4FC3F7', 'Practice & S/C':'#64B5F6',
-  'Lift':'#E8A900', 'S/C':'#FFA726', 'Conditioning':'#AB47BC',
-  'Recovery':'#00C896', 'Off':'#4A5268', 'On own':'#78909C',
-  'Video/Film':'#78909C', 'Skate':'#26C6DA'
-};
-function sessColor(s) {
-  var sl = (s||'').trim().toLowerCase();
-  if (sl === 'off' || sl === '') return '#4A5268';
-  for (var k in SESS_COL) { if (sl.indexOf(k.toLowerCase()) >= 0) return SESS_COL[k]; }
-  return '#7A8299';
-}
-
-// ─── MULTI-SESSION WELLNESS ENTRY ─────────────────────────────────────────────
-var sessionData = []; // [{type, mins, rpe, notes}]
-
-function buildSessionBlocks() {
-  var container = ge('sessionBlocks');
-  container.innerHTML = '';
-  sessionData.forEach(function(s, i) {
-    var block = document.createElement('div');
-    block.className = 'session-block';
-    block.innerHTML =
-      '<div class="session-block-header">'
-      + '<span class="session-num">Session ' + (i+1) + '</span>'
-      + '<button class="rm-session" data-idx="' + i + '">&#x2715; Remove</button>'
-      + '</div>'
-      + '<div class="sess-row">'
-      + '<div><div class="mini-label">Session Type</div>'
-      + '<select class="mini-inp" data-field="type" data-idx="' + i + '">'
-      + SESS_TYPES.map(function(t){return '<option'+(s.type===t?' selected':'')+'>'+t+'</option>';}).join('')
-      + '</select></div>'
-      + '<div><div class="mini-label">Duration (min)</div>'
-      + '<input type="number" class="mini-inp" data-field="mins" data-idx="' + i + '" value="' + (s.mins||'') + '" placeholder="e.g. 75" min="1" max="480"></div>'
-      + '<div><div class="mini-label">RPE (1-5)</div>'
-      + '<select class="mini-inp" data-field="rpe" data-idx="' + i + '">'
-      + [1,2,3,4,5].map(function(n){return '<option'+(s.rpe===n?' selected':'')+'>'+n+'</option>';}).join('')
-      + '</select></div>'
-      + '</div>'
-      + '<div><div class="mini-label">Session Notes</div>'
-      + '<input type="text" class="mini-inp" data-field="notes" data-idx="' + i + '" value="' + (s.notes||'') + '" placeholder="Optional notes..."></div>';
-    container.appendChild(block);
-  });
-  updateLoadTotals();
-}
-
-function updateLoadTotals() {
-  var totalMins = 0, totalLoad = 0, rpeSum = 0, rpeCount = 0;
-  sessionData.forEach(function(s) {
-    var m = parseInt(s.mins) || 0;
-    var r = parseInt(s.rpe) || 3;
-    totalMins += m;
-    totalLoad += m * r;
-    if (m > 0) { rpeSum += r; rpeCount++; }
-  });
-  ge('ltTotalMins').textContent = totalMins;
-  ge('ltTotalLoad').textContent = totalLoad;
-  ge('ltAvgRPE').textContent = rpeCount ? (rpeSum/rpeCount).toFixed(1) : '—';
-  ge('ltSessions').textContent = sessionData.filter(function(s){return (parseInt(s.mins)||0)>0;}).length;
-}
-
-// Delegate session block events
-document.addEventListener('change', function(e) {
-  var el = e.target;
-  if (el.hasAttribute('data-field') && el.hasAttribute('data-idx')) {
-    var idx = parseInt(el.getAttribute('data-idx'));
-    var field = el.getAttribute('data-field');
-    if (field === 'rpe') sessionData[idx][field] = parseInt(el.value);
-    else if (field === 'mins') sessionData[idx][field] = parseInt(el.value) || 0;
-    else sessionData[idx][field] = el.value;
-    updateLoadTotals();
-  }
-});
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('rm-session') || e.target.closest('.rm-session')) {
-    var btn = e.target.classList.contains('rm-session') ? e.target : e.target.closest('.rm-session');
-    var idx = parseInt(btn.getAttribute('data-idx'));
-    sessionData.splice(idx, 1);
-    buildSessionBlocks();
-    return;
-  }
-});
-
-// Add session button
-ge('addSessionBtn').addEventListener('click', function() {
-  sessionData.push({type:'Lift', mins:60, rpe:3, notes:''});
-  buildSessionBlocks();
-});
-
-// Save wellness entry (multi-session)
-ge('wSubmit').addEventListener('click', function() {
-  var athl = ge('wAthl').value;
-  var date = ge('wDate').value;
-  if (!athl || !date) { alert('Select athlete and date.'); return; }
-  if (!sel.sleep || !sel.sore || !sel.energy || !sel.mood) { alert('Complete all wellness scales.'); return; }
-  var validSessions = sessionData.filter(function(s){ return (parseInt(s.mins)||0) > 0; });
-  if (!validSessions.length) { alert('Add at least one session with a duration.'); return; }
-
-  var ws = (sel.sleep + sel.sore + sel.energy + sel.mood) / 4;
-  var notes = ge('wNotes').value;
-
-  // Save one entry per session block, shared wellness scores
-  validSessions.forEach(function(s) {
-    var entry = {
-      id: Date.now() + Math.random(),
-      athlete: athl, date: date,
-      session: s.type, rpe: parseInt(s.rpe) || 3,
-      mins: parseInt(s.mins) || 0,
-      sleep: sel.sleep, soreness: sel.sore, energy: sel.energy, mood: sel.mood,
-      wellness: parseFloat(ws.toFixed(2)),
-      load: (parseInt(s.rpe)||3) * (parseInt(s.mins)||0),
-      notes: s.notes || notes
-    };
-    wLog.unshift(entry);
-  });
-  localStorage.setItem('qumhoc_w5', JSON.stringify(wLog));
-
-  // Reset
-  sel = {rpe:null, sleep:null, sore:null, energy:null, mood:null};
-  ['scSleep','scSore','scEnergy','scMood'].forEach(function(id){
-    document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});
-  });
-  sessionData = [{type:'Lift',mins:60,rpe:3,notes:''}];
-  buildSessionBlocks();
-  ge('wNotes').value = '';
-  alert('Saved ' + validSessions.length + ' session(s)! Wellness avg: ' + ws.toFixed(1) + '/5');
-  showSub('wrecent', document.querySelectorAll('.stab')[1]);
-});
-
-// Override renderWLog to support session type filter
-function renderWLog() {
-  var fa   = ge('wFA')    ? ge('wFA').value    : 'All';
-  var fSess= ge('wFSess') ? ge('wFSess').value : 'All';
-  var entries = wLog.slice();
-  if (fa    !== 'All') entries = entries.filter(function(e){ return e.athlete === fa; });
-  if (fSess !== 'All') entries = entries.filter(function(e){ return e.session === fSess; });
-  if (!entries.length) {
-    ge('wLog').innerHTML = '<div style="color:var(--td);font-size:12px;text-align:center;padding:20px">No entries yet.</div>';
-    ge('wPills').innerHTML = '';
-    return;
-  }
-  var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
-  var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
-  ge('wPills').innerHTML =
-    '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
-  + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
-  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+tL.toLocaleString()+'</div><div class="pl2">Total Load (AU)</div></div>'
-  + '<div class="pill"><div class="pv">'+tM+'</div><div class="pl2">Total Mins</div></div>'
-  + '<div class="pill"><div class="pv">'+entries.length+'</div><div class="pl2">Sessions</div></div>';
-  ge('wLog').innerHTML = entries.slice(0,50).map(function(e) {
-    var rc = RC[e.rpe] || 'var(--gold)', wc = WC[Math.round(e.wellness)] || 'var(--gold)';
-    var sc = sessColor(e.session);
-    return '<div class="le">'
-      + '<div class="ld">'+e.date+'</div>'
-      + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
-      + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
-      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
-      + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
-      + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
-      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
-      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
-      + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
-      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
-      + '</div>';
-  }).join('');
-}
-
-// ─── WEEKLY PLANNER ───────────────────────────────────────────────────────────
-// Plan view buttons
-document.addEventListener('click', function(e) {
-  if (e.target.hasAttribute('data-planview')) {
-    planView = e.target.getAttribute('data-planview');
-    document.querySelectorAll('[data-planview]').forEach(function(b){b.classList.remove('on');});
-    e.target.classList.add('on');
-    renderPlanner();
-  }
-});
 
 function getFilteredPlan() {
   var phase = ge('planPhase') ? ge('planPhase').value : 'All';
@@ -3256,118 +2347,10 @@ function renderPlanInsights(weeks) {
 
 // initApp extension handled above
 window.renderPlanner = renderPlanner;
-window.renderWLog = renderWLog;
-
-// --- SAVE & EXPORT ---
-function exportDashboard() {
-  var btn = ge('exportBtn');
-  btn.textContent = 'Saving...';
-  btn.disabled = true;
-
-  // Get current HTML
-  var fullHtml = document.documentElement.outerHTML;
-
-  // Replace the embedded DATA with current DATA (in case CSV was imported this session)
-  var dataJson = JSON.stringify(DATA);
-  fullHtml = fullHtml.replace(/var DATA = \[[\s\S]*?\];/, 'var DATA = ' + dataJson + ';');
-
-  // Replace PLAN with current PLAN
-  var planJson = JSON.stringify(PLAN);
-  fullHtml = fullHtml.replace(/var PLAN = \[[\s\S]*?\];/, 'var PLAN = ' + planJson + ';');
-
-  // Create download
-  var blob = new Blob(['<!DOCTYPE html>\n' + fullHtml], {type: 'text/html;charset=utf-8'});
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href   = url;
-  a.download = document.title.replace(/[^a-zA-Z0-9]/g, '_') + '_updated.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  btn.textContent = '\u2713 Saved!';
-  setTimeout(function() {
-    btn.textContent = '\u21E9 Save & Export';
-    btn.disabled = false;
-  }, 2000);
-}
-
-
-function checkRiskFlag(athlete) {
-  var banner = ge('riskBanner');
-  if (!banner) return;
-  var today   = new Date();
-  var weekAgo = new Date(today - 7*86400000);
-  var ents = wLog.filter(function(e){
-    return (athlete==='All'||e.athlete===athlete) && new Date(e.date)>=weekAgo;
-  });
-  if (!ents.length) { banner.className='risk-banner'; return; }
-  var avgW = ents.reduce(function(a,e){return a+e.wellness;},0)/ents.length;
-  var acwr = computeACWR(athlete);
-  var highACWR = acwr!==null && acwr>1.3;
-  var lowWell  = avgW<3.0;
-  var msgs=[];
-  if (highACWR&&lowWell)
-    msgs.push('⚠ HIGH RISK: ACWR '+acwr.toFixed(2)+' AND avg wellness '+avgW.toFixed(1)+'/5 — peak injury risk. Consider reducing load now.');
-  else if (highACWR)
-    msgs.push('⚠ CAUTION: ACWR '+acwr.toFixed(2)+' (>1.3) — monitor training load closely.');
-  else if (lowWell)
-    msgs.push('⚠ CAUTION: Avg wellness '+avgW.toFixed(1)+'/5 (<3.0) this week — athletes reporting significant fatigue.');
-  if (msgs.length) {
-    banner.className='risk-banner show';
-    banner.innerHTML='<div class="rb-title">Risk Alert — '+(athlete==='All'?'Team':dn(athlete))+'</div>'+msgs.join('<br>');
-  } else { banner.className='risk-banner'; }
-}
-window.checkRiskFlag = checkRiskFlag;
-
-
 
 initApp();
 
 })(); // end IIFE
-</script>
-= '\u21E9 Save & Export';
-    btn.disabled = false;
-  }, 2000);
-}
-
-
-function checkRiskFlag(athlete) {
-  var banner = ge('riskBanner');
-  if (!banner) return;
-  var today   = new Date();
-  var weekAgo = new Date(today - 7*86400000);
-  var ents = wLog.filter(function(e){
-    return (athlete==='All'||e.athlete===athlete) && new Date(e.date)>=weekAgo;
-  });
-  if (!ents.length) { banner.className='risk-banner'; return; }
-  var avgW = ents.reduce(function(a,e){return a+e.wellness;},0)/ents.length;
-  var acwr = computeACWR(athlete);
-  var highACWR = acwr!==null && acwr>1.3;
-  var lowWell  = avgW<3.0;
-  var msgs=[];
-  if (highACWR&&lowWell)
-    msgs.push('⚠ HIGH RISK: ACWR '+acwr.toFixed(2)+' AND avg wellness '+avgW.toFixed(1)+'/5 — peak injury risk. Consider reducing load now.');
-  else if (highACWR)
-    msgs.push('⚠ CAUTION: ACWR '+acwr.toFixed(2)+' (>1.3) — monitor training load closely.');
-  else if (lowWell)
-    msgs.push('⚠ CAUTION: Avg wellness '+avgW.toFixed(1)+'/5 (<3.0) this week — athletes reporting significant fatigue.');
-  if (msgs.length) {
-    banner.className='risk-banner show';
-    banner.innerHTML='<div class="rb-title">Risk Alert — '+(athlete==='All'?'Team':dn(athlete))+'</div>'+msgs.join('<br>');
-  } else { banner.className='risk-banner'; }
-}
-window.checkRiskFlag = checkRiskFlag;
-
-
-
-initApp();
-
-})(); // end IIFE
-
-
-
 </script>
 </body>
 </html>
