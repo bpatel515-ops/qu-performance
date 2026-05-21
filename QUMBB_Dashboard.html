@@ -15,7 +15,7 @@
   --r:6px;--rl:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;}
+body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{background:var(--s1);border-bottom:2px solid var(--gold);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tbl{display:flex;align-items:center;gap:12px;}
 .logo-wrap{width:46px;height:46px;flex-shrink:0;}
@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-siz
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
 .st{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
 .st span{color:var(--gold);}
-.tw{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px;}
+.tw{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);overflow:hidden;margin-bottom:14px;overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
 thead{background:var(--s2);border-bottom:1px solid var(--br);}
 th{padding:8px 10px;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tm);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;}
@@ -75,7 +75,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .tb2{background:rgba(255,112,67,.15);color:var(--blow);}
 .td3{background:rgba(239,83,80,.15);color:var(--dev);}
 .tn2{color:var(--td);}
-.pgrid{display:grid;grid-template-columns:295px 1fr;gap:12px;align-items:start;min-width:0;}
+.pgrid{display:grid;grid-template-columns:295px 1fr;gap:12px;align-items:start;}
 .pc{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);padding:16px;}
 .ameta{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;}
 .mi{background:var(--s2);border-radius:var(--r);padding:7px 9px;}
@@ -232,7 +232,6 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
 .ebtn{background:var(--s2);border:1px solid var(--br);color:var(--gold);padding:6px 12px;border-radius:var(--r);font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;}
 .ebtn:hover{background:var(--gold);color:var(--navy);}
-/* ── SYNC BAR ──────────────────────────────────────────────────────── */
 .sync-bar{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:6px 14px;font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--tm);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--td);flex-shrink:0;transition:background .3s;}
 .sync-dot.ok{background:var(--elite);}.sync-dot.err{background:var(--dev);}
@@ -240,84 +239,27 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 @keyframes sdpulse{0%,100%{opacity:1}50%{opacity:.35}}
 .sync-refresh{margin-left:auto;background:none;border:1px solid var(--br2);color:var(--tm);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;transition:all .15s;}
 .sync-refresh:hover{border-color:var(--gold);color:var(--gold);}
-/* ── HRV FIELDS ────────────────────────────────────────────────────── */
 .hrv-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
 .hrv-field{display:flex;flex-direction:column;gap:3px;}
 .hrv-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);}
 .hrv-inp{background:var(--s2);border:1px solid var(--br2);border-radius:5px;color:var(--tx);font-size:14px;font-family:Barlow,sans-serif;padding:6px 8px;width:100%;text-align:center;}
 .hrv-inp:focus{outline:none;border-color:var(--gold);}
 .hrv-inp::placeholder{color:var(--td);}
-/* ── RISK BANNER ───────────────────────────────────────────────────── */
 .risk-banner{display:none;background:rgba(239,83,80,.12);border:1px solid var(--dev);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--dev);font-weight:600;line-height:1.5;}
 .risk-banner.show{display:block;}
 .risk-banner .rb-title{font-size:13px;font-weight:700;margin-bottom:4px;}
-/* ── ANTHRO DELTA ──────────────────────────────────────────────────── */
 .anthro-delta{font-size:10px;padding:2px 7px;border-radius:4px;margin-left:6px;}
 .ad-good{background:rgba(102,187,106,.12);color:var(--elite);}
 .ad-bad{background:rgba(239,83,80,.12);color:var(--dev);}
 .ad-neu{background:var(--s2);color:var(--tm);}
-/* ── MOBILE ────────────────────────────────────────────────────────── */
-@media(max-width:700px){
-  .topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}
-  .tbl{gap:8px;} .tn{font-size:15px;} .ts{font-size:9px;}
-  .tbr{flex-wrap:wrap;gap:5px;}
-  .nav{padding:0 8px;} .ntab{padding:10px 11px;font-size:10px;}
-  .main{padding:8px;}
-  .kg{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;}
-  .pgrid{grid-template-columns:1fr;}
-  .wg{grid-template-columns:1fr;}
-  .hrv-row{grid-template-columns:1fr 1fr;}
-  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .pgrid>div:last-child{min-width:0;}
-}
-
-
-/* ═══════════════════════════════════════════════════
-   UNIVERSAL SCROLL FIX
-   ═══════════════════════════════════════════════════ */
-
-/* Body: never clip horizontal content */
-body { overflow-x: unset !important; }
-
-/* Every tab panel: vertical scroll, never clip horizontal */
-.sec { overflow-y: auto; overflow-x: hidden; }
-
-/* Table wrappers: always horizontally scrollable */
-.tw { overflow-x: auto !important; overflow-y: visible;
-      -webkit-overflow-scrolling: touch; }
-
-/* Overview table: min-width so it doesn't collapse */
-#ovTable { min-width: 600px; }
-
-/* Profile grid: right column must not overflow-clip its children */
-.pgrid { overflow: visible; }
-.pgrid > div { min-width: 0; overflow: visible; }
-
-/* History table wrapper: horizontal scroll */
-.pgrid .tw { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
-
-/* Main content area: never clip */
-.main { overflow: visible; }
-
-/* Leaderboard, compare, positions table wrappers */
-.lbw, .cmpw, .posw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-/* Wellness log entries */
-.wlog-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-/* Plan chart area */
-.plan-chart-area { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-/* Trends charts */
-.lg { overflow-x: auto; }
-
-/* Mobile: all tables scroll horizontally */
-@media (max-width: 900px) {
-  .sec { overflow-x: auto; }
-  table { min-width: max-content; }
-  .tw { display: block; width: 100%; overflow-x: auto; }
-}
+/* UNIVERSAL SCROLL FIX */
+body{overflow-x:unset!important;}
+.sec{overflow-y:auto;overflow-x:hidden;}
+.tw{overflow-x:auto!important;overflow-y:visible;-webkit-overflow-scrolling:touch;}
+#ovTable{min-width:600px;}
+.pgrid>div{min-width:0;overflow:visible;}
+@media(max-width:900px){.sec{overflow-x:auto;}table{min-width:max-content;}.tw{display:block;width:100%;overflow-x:auto;}}
+@media(max-width:700px){.hrv-row{grid-template-columns:1fr 1fr;}.topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}.tbr{flex-wrap:wrap;gap:5px;}.nav{padding:0 8px;}.ntab{padding:10px 11px;font-size:10px;}.main{padding:8px;}.kg{grid-template-columns:repeat(2,1fr);gap:8px;}.fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;}.pgrid{grid-template-columns:1fr;}.wg{grid-template-columns:1fr;}}
 
 </style>
 </head>
@@ -418,10 +360,8 @@ body { overflow-x: unset !important; }
       <div class="tw" style="margin-bottom:0;"><table>
         <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Vert"</th><th>Appr"</th><th>Pwr W</th><th>10yd&#8595;</th><th>20yd&#8595;</th><th>Lane Ag&#8595;</th><th>Beep</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
-      </table></div>
-  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;">
-  <div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div>
-  <div id="deltaTable"></div></div>
+      </table>
+  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div></div>
     </div>
   </div>
 </div>
@@ -597,7 +537,7 @@ body { overflow-x: unset !important; }
 <div id="trends" class="sec">
   <div class="risk-banner" id="riskBanner"></div>
   
-  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;" id="monotonyPanel"></div>
+  <div id="monotonyPanel" style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;"></div>
   <div class="fbar">
     <div class="fg"><span class="fl">Athlete</span><select class="fs" id="trAthl" onchange="renderTrends()"><option value="All">All Athletes</option></select></div>
     <div class="fg"><span class="fl">Season</span><select class="fs" id="trSeason" onchange="renderTrends()"></select></div>
@@ -772,162 +712,9 @@ body { overflow-x: unset !important; }
 
 var TEAM_ID = 'MBB';
 var LOCAL_KEY = 'qumbb_w5';
-
-// --- SUPABASE CONFIG ---
 var SB_URL   = 'https://qpqvrekiujpcfugjqpft.supabase.co';
 var SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwcXZyZWtpdWpwY2Z1Z2pxcGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjMyODgsImV4cCI6MjA5NDU5OTI4OH0.g-mlooOha_GhaSAOH0Gurnl0cQzDzHTX8YveU6pFBSE';
 var SB_TABLE = 'wellness_log';
-
-function sbH() {
-  return {
-    'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=minimal'
-  };
-}
-
-function updateSyncStatus(state, msg) {
-  var dot = ge('syncDot'), el = ge('syncMsg');
-  if (!dot || !el) return;
-  dot.className = 'sync-dot ' + state;
-  if (msg) { el.textContent = msg; return; }
-  if (state === 'ok')      el.textContent = 'Cloud sync active - entries visible on all devices';
-  else if (state === 'err') el.textContent = 'Cloud sync offline - showing cached data. Tap Refresh to retry.';
-  else                      el.textContent = 'Connecting to cloud...';
-}
-
-// Warm up Supabase cold start with a cheap HEAD request
-// Fires immediately on page load so the real fetch finds a warm connection
-function warmSupabase() {
-  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?team=eq.' + TEAM_ID + '&limit=1', {
-    method: 'HEAD',
-    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-  }).catch(function() {}); // ignore errors - this is just a warmup ping
-}
-
-function loadWLog(callback, forceRefresh) {
-  var team = TEAM_ID;
-
-  // Step 1: show cache instantly so UI is never empty
-  try {
-    var cached = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
-    if (cached.length) { wLog = cached; if (callback) callback(); }
-  } catch(e) {}
-
-  // Step 2: throttle - skip re-fetch if recent (unless forced)
-  var now = Date.now();
-  if (!forceRefresh && loadWLog._lastFetch && (now - loadWLog._lastFetch) < 10000) {
-    updateSyncStatus('ok');
-    if (!wLog.length && callback) callback();
-    return;
-  }
-  loadWLog._lastFetch = now;
-  updateSyncStatus('loading', 'Syncing with cloud...');
-
-  // Step 3: fetch with 5s timeout flag (no AbortController - Safari compatible)
-  var done    = false;
-  var t0      = Date.now();
-  var cols    = 'id,athlete,date,session,rpe,sleep,soreness,energy,mood,wellness,duration,load,notes,hrv,resting_hr,sleep_hrs';
-  var timeoutId = setTimeout(function() {
-    if (done) return;
-    done = true;
-    console.warn('Supabase timeout after 5s');
-    updateSyncStatus('err');
-    if (!wLog.length) {
-      try { wLog = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { wLog = []; }
-      if (callback) callback();
-    }
-  }, 5000);
-
-  fetch(SB_URL + '/rest/v1/' + SB_TABLE
-    + '?team=eq.' + encodeURIComponent(team)
-    + '&select=' + cols
-    + '&order=date.desc,id.desc&limit=200', {
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Accept': 'application/json'
-    }
-  })
-  .then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  })
-  .then(function(rows) {
-    clearTimeout(timeoutId);
-    if (done) return; // timeout already fired
-    done = true;
-    if (!Array.isArray(rows)) throw new Error('Bad response');
-    var ms = Date.now() - t0;
-    wLog = rows.map(function(r) {
-      return {
-        id: r.id,           athlete:  r.athlete,
-        date: r.date,       session:  r.session,
-        rpe: r.rpe,         sleep:    r.sleep,
-        soreness: r.soreness, energy: r.energy,
-        mood: r.mood,       wellness: r.wellness,
-        duration: r.duration, load:   r.load,
-        notes: r.notes || '',
-        hrv: r.hrv || null, resting_hr: r.resting_hr || null, sleep_hrs: r.sleep_hrs || null
-      };
-    });
-    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
-    updateSyncStatus('ok', 'Synced ' + wLog.length + ' entries (' + ms + 'ms)');
-    setTimeout(function() { updateSyncStatus('ok'); }, 3000);
-    if (callback) callback();
-  })
-  .catch(function(err) {
-    clearTimeout(timeoutId);
-    if (done) return;
-    done = true;
-    console.warn('Supabase: ' + err.message);
-    updateSyncStatus('err');
-    if (!wLog.length) {
-      try { wLog = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { wLog = []; }
-      if (callback) callback();
-    }
-  });
-}
-loadWLog._lastFetch = 0;
-
-function saveToSupabase(entry, onSuccess, onError) {
-  var row = {
-    id: entry.id, team: TEAM_ID, athlete: entry.athlete, date: entry.date,
-    session: entry.session, rpe: entry.rpe, sleep: entry.sleep,
-    soreness: entry.soreness, energy: entry.energy, mood: entry.mood,
-    wellness: entry.wellness, duration: entry.duration, load: entry.load,
-    notes: entry.notes || '',
-    hrv: entry.hrv || null, resting_hr: entry.resting_hr || null,
-    sleep_hrs: entry.sleep_hrs || null
-  };
-  fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
-    method: 'POST', headers: sbH(), body: JSON.stringify(row)
-  })
-  .then(function(r) {
-    if (r.ok || r.status === 201) {
-      try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
-      if (onSuccess) onSuccess();
-    } else { r.text().then(function(t) { if (onError) onError(t); }); }
-  })
-  .catch(function(err) { if (onError) onError(err); });
-}
-
-function deleteFromSupabase(id, onSuccess, onError) {
-  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?id=eq.' + id + '&team=eq.' + TEAM_ID, {
-    method: 'DELETE', headers: sbH()
-  })
-  .then(function(r) {
-    if (r.ok) {
-      wLog = wLog.filter(function(e) { return e.id !== id; });
-      try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
-      if (onSuccess) onSuccess();
-    } else { r.text().then(function(t) { if (onError) onError(t); }); }
-  })
-  .catch(function(err) { if (onError) onError(err); });
-}
-
-
 
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
@@ -939,7 +726,8 @@ var viewMode = 'scores';
 var sortSt = {};
 var ovSortCol = -1;
 var ovSortAsc = false;
-var wLog = []; // loaded from Supabase on init
+var wLog = [];
+try { wLog = JSON.parse(localStorage.getItem('qumhoc_w5') || '[]'); } catch(e) { wLog = []; }
 var sel = { rpe:null, sleep:null, sore:null, energy:null, mood:null };
 var radSeason = 'All';
 
@@ -953,9 +741,6 @@ var WI  = ['','😞','😕','😐','🙂','😄'];
 var WL  = ['','Terrible','Poor','Fair','Good','Excellent'];
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-
-
-
 function ge(id) { return document.getElementById(id); }
 function fmt(v, d) { if (d === undefined) d = 1; return (v == null || isNaN(v)) ? '—' : parseFloat(v).toFixed(d); }
 function fmtI(v) { return (v == null || isNaN(v)) ? '—' : String(Math.round(v)); }
@@ -1003,7 +788,7 @@ function fillAthletes() {
   var names = uniq(DATA.map(function(d) { return d['Athlete Name']; })).sort();
   var opts = names.map(function(n) { return '<option value="' + n + '">' + dn(n) + '</option>'; }).join('');
   var optAll = '<option value="All">All Athletes</option>' + opts;
-  ['profSel', 'cmpA', 'wAthl', 'anthroSel'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
+  ['profSel', 'cmpA', 'wAthl'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = opts; });
   ['wFA', 'trAthl'].forEach(function(id) { var el = ge(id); if (el) el.innerHTML = optAll; });
   ge('cmpB').innerHTML = names.map(function(n, i) {
     return '<option value="' + n + '"' + (i === 1 ? ' selected' : '') + '>' + dn(n) + '</option>';
@@ -1100,8 +885,7 @@ function showTab(id, el) {
   if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); renderCompliance(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); if(typeof renderAnthroTrends==='function') renderAnthroTrends(ge('anthroSel')?ge('anthroSel').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
-}
-function showSub(id, el) {
+}function showSub(id, el) {
   document.querySelectorAll('.stab').forEach(function(t) { t.classList.remove('on'); });
   document.querySelectorAll('.sp2').forEach(function(p) { p.classList.remove('on'); });
   el.classList.add('on');
@@ -1132,7 +916,6 @@ function renderKPIs() {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';
   }).join('');
 }
-
 function renderOvTable() {
   var fd = filterData('ovSeason','ovPeriod','ovDate');
   var s  = ge('ovSeason') ? ge('ovSeason').value : 'All';
@@ -1140,10 +923,10 @@ function renderOvTable() {
   var dt = ge('ovDate')   ? ge('ovDate').value   : 'All';
   ge('tblSub').textContent = fd.length + ' records · ' + (s!=='All'?s:'All Seasons') + ' · ' + (p!=='All'?p:'All Periods') + (dt!=='All'?' · '+dt:'');
 
-  var baseH = '<th onclick="sortOv(0)" class="sh-col">Athlete</th>'+'<th onclick="sortOv(1)" class="sh-col">Pos</th>'+'<th onclick="sortOv(2)" class="sh-col">Yr</th>'+'<th onclick="sortOv(3)" class="sh-col">Season</th>'+'<th onclick="sortOv(4)" class="sh-col">Period</th>'+'<th onclick="sortOv(5)" class="sh-col">Date</th>';
+  var baseH = '<th>Athlete</th><th>Pos</th><th>Yr</th><th>Season</th><th>Period</th><th>Date</th>';
   var colH, colFn;
   if (viewMode === 'scores') {
-    colH  = '<th onclick="sortOv(6)" class="sh-col">Power</th>'+'<th onclick="sortOv(7)" class="sh-col">Strength</th>'+'<th onclick="sortOv(8)" class="sh-col">Speed</th>'+'<th onclick="sortOv(9)" class="sh-col">Cond</th>'+'<th onclick="sortOv(10)" class="sh-col">Anthro</th>'+'<th onclick="sortOv(11)" class="sh-col">Overall</th>';
+    colH  = '<th>Power</th><th>Strength</th><th>Speed</th><th>Cond</th><th>Anthro</th><th>Overall</th>';
     colFn = function(d) {
       return '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
@@ -1153,25 +936,20 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th onclick="sortOv(6)" class="sh-col">BW</th>'+'<th onclick="sortOv(7)" class="sh-col">Squat</th>'+'<th onclick="sortOv(8)" class="sh-col">Bench</th>'+'<th onclick="sortOv(9)" class="sh-col">TBDL</th>'+'<th onclick="sortOv(10)" class="sh-col">Vert&quot;</th>'+'<th onclick="sortOv(11)" class="sh-col">Approach&quot;</th>'+'<th onclick="sortOv(12)" class="sh-col">Pwr W</th>'+'<th onclick="sortOv(13)" class="sh-col">10yd ↓</th>'+'<th onclick="sortOv(14)" class="sh-col">20yd ↓</th>'+'<th onclick="sortOv(15)" class="sh-col">LaneAg ↓</th>'+'<th onclick="sortOv(16)" class="sh-col">Grip R</th>'+'<th onclick="sortOv(17)" class="sh-col">Grip L</th>'+'<th onclick="sortOv(18)" class="sh-col">Beep</th>';
+    colH  = '<th>BW</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>CMJ</th><th>10yd</th><th>ProAg</th><th>Beep</th>';
     colFn = function(d) {
-      var spd = d['10 yd Best (s)']; var sc = spd&&spd<1.72?'te':spd&&spd<1.85?'tg':'';
+      var spd = d['10 yd Best (s)']; var sc = (spd && spd < 1.54) ? 'te' : (spd && spd < 1.63 ? 'tg' : '');
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
            + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
            + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
            + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
-           + '<td class="mn">'+(d['VJ Vertec Best (in)']!=null?fmt(d['VJ Vertec Best (in)'],1):'—')+'</td>'
-           + '<td class="mn">'+(d['Approach Jump Best (in)']!=null?fmt(d['Approach Jump Best (in)'],1):'—')+'</td>'
-           + '<td class="mn">'+(d['Power W (Vertec)']!=null?fmtI(d['Power W (Vertec)']):'—')+'</td>'
+           + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
            + '<td class="mn '+sc+'">'+(spd!=null?fmt(spd,2):'—')+'</td>'
-           + '<td class="mn">'+(d['20 yd Best (s)']!=null?fmt(d['20 yd Best (s)'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Lane Agility Best']!=null?fmt(d['Lane Agility Best'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Grip Right']!=null?fmtI(d['Grip Right']):'—')+'</td>'
-           + '<td class="mn">'+(d['Grip Left']!=null?fmtI(d['Grip Left']):'—')+'</td>'
+           + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
            + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>';
     };
   } else {
-    colH  = '<th onclick="sortOv(6)" class="sh-col">BW</th>'+'<th onclick="sortOv(7)" class="sh-col">Height</th>'+'<th onclick="sortOv(8)" class="sh-col">Wingspan</th>'+'<th onclick="sortOv(9)" class="sh-col">BF%</th>'+'<th onclick="sortOv(10)" class="sh-col">Fat Mass</th>'+'<th onclick="sortOv(11)" class="sh-col">Lean Mass</th>'+'<th onclick="sortOv(12)" class="sh-col">PQ</th>';
+    colH  = '<th>BW</th><th>Height</th><th>Wingspan</th><th>BF%</th><th>Fat Mass</th><th>Lean Mass</th><th>PQ</th>';
     colFn = function(d) {
       var ht  = d['Height (inches)'] ? Math.floor(d['Height (inches)']/12)+"'"+Math.round(d['Height (inches)']%12)+'"' : '—';
       var bfc = parseFloat(d.Bodyfat) > 12 ? 'td3' : parseFloat(d.Bodyfat) > 9 ? 'tb2' : '';
@@ -1186,40 +964,21 @@ function renderOvTable() {
   }
 
 
-  // ── Sort fd by ovSortCol ─────────────────────────────────────────────────
+  // Apply sort
   if (ovSortCol >= 0) {
-    var colKeys = [
-      'Athlete Name','Position','Group','Season','Time Period','Date'
-    ];
-    if (viewMode === 'scores') {
-      colKeys = colKeys.concat(['Score POWER','Score STRENGTH','Score SPEED',
-        'Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    } else if (viewMode === 'metrics') {
-      colKeys = colKeys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max',
-        'VJ Vertec Best (in)','Approach Jump Best (in)','Power W (Vertec)','10 yd Best (s)',
-        'Lane Agility Best','Grip Right','Grip Left','Beep Test']);
-    } else if (viewMode === 'anthro') {
-      colKeys = colKeys.concat(['Bodyweight','Height (inches)','Wingspan',
-        'Bodyfat','Fat Mass','Lean Mass']);
-    }
-    var sortKey = colKeys[ovSortCol] || '';
-    if (sortKey) {
-      fd = fd.slice().sort(function(a, b) {
-        var av = a[sortKey], bv = b[sortKey];
-        if (av == null && bv == null) return 0;
-        if (av == null) return 1;
-        if (bv == null) return -1;
-        var cmp = (typeof av === 'string') ? av.localeCompare(bv) : av - bv;
-        return ovSortAsc ? cmp : -cmp;
-      });
-    }
+    var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
+    if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','NCMJ Mat Best (in)','CMJ Best (in)','Power W (Mat)','10 yd Best (s)','Pro Agility Best (s)','Grip Right','Grip Left','Beep Test']);
+    else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Bodyfat','Fat Mass','Lean Mass']);
+    var _sk=_keys[ovSortCol]||'';
+    if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
   }
 
   ge('ovHead').innerHTML = '<tr>' + baseH + colH + '</tr>';
   ge('ovBody').innerHTML = fd.map(function(d) {
     var name = d['Athlete Name'];
-    var pos  = d.Position === 'Guard' ? 'GRD' : d.Position === 'Forward' ? 'FWD' : d.Position;
-    var pc   = 'p' + (d.Position === 'Guard' ? 'G2' : 'F');
+    var pos  = d.Position === 'Defenseman' ? 'DEF' : d.Position === 'Forward' ? 'FWD' : 'GK';
+    var pc   = 'p' + (d.Position === 'Defenseman' ? 'D' : d.Position === 'Forward' ? 'F' : 'G');
     return '<tr data-name="' + h(name) + '">'
          + '<td><div class="ac"><div class="av" style="background:'+gc(name)+'">'+ini(name)+'</div><span>'+dn(name)+'</span></div></td>'
          + '<td><span class="pb '+pc+'">'+pos+'</span></td>'
@@ -1331,15 +1090,11 @@ function renderProfile() {
     {l:'Squat Max',          k:'Squat Max',            u:'lbs', hi:450},
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
-    {l:'Vertical',k:'VJ Vertec Best (in)',u:'"',hi:40},
-    {l:'Approach Jump',k:'Approach Jump Best (in)',u:'"',hi:45},
-    {l:'Power W',k:'Power W (Vertec)',u:'W',hi:9000},
-    {l:'10 yd',k:'10 yd Best (s)',u:'s',hi:2.1,lo:1.6,lb:true},
-    {l:'20 yd',k:'20 yd Best (s)',u:'s',hi:3.6,lo:2.6,lb:true},
-    {l:'Lane Agility',k:'Lane Agility Best',u:'s',hi:12.0,lo:8.5,lb:true},
+    {l:'CMJ',                k:'CMJ Best (in)',          u:'"',  hi:45},
+    {l:'Broad Jump',         k:'Broad Jump Best (in)',  u:'"',  hi:130},
+    {l:'10 yd',              k:'10 yd Best (s)',         u:'s',  hi:1.8, lo:1.4, lb:true},
+    {l:'Pro Agility',        k:'Pro Agility Best (s)',  u:'s',  hi:4.5, lo:3.8, lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
-    {l:'Grip Right',         k:'Grip Right',            u:'lbs',hi:220},
-    {l:'Grip Left',          k:'Grip Left',             u:'lbs',hi:220},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},
@@ -1368,15 +1123,10 @@ function renderProfile() {
       + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
       + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
-      + '<td class="mn">'+(d['VJ Vertec Best (in)']!=null?fmt(d['VJ Vertec Best (in)'],1):'—')+'</td>'
-      + '<td class="mn">'+(d['Approach Jump Best (in)']!=null?fmt(d['Approach Jump Best (in)'],1):'—')+'</td>'
-      + '<td class="mn">'+(d['Power W (Vertec)']!=null?fmtI(d['Power W (Vertec)']):'—')+'</td>'
-      + '<td class="mn">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
-      + '<td class="mn">'+(d['20 yd Best (s)']!=null?fmt(d['20 yd Best (s)'],2):'—')+'</td>'
-      + '<td class="mn">'+(d['Lane Agility Best']!=null?fmt(d['Lane Agility Best'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
+      + '<td class="mn '+(d['10 yd Best (s)']<1.54?'te':d['10 yd Best (s)']<1.63?'tg':'')+'">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-      + '<td class="mn">'+(d['Grip Right']!=null?fmtI(d['Grip Right']):'\u2014')+'</td>'
-      + '<td class="mn">'+(d['Grip Left']!=null?fmtI(d['Grip Left']):'\u2014')+'</td>'
       + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
       + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
       + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'
@@ -1435,8 +1185,8 @@ function renderLB() {
     var rs    = i===0?'color:var(--gold);font-weight:800':i===1?'color:#C0C0C0':i===2?'color:#CD7F32':'color:var(--td)';
     var dec   = lb||metric.indexOf('Beep')>=0?2:metric.indexOf('Score')>=0||metric.indexOf('Max')>=0?0:1;
     var pc    = lb ? 100-pct : pct;
-    var posC  = d.Position==='Guard'?'G2':'F';
-    var posL  = d.Position==='Guard'?'GRD':d.Position==='Forward'?'FWD':d.Position;
+    var posC  = d.Position==='Defenseman'?'D':d.Position==='Forward'?'F':'G';
+    var posL  = d.Position==='Defenseman'?'DEF':d.Position==='Forward'?'FWD':'GK';
     return '<tr>'
       + '<td style="'+rs+';font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700">'+(i+1)+'</td>'
       + '<td><div class="ac"><div class="av" style="background:'+gc(d['Athlete Name'])+'">'+ini(d['Athlete Name'])+'</div><span>'+dn(d['Athlete Name'])+'</span></div></td>'
@@ -1472,11 +1222,9 @@ function renderCmp() {
     {l:'Overall',k:'Score OVERALL',lb:false},{l:'Power',k:'Score POWER',lb:false},{l:'Strength',k:'Score STRENGTH',lb:false},
     {l:'Speed',k:'Score SPEED',lb:false},{l:'Conditioning',k:'Score CONDITIONING',lb:false},
     {l:'Squat Max',k:'Squat Max',lb:false},{l:'Bench Press',k:'Bench Press Max',lb:false},{l:'TBDL Max',k:'TBDL Max',lb:false},
-    {l:'NCMJ (in)',k:'NCMJ Mat Best (in)',lb:false},{l:'CMJ (in)',k:'CMJ Best (in)',lb:false},{l:'Power W (watts)',k:'Power W (Mat)',lb:false},{l:'Broad Jump (in)',k:'Broad Jump Best (in)',lb:false},
+    {l:'CMJ (in)',k:'CMJ Best (in)',lb:false},{l:'Broad Jump (in)',k:'Broad Jump Best (in)',lb:false},
     {l:'10 yd (s)',k:'10 yd Best (s)',lb:true},{l:'Pro Agility (s)',k:'Pro Agility Best (s)',lb:true},
-    {l:'Beep Test',k:'Beep Test',lb:false},
-    {l:'Grip Right (lbs)',k:'Grip Right',lb:false},
-    {l:'Grip Left (lbs)',k:'Grip Left',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},
+    {l:'Beep Test',k:'Beep Test',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},
   ];
   ge('cmpBody').innerHTML = cm.map(function(m) {
     var va=dA[m.k], vb=dB[m.k];
@@ -1495,8 +1243,8 @@ function renderCmp() {
 function renderPos() {
   var s=ge('posSeason')?ge('posSeason').value:'All', p=ge('posPeriod')?ge('posPeriod').value:'All';
   var fd=DATA.slice(); if(s!=='All')fd=fd.filter(function(d){return d.Season===s;}); if(p!=='All')fd=fd.filter(function(d){return d['Time Period']===p;});
-  var pm=[{l:'Squat Max',k:'Squat Max',u:'lbs'},{l:'Bench Press',k:'Bench Press Max',u:'lbs'},{l:'TBDL Max',k:'TBDL Max',u:'lbs'},{l:'Vertical',k:'VJ Vertec Best (in)',u:'"'},{l:'Approach',k:'Approach Jump Best (in)',u:'"'},{l:'Power W',k:'Power W (Vertec)',u:'W'},{l:'10 yd',k:'10 yd Best (s)',u:'s',lb:true},{l:'20 yd',k:'20 yd Best (s)',u:'s',lb:true},{l:'Lane Agility',k:'Lane Agility Best',u:'s',lb:true},{l:'Beep Test',k:'Beep Test',u:''},{l:'Grip Right',k:'Grip Right',u:'lbs'},{l:'Grip Left',k:'Grip Left',u:'lbs'}];
-  ge('posGrid').innerHTML = ['Guard','Forward'].map(function(pos) {
+  var pm=[{l:'Squat Max',k:'Squat Max',u:'lbs'},{l:'Bench Press',k:'Bench Press Max',u:'lbs'},{l:'TBDL Max',k:'TBDL Max',u:'lbs'},{l:'CMJ',k:'CMJ Best (in)',u:'"'},{l:'10 yd',k:'10 yd Best (s)',u:'s',lb:true},{l:'Beep Test',k:'Beep Test',u:''}];
+  ge('posGrid').innerHTML = ['Forward','Defenseman','Goalie'].map(function(pos) {
     var g=fd.filter(function(d){return d.Position===pos;}); if(!g.length)return'';
     var tc2={e:0,g2:0,a:0,b:0,d:0};
     g.filter(function(d){return d['Score OVERALL']>0;}).forEach(function(d){var sc=d['Score OVERALL'];if(sc>=80)tc2.e++;else if(sc>=60)tc2.g2++;else if(sc>=40)tc2.a++;else if(sc>=20)tc2.b++;else tc2.d++;});
@@ -1504,7 +1252,7 @@ function renderPos() {
     var avgSc=tested?(g.filter(function(d){return d['Score OVERALL']>0;}).map(function(d){return d['Score OVERALL'];}).reduce(function(a,b){return a+b;},0)/tested).toFixed(0):'—';
     var cols2={e:'var(--elite)',g2:'var(--good)',a:'var(--gold)',b:'var(--blow)',d:'var(--dev)'};
     var dist=Object.keys(tc2).map(function(t){return'<div style="width:'+(tested?(tc2[t]/tested*100).toFixed(0):0)+'%;background:'+cols2[t]+';height:100%;min-width:'+(tc2[t]>0?3:0)+'px"></div>';}).join('');
-    var pc=pos==='Guard'?'#00C896':'#4FC3F7';
+    var pc=pos==='Forward'?'#4FC3F7':pos==='Defenseman'?'#E8A900':'#00C896';
     var rows=pm.map(function(m){
       var sorted=g.filter(function(d){return d[m.k]!=null&&!isNaN(d[m.k])&&d[m.k]>0;});
       sorted.sort(function(a,b){return m.lb?a[m.k]-b[m.k]:b[m.k]-a[m.k];});
@@ -1539,135 +1287,33 @@ function buildScales() {
   mk('scMood',  'mood',   WC, WI, WL);
 }
 
-
 ge('wSubmit').addEventListener('click', function() {
-  var athl = ge('wAthl').value, date = ge('wDate').value;
-  if (!athl || !date) { alert('Select athlete and date.'); return; }
-  if (!sel.sleep || !sel.sore || !sel.energy || !sel.mood) { alert('Complete all wellness scales.'); return; }
-  var validSessions = sessionData.filter(function(s){ return (parseInt(s.mins)||0) > 0; });
-  if (!validSessions.length) { alert('Add at least one session with a duration.'); return; }
-  var ws = (sel.sleep + sel.sore + sel.energy + sel.mood) / 4;
-  var notes = ge('wNotes').value;
-  var btn = ge('wSubmit');
-  btn.textContent = 'Saving...';
-  btn.disabled = true;
-  var entries = validSessions.map(function(s) {
-    var _hrv  = ge('wHRV')      ? (parseInt(ge('wHRV').value)      || null) : null;
-    var _rhr  = ge('wRestHR')   ? (parseInt(ge('wRestHR').value)   || null) : null;
-    var _slh  = ge('wSleepHrs') ? (parseFloat(ge('wSleepHrs').value) || null) : null;
-    return { id: Date.now() + Math.round(Math.random()*9999),
-      athlete: athl, date: date, session: s.type, rpe: parseInt(s.rpe)||3,
-      sleep: sel.sleep, soreness: sel.sore, energy: sel.energy, mood: sel.mood,
-      wellness: parseFloat(ws.toFixed(2)),
-      duration: parseInt(s.mins)||0, load: (parseInt(s.rpe)||3)*(parseInt(s.mins)||0),
-      hrv: _hrv, resting_hr: _rhr, sleep_hrs: _slh,
-      notes: s.notes || notes };
-  });
-  var saved = 0, errors = 0;
-  function onDone() {
-    saved++;
-    if (saved + errors >= entries.length) {
-      btn.textContent = '\u2713 Save All Sessions';
-      btn.disabled = false;
-      if (errors > 0) { alert('Saved ' + saved + ' session(s), ' + errors + ' failed. Check connection.'); }
-      else { alert('Saved ' + saved + ' session(s)! Wellness avg: ' + ws.toFixed(1) + '/5'); }
-      sel = {rpe:null, sleep:null, sore:null, energy:null, mood:null};
-      ['scSleep','scSore','scEnergy','scMood'].forEach(function(id){
-        document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});
-      });
-      sessionData = [{type:'Lift', mins:60, rpe:3, notes:''}];
-      buildSessionBlocks();
-      ge('wNotes').value = '';
-      loadWLog._lastFetch = 0; loadWLog(function() { renderWLog(); showSub('wrecent', document.querySelectorAll('.stab')[1]); }, true);
-    }
-  }
-  entries.forEach(function(entry) {
-    saveToSupabase(entry, onDone, function() { errors++; onDone(); });
-  });
+  var athl=ge('wAthl').value, date=ge('wDate').value, sess=ge('wSess').value;
+  var dur=parseInt(ge('wDur').value)||null, notes=ge('wNotes').value;
+  if (!athl||!date) { alert('Select athlete and date.'); return; }
+  if (!sel.rpe)     { alert('Select RPE (1-5).'); return; }
+  if (!sel.sleep||!sel.sore||!sel.energy||!sel.mood) { alert('Complete all wellness scales.'); return; }
+  var ws = (sel.sleep+sel.sore+sel.energy+sel.mood)/4;
+  var entry = {id:Date.now(),athlete:athl,date:date,session:sess,rpe:sel.rpe,sleep:sel.sleep,soreness:sel.sore,energy:sel.energy,mood:sel.mood,wellness:parseFloat(ws.toFixed(2)),duration:dur,load:sel.rpe*(dur||60),notes:notes};
+  wLog.unshift(entry);
+  localStorage.setItem('qumhoc_w5', JSON.stringify(wLog));
+  sel = {rpe:null,sleep:null,sore:null,energy:null,mood:null};
+  ['scRPE','scSleep','scSore','scEnergy','scMood'].forEach(function(id){document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});});
+  ge('wDur').value=''; ge('wNotes').value='';
+  alert('Saved! Wellness avg: '+ws.toFixed(1)+'/5');
+  showSub('wrecent', document.querySelectorAll('.stab')[1]);
 });
 
-// Override renderWLog to support session type filter
-function renderWLog() {
-  var fa   = ge('wFA')    ? ge('wFA').value    : 'All';
-  var fSess= ge('wFSess') ? ge('wFSess').value : 'All';
-  var entries = wLog.slice();
-  if (fa    !== 'All') entries = entries.filter(function(e){ return e.athlete === fa; });
-  if (fSess !== 'All') entries = entries.filter(function(e){ return e.session === fSess; });
-  if (!entries.length) {
-    ge('wLog').innerHTML = '<div style="color:var(--td);font-size:12px;text-align:center;padding:20px">No entries yet.</div>';
-    ge('wPills').innerHTML = '';
-    return;
-  }
-  var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
-  var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
-  var tM   = entries.map(function(e){return e.duration||0;}).reduce(function(a,b){return a+b;},0);
-  var hv   = entries.filter(function(e){return e.hrv;});
-  var sv   = entries.filter(function(e){return e.sleep_hrs;});
-  var aHRV = hv.length ? (hv.reduce(function(a,e){return a+e.hrv;},0)/hv.length).toFixed(0) : null;
-  var aSLP = sv.length ? (sv.reduce(function(a,e){return a+e.sleep_hrs;},0)/sv.length).toFixed(1) : null;
-  ge('wPills').innerHTML =
-    '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
-  + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
-  + (aHRV ? '<div class="pill"><div class="pv" style="color:#4FC3F7">'+aHRV+'ms</div><div class="pl2">Avg HRV</div></div>' : '')
-  + (aSLP ? '<div class="pill"><div class="pv" style="color:var(--elite)">'+aSLP+'h</div><div class="pl2">Avg Sleep</div></div>' : '')
-  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+tL.toLocaleString()+'</div><div class="pl2">Total Load (AU)</div></div>'
-  + '<div class="pill"><div class="pv">'+tM+'</div><div class="pl2">Total Mins</div></div>'
-  + '<div class="pill"><div class="pv">'+entries.length+'</div><div class="pl2">Sessions</div></div>';
-  ge('wLog').innerHTML = entries.slice(0,50).map(function(e) {
-    var rc = RC[e.rpe] || 'var(--gold)', wc = WC[Math.round(e.wellness)] || 'var(--gold)';
-    var sc = sessColor(e.session);
-    return '<div class="le">'
-      + '<div class="ld">'+e.date+'</div>'
-      + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
-      + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
-      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+(e.duration||0)+' min</div>'
-      + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
-      + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
-      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
-      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
-      + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
-      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete">✕</button>'
-      + '</div>';
-  }).join('');
-}
 
-// ─── WEEKLY PLANNER ───────────────────────────────────────────────────────────
-// Plan view buttons
-document.addEventListener('click', function(e) {
-  if (e.target.hasAttribute('data-planview')) {
-    planView = e.target.getAttribute('data-planview');
-    document.querySelectorAll('[data-planview]').forEach(function(b){b.classList.remove('on');});
-    e.target.classList.add('on');
-    renderPlanner();
-  }
-});
-
-function getFilteredPlan() {
-  var phase = ge('planPhase') ? ge('planPhase').value : 'All';
-  var weeks = PLAN.slice();
-  if (phase === 'pre')       weeks = weeks.filter(function(w,i){return i<6;});
-  else if (phase === 'inseason') weeks = weeks.filter(function(w,i){return i>=6&&i<28;});
-  else if (phase === 'post') weeks = weeks.filter(function(w,i){return i>=28&&i<33;});
-  else if (phase === 'offseason') weeks = weeks.filter(function(w,i){return i>=33;});
-  return weeks;
-}
-
-
+// ─── ACWR & TRENDS ───────────────────────────────────────────────────────────
 function computeACWR(athlete) {
   var data = athlete==='All' ? wLog : wLog.filter(function(e){return e.athlete===athlete;});
-  if (!data.length) return {acute:0,chronic:0,ratio:null,insufficient:true};
+  if (!data.length) return {acute:0,chronic:0,ratio:0};
   var now=new Date(), d7=new Date(now), d28=new Date(now);
   d7.setDate(d7.getDate()-7); d28.setDate(d28.getDate()-28);
-  // Need at least 7 days of data spread over at least 14 days for meaningful ACWR
-  var dates = data.map(function(e){return e.date;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
-  var spanDays = dates.length > 1 ? Math.round((new Date(dates[dates.length-1])-new Date(dates[0]))/86400000) : 0;
   var a7  = data.filter(function(e){return new Date(e.date)>=d7; }).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/7;
   var c28 = data.filter(function(e){return new Date(e.date)>=d28;}).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/28;
-  var ratio = c28 > 0 ? parseFloat((a7/c28).toFixed(2)) : null;
-  // Flag as insufficient if less than 14 days of data spread
-  var insufficient = spanDays < 14;
-  return {acute:Math.round(a7), chronic:Math.round(c28), ratio:ratio, insufficient:insufficient, spanDays:spanDays};
+  return {acute:Math.round(a7), chronic:Math.round(c28), ratio:c28>0?parseFloat((a7/c28).toFixed(2)):0};
 }
 function acwrCo(r) { return r<0.8?'var(--good)':r<=1.3?'var(--elite)':r<=1.5?'var(--gold)':'var(--dev)'; }
 function acwrZn(r) { return r===0?'No Data':r<0.8?'Under-training':r<=1.3?'Optimal Zone':r<=1.5?'Caution':'High Risk'; }
@@ -1683,20 +1329,7 @@ function renderTrends() {
   entries = entries.filter(function(e){return new Date(e.date)>=cutoff;}).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
 
   if (athl !== 'All') {
-    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(r||0);
-    var ms=computeMonotonyStrain(athl);
-    var mpanel=ge('monotonyPanel');
-    if(mpanel){
-      var mColor=ms.monotony===null?'var(--td)':ms.monotony>2?'var(--dev)':ms.monotony>1.5?'var(--gold)':'var(--elite)';
-      var sColor=ms.strain===null?'var(--td)':ms.strain>6000?'var(--dev)':ms.strain>4000?'var(--gold)':'var(--elite)';
-      mpanel.innerHTML='<div class="st" style="margin-bottom:10px;">LOAD <span>QUALITY</span></div>'
-        +'<div style="display:flex;gap:10px;flex-wrap:wrap;">'
-        +'<div class="pill"><div class="pv" style="color:'+mColor+'">'+(ms.monotony!==null?ms.monotony.toFixed(2):'--')+'</div><div class="pl2">Monotony</div></div>'
-        +'<div class="pill"><div class="pv" style="color:'+sColor+'">'+(ms.strain!==null?ms.strain.toLocaleString():'--')+'</div><div class="pl2">Strain (AU)</div></div>'
-        +'<div class="pill"><div class="pv">'+(ms.weekTotal||0).toLocaleString()+'</div><div class="pl2">Week Load (AU)</div></div>'
-        +(ms.monotony!==null&&ms.monotony>2?'<div style="color:var(--dev);font-size:11px;font-weight:600;align-self:center;">&#9888; High monotony - vary training stimulus</div>':'')
-        +'</div>';
-    }
+    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(r);
     ge('acwrGrid').innerHTML = '<div class="mi" style="border:1px solid '+cl+';border-radius:var(--rl);padding:14px;grid-column:span 2">'
       + '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
       + '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:44px;font-weight:900;color:'+cl+'">'+r.toFixed(2)+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:'+cl+'">'+acwrZn(r)+'</div></div>'
@@ -2050,7 +1683,6 @@ function parsePlanCSV(text) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 function initApp() {
-  warmSupabase(); // wake Supabase cold start immediately
   fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason']);
   fillAthletes();
   populateDates();
@@ -2073,11 +1705,6 @@ function initApp() {
       + names.map(function(n){return '<option value="'+n+'">'+dn(n)+'</option>';}).join('');
   }
   renderKPIs(); renderOvTable(); renderLB(); renderCmp(); renderPos();
-  // Activate the overview tab on load
-  var firstTab = document.querySelector('.ntab');
-  if (firstTab) firstTab.classList.add('active');
-  var ovSec = ge('overview');
-  if (ovSec) ovSec.classList.add('active');
 }
 
 
@@ -2151,6 +1778,122 @@ function updateLoadTotals() {
   ge('ltAvgRPE').textContent = rpeCount ? (rpeSum/rpeCount).toFixed(1) : '—';
   ge('ltSessions').textContent = sessionData.filter(function(s){return (parseInt(s.mins)||0)>0;}).length;
 }
+
+// Delegate session block events
+document.addEventListener('change', function(e) {
+  var el = e.target;
+  if (el.hasAttribute('data-field') && el.hasAttribute('data-idx')) {
+    var idx = parseInt(el.getAttribute('data-idx'));
+    var field = el.getAttribute('data-field');
+    if (field === 'rpe') sessionData[idx][field] = parseInt(el.value);
+    else if (field === 'mins') sessionData[idx][field] = parseInt(el.value) || 0;
+    else sessionData[idx][field] = el.value;
+    updateLoadTotals();
+  }
+});
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('rm-session') || e.target.closest('.rm-session')) {
+    var btn = e.target.classList.contains('rm-session') ? e.target : e.target.closest('.rm-session');
+    var idx = parseInt(btn.getAttribute('data-idx'));
+    sessionData.splice(idx, 1);
+    buildSessionBlocks();
+    return;
+  }
+});
+
+// Add session button
+ge('addSessionBtn').addEventListener('click', function() {
+  sessionData.push({type:'Lift', mins:60, rpe:3, notes:''});
+  buildSessionBlocks();
+});
+
+// Save wellness entry (multi-session)
+ge('wSubmit').addEventListener('click', function() {
+  var athl = ge('wAthl').value;
+  var date = ge('wDate').value;
+  if (!athl || !date) { alert('Select athlete and date.'); return; }
+  if (!sel.sleep || !sel.sore || !sel.energy || !sel.mood) { alert('Complete all wellness scales.'); return; }
+  var validSessions = sessionData.filter(function(s){ return (parseInt(s.mins)||0) > 0; });
+  if (!validSessions.length) { alert('Add at least one session with a duration.'); return; }
+
+  var ws = (sel.sleep + sel.sore + sel.energy + sel.mood) / 4;
+  var notes = ge('wNotes').value;
+
+  // Save one entry per session block, shared wellness scores
+  validSessions.forEach(function(s) {
+    var entry = {
+      id: Date.now() + Math.random(),
+      athlete: athl, date: date,
+      session: s.type, rpe: parseInt(s.rpe) || 3,
+      mins: parseInt(s.mins) || 0,
+      sleep: sel.sleep, soreness: sel.sore, energy: sel.energy, mood: sel.mood,
+      wellness: parseFloat(ws.toFixed(2)),
+      load: (parseInt(s.rpe)||3) * (parseInt(s.mins)||0),
+      notes: s.notes || notes
+    };
+    wLog.unshift(entry);
+  });
+  localStorage.setItem('qumhoc_w5', JSON.stringify(wLog));
+
+  // Reset
+  sel = {rpe:null, sleep:null, sore:null, energy:null, mood:null};
+  ['scSleep','scSore','scEnergy','scMood'].forEach(function(id){
+    document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});
+  });
+  sessionData = [{type:'Lift',mins:60,rpe:3,notes:''}];
+  buildSessionBlocks();
+  ge('wNotes').value = '';
+  alert('Saved ' + validSessions.length + ' session(s)! Wellness avg: ' + ws.toFixed(1) + '/5');
+  showSub('wrecent', document.querySelectorAll('.stab')[1]);
+});
+
+// Override renderWLog to support session type filter
+function renderWLog() {
+  var fa   = ge('wFA')    ? ge('wFA').value    : 'All';
+  var fSess= ge('wFSess') ? ge('wFSess').value : 'All';
+  var entries = wLog.slice();
+  if (fa    !== 'All') entries = entries.filter(function(e){ return e.athlete === fa; });
+  if (fSess !== 'All') entries = entries.filter(function(e){ return e.session === fSess; });
+  if (!entries.length) {
+    ge('wLog').innerHTML = '<div style="color:var(--td);font-size:12px;text-align:center;padding:20px">No entries yet.</div>';
+    ge('wPills').innerHTML = '';
+    return;
+  }
+  var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
+  var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
+  var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
+  var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
+  ge('wPills').innerHTML =
+    '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
+  + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
+  + '<div class="pill"><div class="pv" style="color:var(--gold)">'+tL.toLocaleString()+'</div><div class="pl2">Total Load (AU)</div></div>'
+  + '<div class="pill"><div class="pv">'+tM+'</div><div class="pl2">Total Mins</div></div>'
+  + '<div class="pill"><div class="pv">'+entries.length+'</div><div class="pl2">Sessions</div></div>';
+  ge('wLog').innerHTML = entries.slice(0,50).map(function(e) {
+    var rc = RC[e.rpe] || 'var(--gold)', wc = WC[Math.round(e.wellness)] || 'var(--gold)';
+    var sc = sessColor(e.session);
+    return '<div class="le">'
+      + '<div class="ld">'+e.date+'</div>'
+      + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
+      + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
+      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
+      + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
+      + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
+      + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ─── WEEKLY PLANNER ───────────────────────────────────────────────────────────
+// Plan view buttons
+document.addEventListener('click', function(e) {
+  if (e.target.hasAttribute('data-planview')) {
+    planView = e.target.getAttribute('data-planview');
+    document.querySelectorAll('[data-planview]').forEach(function(b){b.classList.remove('on');});
+    e.target.classList.add('on');
+    renderPlanner();
+  }
+});
 
 function getFilteredPlan() {
   var phase = ge('planPhase') ? ge('planPhase').value : 'All';
@@ -2450,9 +2193,37 @@ function renderPlanInsights(weeks) {
 
 // initApp extension handled above
 window.renderPlanner = renderPlanner;
+window.renderWLog = renderWLog;
 
+function checkRiskFlag(athlete) {
+  var banner = ge('riskBanner');
+  if (!banner) return;
+  var now = new Date(), weekAgo = new Date(now);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  var ents = wLog.filter(function(e) {
+    return (athlete === 'All' || e.athlete === athlete) && new Date(e.date) >= weekAgo;
+  });
+  if (!ents.length) { banner.className = 'risk-banner'; return; }
+  var avgW = ents.reduce(function(a, e) { return a + e.wellness; }, 0) / ents.length;
+  var acwr = computeACWR(athlete);
+  var highACWR = acwr.ratio !== null && acwr.ratio > 1.3;
+  var lowWell  = avgW < 3.0;
+  var msgs = [];
+  if (highACWR && lowWell)
+    msgs.push('\u26a0 HIGH RISK: ACWR ' + acwr.ratio.toFixed(2) + ' AND avg wellness ' + avgW.toFixed(1) + '/5 \u2014 peak injury risk. Reduce load now.');
+  else if (highACWR)
+    msgs.push('\u26a0 CAUTION: ACWR ' + acwr.ratio.toFixed(2) + ' (>1.3) \u2014 monitor training load closely.');
+  else if (lowWell)
+    msgs.push('\u26a0 CAUTION: Avg wellness ' + avgW.toFixed(1) + '/5 (<3.0) this week \u2014 significant fatigue reported.');
+  if (msgs.length) {
+    banner.className = 'risk-banner show';
+    banner.innerHTML = '<div class="rb-title">Risk Alert \u2014 ' + (athlete === 'All' ? 'Team' : dn(athlete)) + '</div>' + msgs.join('<br>');
+  } else {
+    banner.className = 'risk-banner';
+  }
+}
+window.checkRiskFlag = checkRiskFlag;
 
-// ─── MONOTONY & STRAIN ────────────────────────────────────────────────────────
 function computeMonotonyStrain(athlete) {
   var now = new Date(), d7 = new Date(now);
   d7.setDate(d7.getDate() - 7);
@@ -2469,7 +2240,139 @@ function computeMonotonyStrain(athlete) {
   return { monotony: monotony, strain: strain, weekTotal: Math.round(avg * loads.length) };
 }
 
-// ─── COMPLIANCE TRACKER ───────────────────────────────────────────────────────
+function deleteFromSupabase(id, onSuccess, onError) {
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?id=eq.' + id + '&team=eq.' + TEAM_ID, {
+    method: 'DELETE', headers: sbH()
+  })
+  .then(function(r) {
+    if (r.ok) {
+      wLog = wLog.filter(function(e) { return e.id !== id; });
+      try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
+      if (onSuccess) onSuccess();
+    } else { r.text().then(function(t) { if (onError) onError(t); }); }
+  })
+  .catch(function(err) { if (onError) onError(err); });
+}
+
+function loadWLog(callback, forceRefresh) {
+  var team = TEAM_ID;
+
+  // Step 1: show cache instantly so UI is never empty
+  try {
+    var cached = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+    if (cached.length) { wLog = cached; if (callback) callback(); }
+  } catch(e) {}
+
+  // Step 2: throttle - skip re-fetch if recent (unless forced)
+  var now = Date.now();
+  if (!forceRefresh && loadWLog._lastFetch && (now - loadWLog._lastFetch) < 10000) {
+    updateSyncStatus('ok');
+    if (!wLog.length && callback) callback();
+    return;
+  }
+  loadWLog._lastFetch = now;
+  updateSyncStatus('loading', 'Syncing with cloud...');
+
+  // Step 3: fetch with 5s timeout flag (no AbortController - Safari compatible)
+  var done    = false;
+  var t0      = Date.now();
+  var cols    = 'id,athlete,date,session,rpe,sleep,soreness,energy,mood,wellness,duration,load,notes,hrv,resting_hr,sleep_hrs';
+  var timeoutId = setTimeout(function() {
+    if (done) return;
+    done = true;
+    console.warn('Supabase timeout after 5s');
+    updateSyncStatus('err');
+    if (!wLog.length) {
+      try { wLog = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { wLog = []; }
+      if (callback) callback();
+    }
+  }, 5000);
+
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE
+    + '?team=eq.' + encodeURIComponent(team)
+    + '&select=' + cols
+    + '&order=date.desc,id.desc&limit=200', {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Accept': 'application/json'
+    }
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(rows) {
+    clearTimeout(timeoutId);
+    if (done) return; // timeout already fired
+    done = true;
+    if (!Array.isArray(rows)) throw new Error('Bad response');
+    var ms = Date.now() - t0;
+    wLog = rows.map(function(r) {
+      return {
+        id: r.id,           athlete:  r.athlete,
+        date: r.date,       session:  r.session,
+        rpe: r.rpe,         sleep:    r.sleep,
+        soreness: r.soreness, energy: r.energy,
+        mood: r.mood,       wellness: r.wellness,
+        duration: r.duration, load:   r.load,
+        notes: r.notes || '',
+        hrv: r.hrv || null, resting_hr: r.resting_hr || null, sleep_hrs: r.sleep_hrs || null
+      };
+    });
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
+    updateSyncStatus('ok', 'Synced ' + wLog.length + ' entries (' + ms + 'ms)');
+    setTimeout(function() { updateSyncStatus('ok'); }, 3000);
+    if (callback) callback();
+  })
+  .catch(function(err) {
+    clearTimeout(timeoutId);
+    if (done) return;
+    done = true;
+    console.warn('Supabase: ' + err.message);
+    updateSyncStatus('err');
+    if (!wLog.length) {
+      try { wLog = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); } catch(e) { wLog = []; }
+      if (callback) callback();
+    }
+  });
+}
+
+function renderAnthroTrends(athlete) {
+  var el = ge('anthroTrends'); if (!el) return;
+  var recs = DATA.filter(function(d) {
+    return (athlete === 'All' || d['Athlete Name'] === athlete) && d.Bodyweight && d.Date;
+  }).sort(function(a,b){ return new Date(a.Date) - new Date(b.Date); });
+  if (recs.length < 2) {
+    el.innerHTML = '<div style="color:var(--td);font-size:12px;padding:16px;text-align:center;">Need 2+ test sessions with body comp data.</div>';
+    return;
+  }
+  var metrics = [
+    {l:'Body Weight', k:'Bodyweight', u:'lbs', up:'bad'},
+    {l:'Lean Mass',   k:'Lean Mass',  u:'lbs', up:'good'},
+    {l:'Body Fat %',  k:'Bodyfat',    u:'%',   up:'bad'},
+  ];
+  el.innerHTML = metrics.map(function(m) {
+    var v = recs.filter(function(r){ return r[m.k] != null; });
+    if (v.length < 2) return '';
+    var f = v[0][m.k], la = v[v.length-1][m.k], diff = la - f;
+    var pct  = ((diff/f)*100).toFixed(1);
+    var good = (diff > 0 && m.up === 'good') || (diff < 0 && m.up === 'bad');
+    var cls  = diff === 0 ? 'ad-neu' : (good ? 'ad-good' : 'ad-bad');
+    var sign = diff > 0 ? '+' : '';
+    return '<div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:12px;margin-bottom:8px;">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+      + '<span style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--tm);">' + m.l.toUpperCase() + '</span>'
+      + '<span class="anthro-delta ' + cls + '">' + sign + diff.toFixed(1) + m.u + ' (' + sign + pct + '%) vs pre-season</span>'
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between;font-size:12px;">'
+      + '<span style="color:var(--tm)">Pre: <strong style="color:var(--tx)">' + f.toFixed(1) + m.u + '</strong></span>'
+      + '<span style="color:var(--tm)">Now: <strong style="color:var(--tx)">' + la.toFixed(1) + m.u + '</strong></span>'
+      + '</div></div>';
+  }).join('');
+}
+window.renderAnthroTrends = renderAnthroTrends;
+
 function renderCompliance() {
   var el = ge('compliancePanel'); if (!el) return;
   var now = new Date(), d7 = new Date(now);
@@ -2505,7 +2408,6 @@ function renderCompliance() {
 }
 window.renderCompliance = renderCompliance;
 
-// ─── PRE/POST DELTA TABLE ─────────────────────────────────────────────────────
 function renderDeltaTable(athlete) {
   var el = ge('deltaTable'); if (!el) return;
   var recs = DATA.filter(function(d){
@@ -2554,7 +2456,36 @@ function renderDeltaTable(athlete) {
 }
 window.renderDeltaTable = renderDeltaTable;
 
+function saveToSupabase(entry, onSuccess, onError) {
+  var row = {
+    id: entry.id, team: TEAM_ID, athlete: entry.athlete, date: entry.date,
+    session: entry.session, rpe: entry.rpe, sleep: entry.sleep,
+    soreness: entry.soreness, energy: entry.energy, mood: entry.mood,
+    wellness: entry.wellness, duration: entry.duration, load: entry.load,
+    notes: entry.notes || '',
+    hrv: entry.hrv || null, resting_hr: entry.resting_hr || null,
+    sleep_hrs: entry.sleep_hrs || null
+  };
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
+    method: 'POST', headers: sbH(), body: JSON.stringify(row)
+  })
+  .then(function(r) {
+    if (r.ok || r.status === 201) {
+      try { localStorage.setItem(LOCAL_KEY, JSON.stringify(wLog)); } catch(e) {}
+      if (onSuccess) onSuccess();
+    } else { r.text().then(function(t) { if (onError) onError(t); }); }
+  })
+  .catch(function(err) { if (onError) onError(err); });
+}
 
+function sbH() {
+  return {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
 
 function sortOv(col) {
   if (ovSortCol === col) { ovSortAsc = !ovSortAsc; }
@@ -2563,54 +2494,26 @@ function sortOv(col) {
 }
 window.sortOv = sortOv;
 
-
-function renderAnthroTrends(athlete) {
-  var el = ge('anthroTrends'); if (!el) return;
-  var recs = DATA.filter(function(d) {
-    return (athlete === 'All' || d['Athlete Name'] === athlete) && d.Bodyweight && d.Date;
-  }).sort(function(a,b){ return new Date(a.Date) - new Date(b.Date); });
-  if (recs.length < 2) {
-    el.innerHTML = '<div style="color:var(--td);font-size:12px;padding:16px;text-align:center;">Need 2+ test sessions with body comp data.</div>';
-    return;
-  }
-  var metrics = [
-    {l:'Body Weight', k:'Bodyweight', u:'lbs', up:'bad'},
-    {l:'Lean Mass',   k:'Lean Mass',  u:'lbs', up:'good'},
-    {l:'Body Fat %',  k:'Bodyfat',    u:'%',   up:'bad'},
-  ];
-  el.innerHTML = metrics.map(function(m) {
-    var v = recs.filter(function(r){ return r[m.k] != null; });
-    if (v.length < 2) return '';
-    var f = v[0][m.k], la = v[v.length-1][m.k], diff = la - f;
-    var pct  = ((diff/f)*100).toFixed(1);
-    var good = (diff > 0 && m.up === 'good') || (diff < 0 && m.up === 'bad');
-    var cls  = diff === 0 ? 'ad-neu' : (good ? 'ad-good' : 'ad-bad');
-    var sign = diff > 0 ? '+' : '';
-    return '<div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:12px;margin-bottom:8px;">'
-      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-      + '<span style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--tm);">' + m.l.toUpperCase() + '</span>'
-      + '<span class="anthro-delta ' + cls + '">' + sign + diff.toFixed(1) + m.u + ' (' + sign + pct + '%) vs pre-season</span>'
-      + '</div>'
-      + '<div style="display:flex;justify-content:space-between;font-size:12px;">'
-      + '<span style="color:var(--tm)">Pre: <strong style="color:var(--tx)">' + f.toFixed(1) + m.u + '</strong></span>'
-      + '<span style="color:var(--tm)">Now: <strong style="color:var(--tx)">' + la.toFixed(1) + m.u + '</strong></span>'
-      + '</div></div>';
-  }).join('');
+function updateSyncStatus(state, msg) {
+  var dot = ge('syncDot'), el = ge('syncMsg');
+  if (!dot || !el) return;
+  dot.className = 'sync-dot ' + state;
+  if (msg) { el.textContent = msg; return; }
+  if (state === 'ok')      el.textContent = 'Cloud sync active - entries visible on all devices';
+  else if (state === 'err') el.textContent = 'Cloud sync offline - showing cached data. Tap Refresh to retry.';
+  else                      el.textContent = 'Connecting to cloud...';
 }
-window.renderAnthroTrends = renderAnthroTrends;
+
+function warmSupabase() {
+  fetch(SB_URL + '/rest/v1/' + SB_TABLE + '?team=eq.' + TEAM_ID + '&limit=1', {
+    method: 'HEAD',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  }).catch(function() {}); // ignore errors - this is just a warmup ping
+}
 
 initApp();
 
 })(); // end IIFE
-
-
-
-
-
-
-
-
-
 
 </script>
 </body>
