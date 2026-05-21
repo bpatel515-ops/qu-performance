@@ -15,7 +15,7 @@
   --r:6px;--rl:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;overflow-x:hidden;}
+body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-size:14px;}
 .topbar{background:var(--s1);border-bottom:2px solid var(--gold);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tbl{display:flex;align-items:center;gap:12px;}
 .logo-wrap{width:46px;height:46px;flex-shrink:0;}
@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--tx);font-family:Barlow,sans-serif;font-siz
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
 .st{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
 .st span{color:var(--gold);}
-.tw{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);overflow:hidden;margin-bottom:14px;overflow-x:auto;}
+.tw{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px;}
 table{width:100%;border-collapse:collapse;}
 thead{background:var(--s2);border-bottom:1px solid var(--br);}
 th{padding:8px 10px;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tm);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;}
@@ -75,7 +75,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .tb2{background:rgba(255,112,67,.15);color:var(--blow);}
 .td3{background:rgba(239,83,80,.15);color:var(--dev);}
 .tn2{color:var(--td);}
-.pgrid{display:grid;grid-template-columns:295px 1fr;gap:12px;align-items:start;}
+.pgrid{display:grid;grid-template-columns:295px 1fr;gap:12px;align-items:start;min-width:0;}
 .pc{background:var(--s1);border:1px solid var(--br2);border-radius:var(--rl);padding:16px;}
 .ameta{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;}
 .mi{background:var(--s2);border-radius:var(--r);padding:7px 9px;}
@@ -272,6 +272,53 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
   .pgrid>div:last-child{min-width:0;}
 }
 
+
+/* ═══════════════════════════════════════════════════
+   UNIVERSAL SCROLL FIX
+   ═══════════════════════════════════════════════════ */
+
+/* Body: never clip horizontal content */
+body { overflow-x: unset !important; }
+
+/* Every tab panel: vertical scroll, never clip horizontal */
+.sec { overflow-y: auto; overflow-x: hidden; }
+
+/* Table wrappers: always horizontally scrollable */
+.tw { overflow-x: auto !important; overflow-y: visible;
+      -webkit-overflow-scrolling: touch; }
+
+/* Overview table: min-width so it doesn't collapse */
+#ovTable { min-width: 600px; }
+
+/* Profile grid: right column must not overflow-clip its children */
+.pgrid { overflow: visible; }
+.pgrid > div { min-width: 0; overflow: visible; }
+
+/* History table wrapper: horizontal scroll */
+.pgrid .tw { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+
+/* Main content area: never clip */
+.main { overflow: visible; }
+
+/* Leaderboard, compare, positions table wrappers */
+.lbw, .cmpw, .posw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Wellness log entries */
+.wlog-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Plan chart area */
+.plan-chart-area { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Trends charts */
+.lg { overflow-x: auto; }
+
+/* Mobile: all tables scroll horizontally */
+@media (max-width: 900px) {
+  .sec { overflow-x: auto; }
+  table { min-width: max-content; }
+  .tw { display: block; width: 100%; overflow-x: auto; }
+}
+
 </style>
 </head>
 <body>
@@ -369,7 +416,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>CMJ</th><th>10yd</th><th>ProAg</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Pwr W</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table></div>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;">
@@ -1070,17 +1117,17 @@ function renderKPIs() {
   var t  = fd.filter(function(d) { return d['Score OVERALL'] > 0; });
   var ao = t.length ? t.map(function(d){return d['Score OVERALL'];}).reduce(function(a,b){return a+b;},0)/t.length : 0;
   var kpis = [
-    {l:'Athletes Tested',  v:String(t.length),                          u:'',   s:'of '+fd.length+' total', a:'var(--gold)'},
-    {l:'Avg Overall Score',v:ao.toFixed(1),                              u:'',   s:'team score',             a:co(ao)},
-    {l:'Avg 10 yd',        v:fmt(avgVal(fd,'10 yd Best (s)'),2),        u:'s',  s:'lower is faster',        a:'var(--elite)'},
-    {l:'Avg CMJ',          v:fmt(avgVal(fd,'CMJ Best (in)'),1),          u:'in', s:'team average',           a:'#4FC3F7'},
-    {l:'Avg NCMJ',         v:fmt(avgVal(fd,'NCMJ Mat Best (in)'),1),    u:'in', s:'team average',           a:'#4FC3F7'},
-    {l:'Avg Pro Agility',  v:fmt(avgVal(fd,'Pro Agility Best (s)'),2),  u:'s',  s:'lower is faster',        a:'var(--elite)'},
-    {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),             u:'',   s:'team average',           a:'var(--blow)'},
-    {l:'Avg Squat Max',    v:fmtI(avgVal(fd,'Squat Max')),              u:'lbs',s:'team average',           a:'var(--gold)'},
-    {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),               u:'lbs',s:'team average',           a:'var(--gold)'},
-    {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),        u:'lbs',s:'team average',           a:'var(--gold)'},
-    {l:'Avg Body Fat',     v:fmt(avgVal(fd,'Bodyfat'),1),               u:'%',  s:'team average',           a:'#78909C'},
+    {l:'Athletes Tested',  v:String(t.length),                           u:'',   s:'of '+fd.length+' total', a:'var(--gold)'},
+    {l:'Avg Overall Score',v:ao.toFixed(1),                               u:'',   s:'team score',             a:co(ao)},
+    {l:'Avg 10 yd',        v:fmt(avgVal(fd,'10 yd Best (s)'),2),         u:'s',  s:'lower is faster',        a:'var(--elite)'},
+    {l:'Avg CMJ',          v:fmt(avgVal(fd,'CMJ Best (in)'),1),           u:'in', s:'team average',           a:'#4FC3F7'},
+    {l:'Avg NCMJ',         v:fmt(avgVal(fd,'NCMJ Mat Best (in)'),1),     u:'in', s:'team average',           a:'#4FC3F7'},
+    {l:'Avg Pro Agility',  v:fmt(avgVal(fd,'Pro Agility Best (s)'),2),   u:'s',  s:'lower is faster',        a:'var(--elite)'},
+    {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),              u:'',   s:'team average',           a:'var(--blow)'},
+    {l:'Avg Squat Max',    v:fmtI(avgVal(fd,'Squat Max')),               u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),         u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg Body Fat',     v:fmt(avgVal(fd,'Bodyfat'),1),                u:'%',  s:'team average',           a:'#78909C'},
   ];
   ge('kpiGrid').innerHTML = kpis.map(function(k) {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';
@@ -1138,7 +1185,36 @@ function renderOvTable() {
     };
   }
 
-  ovSortCol = -1; ovSortAsc = false;
+
+  // ── Sort fd by ovSortCol ─────────────────────────────────────────────────
+  if (ovSortCol >= 0) {
+    var colKeys = [
+      'Athlete Name','Position','Group','Season','Time Period','Date'
+    ];
+    if (viewMode === 'scores') {
+      colKeys = colKeys.concat(['Score POWER','Score STRENGTH','Score SPEED',
+        'Score CONDITIONING','Score ANTHRO','Score OVERALL']);
+    } else if (viewMode === 'metrics') {
+      colKeys = colKeys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max',
+        'NCMJ Mat Best (in)','CMJ Best (in)','Power W (Mat)','10 yd Best (s)',
+        'Pro Agility Best (s)','Grip Right','Grip Left','Beep Test']);
+    } else if (viewMode === 'anthro') {
+      colKeys = colKeys.concat(['Bodyweight','Height (inches)','Wingspan',
+        'Bodyfat','Fat Mass','Lean Mass']);
+    }
+    var sortKey = colKeys[ovSortCol] || '';
+    if (sortKey) {
+      fd = fd.slice().sort(function(a, b) {
+        var av = a[sortKey], bv = b[sortKey];
+        if (av == null && bv == null) return 0;
+        if (av == null) return 1;
+        if (bv == null) return -1;
+        var cmp = (typeof av === 'string') ? av.localeCompare(bv) : av - bv;
+        return ovSortAsc ? cmp : -cmp;
+      });
+    }
+  }
+
   ge('ovHead').innerHTML = '<tr>' + baseH + colH + '</tr>';
   ge('ovBody').innerHTML = fd.map(function(d) {
     var name = d['Athlete Name'];
@@ -1276,7 +1352,7 @@ function renderProfile() {
     var bc  = cp>=75 ? 'var(--elite)' : cp>=55 ? 'var(--good)' : cp>=35 ? 'var(--gold)' : 'var(--blow)';
     var tA  = avgVal(peers, m.k);
     var delta = (val != null && tA != null) ? (m.lb ? tA-val : val-tA) : null;
-    var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+'</span>' : '';
+    var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+(m.u||'')+' vs avg</span>' : '';
     var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0 ? 0 : 1;
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?fmt(val,dec)+m.u:'—')+' '+ds+'</div></div>';
   }).join('');
@@ -2478,9 +2554,59 @@ function renderDeltaTable(athlete) {
 window.renderDeltaTable = renderDeltaTable;
 
 
+
+function sortOv(col) {
+  if (ovSortCol === col) { ovSortAsc = !ovSortAsc; }
+  else { ovSortCol = col; ovSortAsc = true; }
+  renderOvTable();
+}
+window.sortOv = sortOv;
+
+
+function renderAnthroTrends(athlete) {
+  var el = ge('anthroTrends'); if (!el) return;
+  var recs = DATA.filter(function(d) {
+    return (athlete === 'All' || d['Athlete Name'] === athlete) && d.Bodyweight && d.Date;
+  }).sort(function(a,b){ return new Date(a.Date) - new Date(b.Date); });
+  if (recs.length < 2) {
+    el.innerHTML = '<div style="color:var(--td);font-size:12px;padding:16px;text-align:center;">Need 2+ test sessions with body comp data.</div>';
+    return;
+  }
+  var metrics = [
+    {l:'Body Weight', k:'Bodyweight', u:'lbs', up:'bad'},
+    {l:'Lean Mass',   k:'Lean Mass',  u:'lbs', up:'good'},
+    {l:'Body Fat %',  k:'Bodyfat',    u:'%',   up:'bad'},
+  ];
+  el.innerHTML = metrics.map(function(m) {
+    var v = recs.filter(function(r){ return r[m.k] != null; });
+    if (v.length < 2) return '';
+    var f = v[0][m.k], la = v[v.length-1][m.k], diff = la - f;
+    var pct  = ((diff/f)*100).toFixed(1);
+    var good = (diff > 0 && m.up === 'good') || (diff < 0 && m.up === 'bad');
+    var cls  = diff === 0 ? 'ad-neu' : (good ? 'ad-good' : 'ad-bad');
+    var sign = diff > 0 ? '+' : '';
+    return '<div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:12px;margin-bottom:8px;">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+      + '<span style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--tm);">' + m.l.toUpperCase() + '</span>'
+      + '<span class="anthro-delta ' + cls + '">' + sign + diff.toFixed(1) + m.u + ' (' + sign + pct + '%) vs pre-season</span>'
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between;font-size:12px;">'
+      + '<span style="color:var(--tm)">Pre: <strong style="color:var(--tx)">' + f.toFixed(1) + m.u + '</strong></span>'
+      + '<span style="color:var(--tm)">Now: <strong style="color:var(--tx)">' + la.toFixed(1) + m.u + '</strong></span>'
+      + '</div></div>';
+  }).join('');
+}
+window.renderAnthroTrends = renderAnthroTrends;
+
 initApp();
 
 })(); // end IIFE
+
+
+
+
+
+
 
 
 
