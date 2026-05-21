@@ -261,6 +261,12 @@ body{overflow-x:unset!important;}
 @media(max-width:900px){.sec{overflow-x:auto;}table{min-width:max-content;}.tw{display:block;width:100%;overflow-x:auto;}}
 @media(max-width:700px){.hrv-row{grid-template-columns:1fr 1fr;}.topbar{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px;}.tbr{flex-wrap:wrap;gap:5px;}.nav{padding:0 8px;}.ntab{padding:10px 11px;font-size:10px;}.main{padding:8px;}.kg{grid-template-columns:repeat(2,1fr);gap:8px;}.fbar{padding:8px 10px;gap:6px;overflow-x:auto;flex-wrap:nowrap;}.pgrid{grid-template-columns:1fr;}.wg{grid-template-columns:1fr;}}
 
+
+.del-btn{position:absolute;top:6px;right:6px;background:none;border:none;color:var(--td);
+  font-size:14px;cursor:pointer;padding:2px 5px;line-height:1;border-radius:3px;transition:all .15s;}
+.del-btn:hover{color:var(--dev);background:rgba(239,83,80,.12);}
+.entry-card{position:relative;}
+
 </style>
 </head>
 <body>
@@ -821,6 +827,20 @@ document.addEventListener('click', function(e) {
   if (el.classList.contains('ntab')) {
     var tab = el.getAttribute('data-tab');
     if (tab) showTab(tab, el);
+    return;
+  }
+
+  // Delete wellness entry
+  if (el.classList.contains('del-btn')) {
+    var eid = el.getAttribute('data-delid');
+    if (!eid) return;
+    if (!confirm('Delete this wellness entry?')) return;
+    el.textContent = '...';
+    var numId = isNaN(eid) ? eid : Number(eid);
+    deleteFromSupabase(numId,
+      function() { renderWLog(); renderCompliance(); },
+      function(err) { el.textContent = '\u2715'; alert('Delete failed: ' + err); }
+    );
     return;
   }
   // Wellness sub-tabs
@@ -1880,6 +1900,7 @@ function renderWLog() {
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
+      + '<button class="del-btn" data-delid="'+e.id+'" title="Delete entry">✕</button>'
       + '</div>';
   }).join('');
 }
@@ -2514,6 +2535,8 @@ function warmSupabase() {
 initApp();
 
 })(); // end IIFE
+
+
 
 </script>
 </body>
