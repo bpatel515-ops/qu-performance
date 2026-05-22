@@ -127,7 +127,7 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .s5i{font-size:15px;}
 .s5l{font-family:"Barlow Condensed",sans-serif;font-size:8px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--td);}
 .ll{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow-y:auto;}
-.le{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:7px 10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.le{background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:7px 10px 7px 10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;position:relative;padding-right:32px;}
 .ld{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--td);min-width:58px;}
 .lb2{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;padding:2px 6px;border-radius:3px;}
 .ln{font-size:11px;color:var(--tm);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1879,7 +1879,7 @@ function renderWLog() {
   var aRPE = entries.map(function(e){return e.rpe;}).reduce(function(a,b){return a+b;},0)/entries.length;
   var aW   = entries.map(function(e){return e.wellness;}).reduce(function(a,b){return a+b;},0)/entries.length;
   var tL   = entries.map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0);
-  var tM   = entries.map(function(e){return e.mins||0;}).reduce(function(a,b){return a+b;},0);
+  var tM   = entries.map(function(e){return e.duration||0;}).reduce(function(a,b){return a+b;},0);
   ge('wPills').innerHTML =
     '<div class="pill"><div class="pv" style="color:'+RC[Math.round(aRPE)]+'">'+aRPE.toFixed(1)+'</div><div class="pl2">Avg RPE</div></div>'
   + '<div class="pill"><div class="pv" style="color:'+WC[Math.round(aW)]+'">'+aW.toFixed(1)+'</div><div class="pl2">Avg Wellness</div></div>'
@@ -1893,7 +1893,7 @@ function renderWLog() {
       + '<div class="ld">'+e.date+'</div>'
       + '<div class="lb2" style="background:'+sc+'22;color:'+sc+'">'+e.session+'</div>'
       + '<div class="lb2" style="background:'+rc+'22;color:'+rc+'">RPE '+e.rpe+'</div>'
-      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.mins||0)+' min</div>'
+      + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.duration||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
@@ -2497,6 +2497,10 @@ function warmSupabase() {
 initApp();
 
 })(); // end IIFE
+
+
+
+
 
 
 
