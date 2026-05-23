@@ -1390,7 +1390,7 @@ function renderTrends() {
       : '';
     ge('acwrGrid').innerHTML = acwrMsg + '<div class="mi" style="border:1px solid '+(acwr.insufficient?'var(--br2)':cl)+';border-radius:var(--rl);padding:14px;grid-column:span 2">'
       + '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
-      + '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:44px;font-weight:900;color:'+cl+'">'+r.toFixed(2)+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:'+cl+'">'+acwrZn(r)+'</div></div>'
+      + '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:44px;font-weight:900;color:'+(acwr.insufficient?'var(--td)':cl)+'">'+(acwr.insufficient?'--':(r!==null?r.toFixed(2):'N/A'))+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:'+(acwr.insufficient?'var(--td)':cl)+'">'+(acwr.insufficient?'Collecting data':acwrZn(r||0))+'</div></div>'
       + '<div class="ameta"><div class="mi"><div class="ml">Acute Load (7d)</div><div class="mv">'+acwr.acute+' AU/day</div></div><div class="mi"><div class="ml">Chronic Load (28d)</div><div class="mv">'+acwr.chronic+' AU/day</div></div></div>'
       + '<div style="font-size:11px;color:var(--tm);line-height:1.8">&#128994; &lt;0.8 Under-training<br><span style="color:var(--elite)">&#10003; 0.8-1.3 Optimal Zone</span><br><span style="color:var(--gold)">&#9888; 1.3-1.5 Caution</span><br><span style="color:var(--dev)">&#9888; &gt;1.5 High Risk</span></div>'
       + '</div></div>';
@@ -2541,6 +2541,7 @@ function warmSupabase() {
 initApp();
 
 })(); // end IIFE
+
 
 
 
