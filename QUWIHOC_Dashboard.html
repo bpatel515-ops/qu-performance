@@ -1343,12 +1343,25 @@ ge('wSubmit').addEventListener('click', function() {
 // ─── ACWR & TRENDS ───────────────────────────────────────────────────────────
 function computeACWR(athlete) {
   var data = athlete==='All' ? wLog : wLog.filter(function(e){return e.athlete===athlete;});
-  if (!data.length) return {acute:0,chronic:0,ratio:0};
+  if (!data.length) return {acute:0,chronic:0,ratio:null,insufficient:true,meaningful:false,spanDays:0};
   var now=new Date(), d7=new Date(now), d28=new Date(now);
   d7.setDate(d7.getDate()-7); d28.setDate(d28.getDate()-28);
-  var a7  = data.filter(function(e){return new Date(e.date)>=d7; }).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/7;
+  // Calculate span of data
+  var dates = data.map(function(e){return e.date;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+  var spanDays = dates.length > 1
+    ? Math.round((new Date(dates[dates.length-1]) - new Date(dates[0])) / 86400000)
+    : 0;
+  var a7  = data.filter(function(e){return new Date(e.date)>=d7;}).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/7;
   var c28 = data.filter(function(e){return new Date(e.date)>=d28;}).map(function(e){return e.load||0;}).reduce(function(a,b){return a+b;},0)/28;
-  return {acute:Math.round(a7), chronic:Math.round(c28), ratio:c28>0?parseFloat((a7/c28).toFixed(2)):0};
+  var ratio = c28 > 0 ? parseFloat((a7/c28).toFixed(2)) : null;
+  return {
+    acute:      Math.round(a7),
+    chronic:    Math.round(c28),
+    ratio:      ratio,
+    spanDays:   spanDays,
+    insufficient: spanDays < 14,   // < 14 days: suppress ACWR display
+    meaningful:   spanDays >= 28,  // >= 28 days: full chronic window available
+  };
 }
 function acwrCo(r) { return r<0.8?'var(--good)':r<=1.3?'var(--elite)':r<=1.5?'var(--gold)':'var(--dev)'; }
 function acwrZn(r) { return r===0?'No Data':r<0.8?'Under-training':r<=1.3?'Optimal Zone':r<=1.5?'Caution':'High Risk'; }
@@ -1364,8 +1377,18 @@ function renderTrends() {
   entries = entries.filter(function(e){return new Date(e.date)>=cutoff;}).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
 
   if (athl !== 'All') {
-    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(r);
-    ge('acwrGrid').innerHTML = '<div class="mi" style="border:1px solid '+cl+';border-radius:var(--rl);padding:14px;grid-column:span 2">'
+    var acwr=computeACWR(athl), r=acwr.ratio, cl=acwrCo(acwr.insufficient?0:(r||0));
+    // Status message based on data maturity
+    var acwrMsg = acwr.insufficient
+      ? '<div style="font-size:11px;color:var(--gold);font-weight:600;padding:6px 10px;background:rgba(232,169,0,.1);border-radius:4px;margin-bottom:8px;">'
+        + '&#9432; Building baseline &mdash; ' + acwr.spanDays + ' of 14 days logged. ACWR alerts start after 14 days.'
+        + '</div>'
+      : !acwr.meaningful
+      ? '<div style="font-size:11px;color:#4FC3F7;font-weight:600;padding:6px 10px;background:rgba(79,195,247,.08);border-radius:4px;margin-bottom:8px;">'
+        + '&#9432; ' + acwr.spanDays + ' days of data &mdash; ACWR is improving. Full 28-day accuracy coming soon.'
+        + '</div>'
+      : '';
+    ge('acwrGrid').innerHTML = acwrMsg + '<div class="mi" style="border:1px solid '+(acwr.insufficient?'var(--br2)':cl)+';border-radius:var(--rl);padding:14px;grid-column:span 2">'
       + '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
       + '<div><div style="font-family:Barlow Condensed,sans-serif;font-size:44px;font-weight:900;color:'+cl+'">'+r.toFixed(2)+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:'+cl+'">'+acwrZn(r)+'</div></div>'
       + '<div class="ameta"><div class="mi"><div class="ml">Acute Load (7d)</div><div class="mv">'+acwr.acute+' AU/day</div></div><div class="mi"><div class="ml">Chronic Load (28d)</div><div class="mv">'+acwr.chronic+' AU/day</div></div></div>'
@@ -2234,28 +2257,31 @@ window.renderWLog = renderWLog;
 function checkRiskFlag(athlete) {
   var banner = ge('riskBanner');
   if (!banner) return;
+  banner.className = 'risk-banner'; // reset
   var now = new Date(), weekAgo = new Date(now);
   weekAgo.setDate(weekAgo.getDate() - 7);
   var ents = wLog.filter(function(e) {
     return (athlete === 'All' || e.athlete === athlete) && new Date(e.date) >= weekAgo;
   });
-  if (!ents.length) { banner.className = 'risk-banner'; return; }
+  if (!ents.length) return;
   var avgW = ents.reduce(function(a, e) { return a + e.wellness; }, 0) / ents.length;
   var acwr = computeACWR(athlete);
-  var highACWR = acwr.ratio !== null && acwr.ratio > 1.3;
-  var lowWell  = avgW < 3.0;
   var msgs = [];
-  if (highACWR && lowWell)
-    msgs.push('\u26a0 HIGH RISK: ACWR ' + acwr.ratio.toFixed(2) + ' AND avg wellness ' + avgW.toFixed(1) + '/5 \u2014 peak injury risk. Reduce load now.');
-  else if (highACWR)
-    msgs.push('\u26a0 CAUTION: ACWR ' + acwr.ratio.toFixed(2) + ' (>1.3) \u2014 monitor training load closely.');
-  else if (lowWell)
-    msgs.push('\u26a0 CAUTION: Avg wellness ' + avgW.toFixed(1) + '/5 (<3.0) this week \u2014 significant fatigue reported.');
+  // Only fire ACWR alerts when we have at least 14 days of data
+  if (!acwr.insufficient && acwr.ratio !== null && acwr.ratio > 1.3) {
+    var txt = '\u26a0 ACWR ' + acwr.ratio.toFixed(2) + ' (>1.3)';
+    if (!acwr.meaningful) txt += ' \u2014 based on ' + acwr.spanDays + ' days of data (improving accuracy)';
+    else txt += ' \u2014 monitor training load closely';
+    msgs.push(txt);
+  }
+  // Wellness alert fires regardless of data span (it\'s a 7-day window)
+  if (avgW < 3.0) {
+    msgs.push('\u26a0 Avg wellness ' + avgW.toFixed(1) + '/5 (<3.0) this week \u2014 significant fatigue reported');
+  }
   if (msgs.length) {
+    var prefix = (!acwr.insufficient && acwr.ratio > 1.3 && avgW < 3.0) ? 'HIGH RISK' : 'CAUTION';
     banner.className = 'risk-banner show';
-    banner.innerHTML = '<div class="rb-title">Risk Alert \u2014 ' + (athlete === 'All' ? 'Team' : dn(athlete)) + '</div>' + msgs.join('<br>');
-  } else {
-    banner.className = 'risk-banner';
+    banner.innerHTML = '<div class="rb-title">' + prefix + ' \u2014 ' + (athlete === 'All' ? 'Team' : dn(athlete)) + '</div>' + msgs.join('<br>');
   }
 }
 window.checkRiskFlag = checkRiskFlag;
@@ -2515,6 +2541,8 @@ function warmSupabase() {
 initApp();
 
 })(); // end IIFE
+
+
 
 
 
