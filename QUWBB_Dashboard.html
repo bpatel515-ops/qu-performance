@@ -268,6 +268,9 @@ body{overflow-x:unset!important;}
 .del-btn:hover{color:var(--dev);background:rgba(239,83,80,.12);}
 .entry-card{position:relative;}
 
+
+input,select,textarea{font-size:16px!important;}
+@media(max-width:700px){.wi{font-size:16px;}.hrv-inp{font-size:16px;}}
 </style>
 </head>
 <body>
@@ -1305,22 +1308,78 @@ function buildScales() {
 }
 
 ge('wSubmit').addEventListener('click', function() {
-  var athl=ge('wAthl').value, date=ge('wDate').value, sess=ge('wSess').value;
-  var dur=parseInt(ge('wDur').value)||null, notes=ge('wNotes').value;
-  if (!athl||!date) { alert('Select athlete and date.'); return; }
-  if (!sel.rpe)     { alert('Select RPE (1-5).'); return; }
-  if (!sel.sleep||!sel.sore||!sel.energy||!sel.mood) { alert('Complete all wellness scales.'); return; }
-  var ws = (sel.sleep+sel.sore+sel.energy+sel.mood)/4;
-  var entry = {id:Date.now(),athlete:athl,date:date,session:sess,rpe:sel.rpe,sleep:sel.sleep,soreness:sel.sore,energy:sel.energy,mood:sel.mood,wellness:parseFloat(ws.toFixed(2)),duration:dur,load:sel.rpe*(dur||60),notes:notes};
-  wLog.unshift(entry);
-  localStorage.setItem('qumhoc_w5', JSON.stringify(wLog));
-  sel = {rpe:null,sleep:null,sore:null,energy:null,mood:null};
-  ['scRPE','scSleep','scSore','scEnergy','scMood'].forEach(function(id){document.querySelectorAll('#'+id+' .s5').forEach(function(b){b.classList.remove('on');});});
-  ge('wDur').value=''; ge('wNotes').value='';
-  alert('Saved! Wellness avg: '+ws.toFixed(1)+'/5');
-  showSub('wrecent', document.querySelectorAll('.stab')[1]);
-});
+  var athl = ge('wAthl').value;
+  var date = ge('wDate').value;
+  if (!athl || !date) { alert('Select athlete and date.'); return; }
+  if (!sel.sleep || !sel.sore || !sel.energy || !sel.mood) { alert('Complete all 4 wellness scales.'); return; }
 
+  // Optional morning readiness
+  var hrv      = ge('wHRV')      ? (parseInt(ge('wHRV').value)      || null) : null;
+  var restHR   = ge('wRestHR')   ? (parseInt(ge('wRestHR').value)   || null) : null;
+  var sleepHrs = ge('wSleepHrs') ? (parseFloat(ge('wSleepHrs').value) || null) : null;
+  var ws = parseFloat(((sel.sleep + sel.sore + sel.energy + sel.mood) / 4).toFixed(2));
+
+  // Valid sessions = have both RPE and duration
+  var validSessions = sessionData.filter(function(s) { return s.rpe && s.mins && s.mins > 0; });
+  if (!validSessions.length) { alert('Add at least one session with RPE and duration.'); return; }
+
+  var saved = 0;
+  updateSyncStatus('loading', 'Saving ' + validSessions.length + ' session(s)...');
+
+  validSessions.forEach(function(s) {
+    var entry = {
+      id:          Date.now() + Math.round(Math.random() * 9999),
+      athlete:     athl,
+      date:        date,
+      session:     s.type || 'Practice',
+      rpe:         parseInt(s.rpe) || 3,
+      sleep:       sel.sleep,
+      soreness:    sel.sore,
+      energy:      sel.energy,
+      mood:        sel.mood,
+      wellness:    ws,
+      duration:    parseInt(s.mins) || 0,
+      load:        (parseInt(s.rpe) || 3) * (parseInt(s.mins) || 0),
+      notes:       ge('wNotes') ? ge('wNotes').value : '',
+      hrv:         hrv,
+      resting_hr:  restHR,
+      sleep_hrs:   sleepHrs,
+    };
+    wLog.unshift(entry);
+    saveToSupabase(entry,
+      function() {
+        saved++;
+        if (saved === validSessions.length) {
+          updateSyncStatus('ok', 'Saved ' + saved + ' session(s) — synced');
+          loadWLog._lastFetch = 0;
+          renderWLog();
+          renderCompliance();
+          showSub('wrecent', document.querySelectorAll('.stab')[1]);
+        }
+      },
+      function(err) {
+        saved++;
+        if (saved === validSessions.length) {
+          updateSyncStatus('err', 'Saved locally — cloud sync failed');
+          renderWLog();
+          renderCompliance();
+        }
+      }
+    );
+  });
+
+  // Reset form
+  sel = { rpe:null, sleep:null, sore:null, energy:null, mood:null };
+  ['scRPE','scSleep','scSore','scEnergy','scMood'].forEach(function(id) {
+    document.querySelectorAll('#' + id + ' .s5').forEach(function(b) { b.classList.remove('on'); });
+  });
+  if (ge('wHRV'))      ge('wHRV').value = '';
+  if (ge('wRestHR'))   ge('wRestHR').value = '';
+  if (ge('wSleepHrs')) ge('wSleepHrs').value = '';
+  if (ge('wNotes'))    ge('wNotes').value = '';
+  sessionData = [{type:'Practice', rpe:null, mins:null}];
+  buildSessionBlocks();
+});
 
 // ─── ACWR & TRENDS ───────────────────────────────────────────────────────────
 function computeACWR(athlete) {
@@ -1919,6 +1978,8 @@ function renderWLog() {
       + '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">'+( e.duration||0)+' min</div>'
       + '<div class="lb2" style="background:'+wc+'22;color:'+wc+'">W '+e.wellness.toFixed(1)+'</div>'
       + '<div class="lb2" style="background:rgba(232,169,0,.1);color:var(--gold)">'+(e.load||0)+' AU</div>'
+      + (e.hrv ? '<div class="lb2" style="background:rgba(79,195,247,.1);color:#4FC3F7">HRV '+e.hrv+'ms</div>' : '')
+      + (e.sleep_hrs ? '<div class="lb2" style="background:rgba(102,187,106,.1);color:var(--elite)">'+e.sleep_hrs+'h sleep</div>' : '')
       + '<div class="ln">'+dn(e.athlete).split(' ')[0]+(e.notes?' · '+e.notes:'')+'</div>'
       + '<button class="del-btn" data-delid="'+e.id+'" title="Delete entry">✕</button>'
       + '</div>';
@@ -2476,7 +2537,7 @@ function saveToSupabase(entry, onSuccess, onError) {
     sleep_hrs: entry.sleep_hrs || null
   };
   fetch(SB_URL + '/rest/v1/' + SB_TABLE, {
-    method: 'POST', headers: sbH(), body: JSON.stringify(row)
+    method: 'POST', headers: sbH('return=representation'), body: JSON.stringify(row)
   })
   .then(function(r) {
     if (r.ok || r.status === 201) {
@@ -2487,12 +2548,12 @@ function saveToSupabase(entry, onSuccess, onError) {
   .catch(function(err) { if (onError) onError(err); });
 }
 
-function sbH() {
+function sbH(prefer) {
   return {
     'apikey': SB_KEY,
     'Authorization': 'Bearer ' + SB_KEY,
     'Content-Type': 'application/json',
-    'Prefer': 'return=minimal'
+    'Prefer': prefer || 'return=minimal'
   };
 }
 
@@ -2523,6 +2584,7 @@ function warmSupabase() {
 initApp();
 
 })(); // end IIFE
+
 
 
 
