@@ -294,6 +294,7 @@ input,select,textarea{font-size:16px!important;}
     <button class="pbtn" onclick="window.print()">Print</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
     <button class="ibtn" onclick="openImport()">&#8679; Import Fitness CSV</button>
+    <span class="badge" id="fitCloud" title="Fitness data source &mdash; click to refresh" style="background:var(--s3);color:var(--tm);cursor:pointer;" onclick="loadFitnessFromDB(true)">&#9729; Loading&hellip;</span>
   </div>
 </header>
 
@@ -303,6 +304,7 @@ input,select,textarea{font-size:16px!important;}
   <div class="ntab" data-tab="leaderboard">Leaderboards</div>
   <div class="ntab" data-tab="compare">Compare</div>
   <div class="ntab" data-tab="positions">Positions</div>
+  <div class="ntab" data-tab="movement">Movement</div>
   <div class="ntab" data-tab="wellness">Wellness</div>
   <div class="ntab" data-tab="trends">Load &amp; Trends</div>
   <div class="ntab" data-tab="planner">Weekly Plan</div>
@@ -579,6 +581,16 @@ input,select,textarea{font-size:16px!important;}
 
 
 <!-- WEEKLY PLANNER -->
+<div id="movement" class="sec">
+  <div class="fbar">
+    <div class="fg"><span class="fl">Season</span><select class="fs" id="mvSeason" onchange="renderMovement()"></select></div>
+    <div class="fg"><span class="fl">Period</span><select class="fs" id="mvPeriod" onchange="renderMovement()">
+      <option value="All">All Periods</option><option value="OffSeason">Off-Season</option><option value="PreSeason">Pre-Season</option><option value="InSeason">In-Season</option><option value="PostSeason">Post-Season</option></select></div>
+  </div>
+  <div class="sh"><div class="st">MOVEMENT <span>&amp; ASYMMETRY</span></div></div>
+  <div style="font-size:11px;color:var(--tm);margin-bottom:8px;">Y-Balance reach (composite L/R, in) and asymmetry (&Delta;% &mdash; lower is better: <span style="color:var(--gold)">amber &gt;4%</span>, <span style="color:var(--dev)">red &gt;8%</span>), Lateral Broad &Delta;%, AAA, FMS, and the Movement score.</div>
+  <div class="tw"><table class="tbl"><thead id="mvHead"></thead><tbody id="mvBody"></tbody></table></div>
+</div>
 <div id="planner" class="sec">
   <div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
   <span style="font-size:12px;color:var(--tm);">&#128197; Showing <strong id="planWeekCount" style="color:var(--tx)">52</strong> weeks from your imported plan. To update, export the <code style="background:var(--s3);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--good)">Weekly Plan</code> sheet as CSV and re-import.</span>
@@ -655,6 +667,12 @@ input,select,textarea{font-size:16px!important;}
   <!-- Deload / spike forecast -->
   <div class="sh" style="margin-top:16px;"><div class="st">LOAD MANAGEMENT <span>FORECAST</span></div></div>
   <div class="lg" id="planInsights"></div>
+
+  <!-- Season-over-Season Volume -->
+  <div class="sh" style="margin-top:18px;"><div class="st">SEASON-OVER-SEASON <span>VOLUME</span></div></div>
+  <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">Planned weekly volume by season (lines), with actual sRPE load overlaid where wellness data exists (bars). Aligned by season week (1&ndash;52).</div>
+  <div id="seasonVolChart" style="overflow-x:auto;"></div>
+  <div class="lg" id="seasonVolLegend" style="margin-top:6px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px;"></div>
 </div>
 <div class="st" style="margin-top:16px;margin-bottom:8px;">BODY COMPOSITION <span>TRENDS</span></div>
 <div class="fbar" style="margin-bottom:8px;"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="anthroSel" onchange="renderAnthroTrends(this.value)"><option value="All">All Athletes</option></select></div></div>
@@ -905,6 +923,7 @@ function showTab(id, el) {
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
+  if (id === 'movement')   renderMovement();
   if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); renderCompliance(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); if(typeof renderAnthroTrends==='function') renderAnthroTrends(ge('anthroSel')?ge('anthroSel').value:'All'); }
   if (id === 'planner')    setTimeout(renderPlanner, 0);
@@ -931,6 +950,7 @@ function renderKPIs() {
     {l:'Avg NCMJ',         v:fmt(avgVal(fd,'NCMJ Mat Best (in)'),1),     u:'in', s:'team average',           a:'#4FC3F7'},
     {l:'Avg Pro Agility',  v:fmt(avgVal(fd,'Pro Agility Best (s)'),2),   u:'s',  s:'lower is faster',        a:'var(--elite)'},
     {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),              u:'',   s:'team average',           a:'var(--blow)'},
+    {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),              u:'W/kg',s:'5-min watts/kg',        a:'var(--blue)'},
     {l:'Avg Squat Max',    v:fmtI(avgVal(fd,'Squat Max')),               u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),         u:'lbs',s:'team average',           a:'var(--gold)'},
@@ -1123,6 +1143,7 @@ function renderProfile() {
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},
     {l:'Conditioning',       k:'Score CONDITIONING',    u:'',   hi:100},
+    {l:'Movement Score',     k:'Score MOVEMENT',        u:'',   hi:100},
   ];
   ge('profBars').innerHTML = metrics.map(function(m) {
     var val = rec[m.k];
@@ -1208,7 +1229,7 @@ function renderLB() {
     var pct   = Math.round(below/vals.length*100);
     var rs    = i===0?'color:var(--gold);font-weight:800':i===1?'color:#C0C0C0':i===2?'color:#CD7F32':'color:var(--td)';
     var dec   = lb||metric.indexOf('Beep')>=0?2:metric.indexOf('Score')>=0||metric.indexOf('Max')>=0?0:1;
-    var pc    = lb ? 100-pct : pct;
+    var pc    = pct; // 'below' already accounts for direction (lower=better), so pct is the true percentile
     var posC  = d.Position==='Defenseman'?'D':d.Position==='Forward'?'F':'G';
     var posL  = d.Position==='Defenseman'?'DEF':d.Position==='Forward'?'FWD':'GK';
     return '<tr>'
@@ -1264,6 +1285,38 @@ function renderCmp() {
 }
 
 // ─── POSITIONS ───────────────────────────────────────────────────────────────
+function renderMovement() {
+  var fd = DATA.slice();
+  var s = ge('mvSeason') ? ge('mvSeason').value : 'All';
+  var p = ge('mvPeriod') ? ge('mvPeriod').value : 'All';
+  if (s !== 'All') fd = fd.filter(function(d){ return d.Season === s; });
+  if (p !== 'All') fd = fd.filter(function(d){ return d['Time Period'] === p; });
+  fd = fd.filter(function(d){ return d['Ybalance Composite L (in)']!=null || d['AAA']!=null || d['FMS']!=null || d['Lateral Broad %Diff']!=null || d['Score MOVEMENT']!=null; });
+  ge('mvHead').innerHTML = '<tr><th>Athlete</th><th>Pos</th><th>Yr</th><th>Period</th><th>Date</th><th>Y-Bal L&Prime;</th><th>Y-Bal R&Prime;</th><th>Comp &Delta;%</th><th>Ant &Delta;%</th><th>PM &Delta;%</th><th>PL &Delta;%</th><th>Lat Broad &Delta;%</th><th>AAA</th><th>FMS</th><th>MOVE</th></tr>';
+  if (!fd.length) { ge('mvBody').innerHTML = '<tr><td colspan="15" style="color:var(--td);padding:18px;text-align:center">No movement data logged yet &mdash; Y-Balance / AAA / FMS will populate here as you record them (session template captures them).</td></tr>'; return; }
+  function asym(v){ if(v==null||isNaN(v)) return 'mn'; var a=Math.abs(v); return a>8?'mn td3':a>4?'mn tb2':'mn'; }
+  ge('mvBody').innerHTML = fd.sort(function(a,b){ return new Date(b.Date)-new Date(a.Date); }).map(function(d){
+    var pos = d.Position || '—';
+    return '<tr>'
+      + '<td><div class="ac"><div class="av" style="background:'+gc(d['Athlete Name'])+'">'+ini(d['Athlete Name'])+'</div><span>'+dn(d['Athlete Name'])+'</span></div></td>'
+      + '<td style="color:var(--tm)">'+pos+'</td>'
+      + '<td style="color:var(--tm)">'+(d.Group||'—')+'</td>'
+      + '<td style="color:var(--td);font-size:10px">'+(d['Time Period']||'—')+'</td>'
+      + '<td class="mn">'+(d.Date||'—')+'</td>'
+      + '<td class="mn">'+fmt(d['Ybalance Composite L (in)'])+'</td>'
+      + '<td class="mn">'+fmt(d['Ybalance Composite R (in)'])+'</td>'
+      + '<td class="'+asym(d['Ybalance Composite %Diff'])+'">'+fmt(d['Ybalance Composite %Diff'])+'</td>'
+      + '<td class="'+asym(d['Ybalance Anterior %Diff'])+'">'+fmt(d['Ybalance Anterior %Diff'])+'</td>'
+      + '<td class="'+asym(d['Ybalance Pmedial %Diff'])+'">'+fmt(d['Ybalance Pmedial %Diff'])+'</td>'
+      + '<td class="'+asym(d['Ybalance Plateral %Diff'])+'">'+fmt(d['Ybalance Plateral %Diff'])+'</td>'
+      + '<td class="'+asym(d['Lateral Broad %Diff'])+'">'+fmt(d['Lateral Broad %Diff'])+'</td>'
+      + '<td class="mn">'+fmt(d['AAA'])+'</td>'
+      + '<td class="mn">'+fmt(d['FMS'])+'</td>'
+      + '<td><span class="sp '+tc(d['Score MOVEMENT'])+'">'+fmtI(d['Score MOVEMENT'])+'</span></td>'
+      + '</tr>';
+  }).join('');
+}
+window.renderMovement = renderMovement;
 function renderPos() {
   var s=ge('posSeason')?ge('posSeason').value:'All', p=ge('posPeriod')?ge('posPeriod').value:'All';
   var fd=DATA.slice(); if(s!=='All')fd=fd.filter(function(d){return d.Season===s;}); if(p!=='All')fd=fd.filter(function(d){return d['Time Period']===p;});
@@ -1786,7 +1839,7 @@ function parsePlanCSV(text) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 function initApp() {
-  fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason']);
+  fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason','mvSeason']);
   fillAthletes();
   populateDates();
   var pre = DATA.filter(function(d){return d['Time Period']==='PreSeason';});
@@ -2620,7 +2673,106 @@ function warmSupabase() {
   }).catch(function() {}); // ignore errors - this is just a warmup ping
 }
 
-initApp();
+// ─── LIVE FITNESS DATA (Supabase) ──────────────────────────────────────────────
+// Pulls testing rows (already scored server-side) from the v_dashboard_fitness view
+// in the exact DATA shape, then re-inits. Inline DATA stays as offline fallback.
+function loadFitnessFromDB(force) {
+  var badge = ge('fitCloud');
+  if (badge) { badge.innerHTML = '&#9729; Syncing&hellip;'; }
+  fetch(SB_URL + '/rest/v1/v_dashboard_fitness?team=eq.' + TEAM_ID + '&select=*', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(rows){
+    if (rows && rows.length) {
+      DATA = rows;
+      initApp();
+      if (badge) { badge.innerHTML = '&#9729; Live &middot; ' + rows.length + ' records';
+        badge.style.background = 'rgba(46,160,67,.15)'; badge.style.color = 'var(--elite)'; }
+    } else if (badge) {
+      badge.innerHTML = '&#9888; Cached'; badge.title = 'Cloud returned no rows — showing bundled data';
+    }
+  })
+  .catch(function(){
+    if (badge) { badge.innerHTML = '&#9888; Offline (cached)';
+      badge.style.background = 'rgba(210,60,60,.15)'; badge.style.color = 'var(--dev)'; }
+  });
+}
+
+// ─── LIVE TRAINING-LOAD PLAN (Supabase) ────────────────────────────────────────
+// Pulls the weekly plan from v_dashboard_plan in the exact PLAN shape. Inline PLAN
+// stays as offline fallback.
+function loadPlanFromDB() {
+  fetch(SB_URL + '/rest/v1/v_dashboard_plan?team=eq.' + TEAM_ID + '&select=*&order=date.asc', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(rows){
+    if (rows && rows.length) {
+      PLAN = rows;
+      if (ge('planWeekCount')) ge('planWeekCount').textContent = rows.length;
+      if (typeof renderPlanner === 'function' && ge('planner') && ge('planner').classList.contains('active')) renderPlanner();
+    }
+  })
+  .catch(function(){ /* keep inline PLAN as fallback */ });
+}
+
+// ─── SEASON-OVER-SEASON VOLUME (Supabase) ──────────────────────────────────────
+// Planned weekly volume per season (lines) + actual sRPE load overlay (bars),
+// aligned by season week number. Reads v_season_volume.
+function loadSeasonVolume() {
+  var host = ge('seasonVolChart'); if (!host) return;
+  fetch(SB_URL + '/rest/v1/v_season_volume?team=eq.' + TEAM_ID + '&select=*&order=season.desc,week_num.asc', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(rows){
+    if (!rows || !rows.length) { host.innerHTML = '<div style="color:var(--td);font-size:11px;padding:8px">No season volume data.</div>'; return; }
+    var seasons = uniq(rows.map(function(d){ return d.season; })).sort(function(a,b){ return b.localeCompare(a); });
+    var COLORS = ['#E8A900','#4FC3F7','#AB47BC','#66BB6A','#FF7043'];
+    var maxVol = 0, maxAct = 0;
+    rows.forEach(function(d){ if (d.planned_vol>maxVol) maxVol=d.planned_vol; if (d.actual_srpe>maxAct) maxAct=d.actual_srpe; });
+    maxVol = Math.ceil((maxVol||1)*1.1); maxAct = maxAct || 1;
+    var W=940, H=300, pad={t:14,r:44,b:26,l:36};
+    var sx=function(w){ return pad.l + (W-pad.l-pad.r)*((w-1)/51); };
+    var syV=function(v){ return H-pad.b - (H-pad.t-pad.b)*(v/maxVol); };
+    var syA=function(v){ return H-pad.b - (H-pad.t-pad.b)*(v/maxAct); };
+    var svg = "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;min-width:760px;height:300px'>";
+    // gridlines + left axis (volume)
+    for (var g=0; g<=maxVol; g++){ var y=syV(g); svg += "<line x1='"+pad.l+"' y1='"+y+"' x2='"+(W-pad.r)+"' y2='"+y+"' stroke='rgba(255,255,255,0.06)'/>"; svg += "<text x='"+(pad.l-5)+"' y='"+(y+3)+"' text-anchor='end' fill='var(--td)' font-size='9'>"+g+"</text>"; }
+    // week axis labels
+    [1,8,16,24,32,40,48,52].forEach(function(w){ var x=sx(w); svg += "<text x='"+x+"' y='"+(H-8)+"' text-anchor='middle' fill='var(--td)' font-size='9'>W"+w+"</text>"; });
+    // actual sRPE bars (behind lines), current-ish season only (use latest season with actuals)
+    var actSeason = seasons.filter(function(s){ return rows.some(function(d){ return d.season===s && d.actual_srpe!=null; }); })[0];
+    if (actSeason){
+      rows.filter(function(d){ return d.season===actSeason && d.actual_srpe!=null; }).forEach(function(d){
+        var x=sx(d.week_num), y=syA(d.actual_srpe); var bw=(W-pad.l-pad.r)/54;
+        svg += "<rect x='"+(x-bw/2)+"' y='"+y+"' width='"+bw+"' height='"+(H-pad.b-y)+"' fill='rgba(255,255,255,0.22)'/>";
+      });
+    }
+    // planned volume lines per season
+    seasons.forEach(function(s,i){
+      var pts = rows.filter(function(d){ return d.season===s && d.planned_vol!=null; }).sort(function(a,b){return a.week_num-b.week_num;});
+      if (!pts.length) return;
+      var poly = pts.map(function(d){ return sx(d.week_num)+','+syV(d.planned_vol); }).join(' ');
+      svg += "<polyline points='"+poly+"' fill='none' stroke='"+COLORS[i%COLORS.length]+"' stroke-width='2' stroke-linejoin='round' opacity='"+(i===0?1:0.7)+"'/>";
+    });
+    // right axis label
+    svg += "<text x='"+(W-pad.r+6)+"' y='"+pad.t+"' fill='var(--td)' font-size='9'>sRPE</text>";
+    svg += "</svg>";
+    host.innerHTML = svg;
+    // legend
+    var leg = seasons.map(function(s,i){ return "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:14px;height:3px;background:"+COLORS[i%COLORS.length]+";display:inline-block'></span>"+s+" planned</span>"; }).join('');
+    if (actSeason) leg += "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:11px;height:11px;background:rgba(255,255,255,0.35);display:inline-block'></span>"+actSeason+" actual sRPE</span>";
+    if (ge('seasonVolLegend')) ge('seasonVolLegend').innerHTML = leg;
+  })
+  .catch(function(){});
+}
+
+initApp();          // instant render from bundled DATA
+loadFitnessFromDB(); // then refresh fitness from the cloud (source of truth)
+loadPlanFromDB();    // and the weekly training-load plan
+loadSeasonVolume();  // season-over-season volume chart
 
 })(); // end IIFE
 
