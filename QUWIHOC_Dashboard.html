@@ -409,15 +409,7 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="fg"><span class="fl">Metric</span>
       <select class="fs" id="lbMetric" onchange="renderLB()">
-        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option>
-        <option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option>
-        <option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option>
-        <option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option>
-        <option value="Bench Press Max">Bench Press</option><option value="CMJ Best (in)">CMJ (in)</option>
-        <option value="Broad Jump Best (in)">Broad Jump</option>
-        <option value="10 yd Best (s)">10 yd (s) lower=better</option>
-        <option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option>
-        <option value="Beep Test">Beep Test</option><option value="Power Quotient">Power Quotient</option>
+        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="NCMJ Mat Best (in)">NCMJ (in)</option><option value="CMJ Best (in)">CMJ (in)</option><option value="Broad Jump Best (in)">Broad Jump</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Power Quotient">Power Quotient</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -557,7 +549,7 @@ input,select,textarea{font-size:16px!important;}
     <div class="sync-bar"><div class="sync-dot loading" id="syncDot"></div><span class="sync-msg" id="syncMsg">Connecting to cloud...</span><button class="sync-refresh" id="refreshWLog" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button></div>
     <div id="compliancePanel" style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;"></div>
     <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div>
-    <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Lift</option><option>Skate</option><option>Practice</option><option>Game</option><option>Conditioning</option><option>Recovery</option><option>Off</option></select></div></div>
+    <div class="fg"><span class="fl">Session Type</span><select class="fs" id="wFSess" onchange="renderWLog()"><option value="All">All Sessions</option><option>Practice</option><option>Gym Training</option><option>Practice + Gym</option><option>Pre-Game</option><option>Extra Skills</option><option>Recovery</option><option>Game</option></select></div></div>
     <div class="pills" id="wPills"></div>
     <div class="ll" id="wLog"><div style="color:var(--td);font-size:12px;text-align:center;padding:20px;">No entries yet.</div></div>
   </div>
@@ -2523,12 +2515,12 @@ var planView = 'vol';
 var selectedWeekIdx = -1;
 
 // ─── SESSION TYPES & COLORS ───────────────────────────────────────────────────
-var SESS_TYPES = ['Lift','Skate','Practice','Practice & S/C','Game','Conditioning','S/C','Recovery','Off','On own','Video/Film'];
+var SESS_TYPES = ['Practice','Gym Training','Practice + Gym','Pre-Game','Extra Skills','Recovery','Game','Off'];
 var SESS_COL = {
-  'Game':'#EF5350', 'Practice':'#4FC3F7', 'Practice & S/C':'#64B5F6',
-  'Lift':'#E8A900', 'S/C':'#FFA726', 'Conditioning':'#AB47BC',
-  'Recovery':'#00C896', 'Off':'#4A5268', 'On own':'#78909C',
-  'Video/Film':'#78909C', 'Skate':'#26C6DA'
+  'Practice + Gym':'#64B5F6', 'Gym Training':'#E8A900', 'Pre-Game':'#AB47BC', 'Extra Skills':'#FFA726',
+  'Game':'#EF5350', 'Practice':'#4FC3F7', 'Recovery':'#00C896', 'Off':'#4A5268',
+  'Practice & S/C':'#64B5F6', 'Lift':'#E8A900', 'S/C':'#FFA726', 'Conditioning':'#AB47BC',
+  'Skate':'#26C6DA', 'On own':'#78909C', 'Video/Film':'#78909C'
 };
 function sessColor(s) {
   var sl = (s||'').trim().toLowerCase();
