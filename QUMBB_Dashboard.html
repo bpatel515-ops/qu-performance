@@ -711,8 +711,9 @@ input,select,textarea{font-size:16px!important;}
 
 <div id="planYearly" style="display:none">
   <div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-  <span style="font-size:12px;color:var(--tm);">&#128197; Showing <strong id="planWeekCount" style="color:var(--tx)">52</strong> weeks for the selected season &mdash; synced from your practice-planning workbook. Use the <strong style="color:var(--tx)">Season</strong> filter above to switch years.</span>
+  <span style="font-size:12px;color:var(--tm);">&#128197; Showing <strong id="planWeekCount" style="color:var(--tx)">52</strong> weeks for the selected season &mdash; planned in the Weekly Builder &amp; actual load from athlete check-ins. Use the <strong style="color:var(--tx)">Season</strong> filter above to switch years.</span>
   <button class="ibtn" id="plannerImportBtn" style="white-space:nowrap;cursor:pointer;">&#8679; Import New Plan</button>
+  <button class="ibtn" onclick="downloadYearlyAU()" title="Download this season's planned-vs-actual weekly load as a CSV to keep year over year" style="white-space:nowrap;cursor:pointer;">&#8681; Download Yearly (CSV)</button>
 </div>
 <div class="plan-filter-bar">
     <div class="fg"><span class="fl">Season</span>
@@ -973,6 +974,23 @@ input,select,textarea{font-size:16px!important;}
     if(notes) csv+='\n\n"Week Notes","'+notes.replace(/"/g,'""')+'"';
     var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
     a.download='Weekly-Plan-'+(wStart||'week')+'.csv'; a.click();
+  };
+
+  // Yearly load export — planned (from saved weekly builds) vs actual (athlete check-ins), per week.
+  window.downloadYearlyAU=function(){
+    var c=cfg(); if(!c.SB_URL){ alert('Config not ready — reload and retry.'); return; }
+    var season=(document.getElementById('planSeason')||{}).value||'';
+    var q='v_season_volume?team=eq.'+encodeURIComponent(c.TEAM_ID)+(season?'&season=eq.'+encodeURIComponent(season):'')+'&select=season,week_num,week_start,planned_au,planned_mins,actual_mean,actual_athletes,actual_srpe&order=season.asc,week_start.asc';
+    sbGet(q).then(function(rows){
+      rows=(rows||[]).filter(function(r){return r.planned_au!=null || r.actual_athletes;});
+      if(!rows.length){ alert('No yearly load saved yet — save weeks in the Weekly Builder (and let athletes check in) first.'); return; }
+      var head=['Season','Week #','Week Start','Planned (AU)','Planned (min)','Actual Mean (AU)','Athletes Logged','Actual Total sRPE'];
+      var out=[head];
+      rows.forEach(function(r){ out.push([r.season,r.week_num,r.week_start,r.planned_au,r.planned_mins,r.actual_mean,r.actual_athletes,r.actual_srpe]); });
+      var csv=out.map(function(r){return r.map(function(x){return '"'+String(x==null?'':x).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+      var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+      a.download='Yearly-Load-'+c.TEAM_ID+'-'+(season||'all')+'.csv'; a.click();
+    });
   };
 
   /* ---- Phase 2: cloud save + planned-vs-actual overlay + flags + auto-chronic ---- */
