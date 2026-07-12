@@ -2,7 +2,7 @@
   "name": "QU Daily Check-In",
   "short_name": "QU Check-In",
   "description": "Quinnipiac Strength & Conditioning — daily wellness & training-load check-in",
-  "start_url": "./QU-Player-Checkin.html",
+  "start_url": "./qu-player-checkin.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

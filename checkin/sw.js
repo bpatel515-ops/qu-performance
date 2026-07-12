@@ -1,7 +1,7 @@
 // QU Daily Check-In — offline app shell. Bump CACHE to force an update.
-const CACHE = 'qu-checkin-v3';
+const CACHE = 'qu-checkin-v4';
 const ASSETS = [
-  './QU-Player-Checkin.html',
+  './qu-player-checkin.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
@@ -24,6 +24,6 @@ self.addEventListener('fetch', (e) => {
     caches.match(req).then((cached) => cached || fetch(req).then((resp) => {
       if (resp && resp.ok) { const cp = resp.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); }
       return resp;
-    }).catch(() => caches.match('./QU-Player-Checkin.html')))
+    }).catch(() => caches.match('./qu-player-checkin.html')))
   );
 });
