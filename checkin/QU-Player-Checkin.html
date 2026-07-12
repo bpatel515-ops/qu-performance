@@ -145,7 +145,8 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 (function(){
   var SB_URL='https://qpqvrekiujpcfugjqpft.supabase.co';
   var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwcXZyZWtpdWpwY2Z1Z2pxcGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjMyODgsImV4cCI6MjA5NDU5OTI4OH0.g-mlooOha_GhaSAOH0Gurnl0cQzDzHTX8YveU6pFBSE';
-  var ACTIVITIES=['Practice','Lift','Skate','Conditioning','Skills','Game','Recovery','On own'];
+  // Consistent with the dashboard Weekly Planner activity list (minus "Off" — you log what you did)
+  var ACTIVITIES=['Practice','Gym Training','Practice + Gym','Pre-Game','Extra Skills','Recovery','Game'];
   var RPE=['','1 — Light','2 — Easy','3 — Average','4 — Difficult','5 — Very Difficult'];
   var W={sleep:null,stress:null,soreness:null,energy:null,motivation:null,mood:null};
   var sessions=[];
