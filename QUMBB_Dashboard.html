@@ -295,6 +295,7 @@ input,select,textarea{font-size:16px!important;}
     <button class="pbtn" onclick="printPlayerPDF()" title="Selected player card PDF">&#128424; Player PDF</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
     <button class="ibtn" onclick="openImport()">&#8679; Import Fitness CSV</button>
+    <button class="pbtn" onclick="downloadDataCSV()" title="Download every fitness record as a CSV">&#8681; Data CSV</button>
     <span class="badge" id="fitCloud" title="Fitness data source &mdash; click to refresh" style="background:var(--s3);color:var(--tm);cursor:pointer;" onclick="loadFitnessFromDB(true)">&#9729; Loading&hellip;</span>
   </div>
 </header>
@@ -327,9 +328,9 @@ input,select,textarea{font-size:16px!important;}
     <div class="fg"><span class="fl">Test Date</span><select class="fs" id="ovDate" onchange="ovFilter()"><option value="All">All Dates</option></select></div>
     <div class="fg"><span class="fl">Position</span>
       <button class="tb on" data-pos="All">All</button>
-      <button class="tb" data-pos="Forward">FWD</button>
-      <button class="tb" data-pos="Defenseman">DEF</button>
-      <button class="tb" data-pos="Goalie">GK</button>
+      <button class="tb" data-pos="Guard">Guard</button>
+      <button class="tb" data-pos="Forward">Forward</button>
+      <button class="tb" data-pos="Center">Center</button>
     </div>
     <div class="fg"><span class="fl">View</span>
       <button class="tb on" data-view="scores">Scores</button>
@@ -413,8 +414,8 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="fg"><span class="fl">Position</span>
       <select class="fs" id="lbPos" onchange="renderLB()">
-        <option value="All">All</option><option value="Forward">Forward</option>
-        <option value="Defenseman">Defense</option><option value="Goalie">Goalie</option>
+        <option value="All">All</option><option value="Guard">Guard</option>
+        <option value="Forward">Forward</option><option value="Center">Center</option>
       </select>
     </div>
   </div>
@@ -1514,17 +1515,20 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(11)">10yd</th>'+'<th class="sh-col" onclick="sortOv(12)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(13)">Beep</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>';
     colFn = function(d) {
       var spd = d['10 yd Best (s)']; var sc = (spd && spd < 1.54) ? 'te' : (spd && spd < 1.63 ? 'tg' : '');
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
            + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
            + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
            + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
+           + '<td class="mn">'+(d['Pull-ups']!=null?fmtI(d['Pull-ups']):'—')+'</td>'
+           + '<td class="mn">'+(d['NCMJ Mat Best (in)']!=null?fmt(d['NCMJ Mat Best (in)']):'—')+'</td>'
            + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
            + '<td class="mn '+sc+'">'+(spd!=null?fmt(spd,2):'—')+'</td>'
            + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>';
+           + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
+           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>';
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">BF%</th>'+'<th class="sh-col" onclick="sortOv(10)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(11)">Lean Mass</th>'+'<th class="sh-col" onclick="sortOv(12)">PQ</th>';
@@ -1546,7 +1550,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','NCMJ Mat Best (in)','CMJ Best (in)','Power W (Mat)','10 yd Best (s)','Pro Agility Best (s)','Grip Right','Grip Left','Beep Test']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -1555,7 +1559,7 @@ function renderOvTable() {
   ge('ovHead').innerHTML = '<tr>' + baseH + colH + '</tr>';
   ge('ovBody').innerHTML = fd.map(function(d) {
     var name = d['Athlete Name'];
-    var pos  = d.Position === 'Defenseman' ? 'DEF' : d.Position === 'Forward' ? 'FWD' : 'GK';
+    var pos  = ({'Defenseman':'DEF','Forward':'FWD','Goalie':'GK','Guard':'G','Center':'C','Wing':'W'})[d.Position] || (d.Position||'—');
     var pc   = 'p' + (d.Position === 'Defenseman' ? 'D' : d.Position === 'Forward' ? 'F' : 'G');
     return '<tr data-name="' + h(name) + '">'
          + '<td><div class="ac"><div class="av" style="background:'+gc(name)+'">'+ini(name)+'</div><span>'+dn(name)+'</span></div></td>'
@@ -3386,6 +3390,30 @@ function deriveBodyComp(arr){
   return arr;
 }
 window.deriveBodyComp=deriveBodyComp;
+function carryAnthro(arr){
+  var A=['Height (inches)','Wingspan','Hand Size','Tibia','Standing Reach'];
+  var latest={};
+  (arr||[]).slice().sort(function(a,b){return new Date(a.Date)-new Date(b.Date);}).forEach(function(d){
+    var n=d['Athlete Name']; if(!n) return; latest[n]=latest[n]||{};
+    A.forEach(function(f){ if(d[f]!=null && d[f]!=='') latest[n][f]=d[f]; });
+  });
+  (arr||[]).forEach(function(d){ var n=d['Athlete Name']; if(!n||!latest[n]) return;
+    A.forEach(function(f){ if((d[f]==null||d[f]==='') && latest[n][f]!=null) d[f]=latest[n][f]; }); });
+  return arr;
+}
+window.carryAnthro=carryAnthro;
+function downloadDataCSV(){
+  if(!DATA||!DATA.length){ alert('No data loaded yet.'); return; }
+  var seen={}, cols=[];
+  DATA.forEach(function(d){ Object.keys(d).forEach(function(k){ if(!seen[k]){seen[k]=1;cols.push(k);} }); });
+  var first=['Athlete Name','Season','Date','Time Period','Position','Group','Gender'];
+  cols=first.filter(function(c){return seen[c];}).concat(cols.filter(function(c){return first.indexOf(c)<0;}));
+  var esc=function(v){ if(v==null) return ''; v=String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  var rows=[cols.join(',')].concat(DATA.map(function(d){ return cols.map(function(c){return esc(d[c]);}).join(','); }));
+  var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
+  a.download=TEAM_ID+'_fitness_data_'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+}
+window.downloadDataCSV=downloadDataCSV;
 function loadFitnessFromDB(force) {
   var badge = ge('fitCloud');
   if (badge) { badge.innerHTML = '&#9729; Syncing&hellip;'; }
@@ -3395,7 +3423,7 @@ function loadFitnessFromDB(force) {
   .then(function(r){ return r.ok ? r.json() : null; })
   .then(function(rows){
     if (rows && rows.length) {
-      DATA = rows; deriveBodyComp(DATA); initApp();
+      DATA = rows; deriveBodyComp(DATA); carryAnthro(DATA); initApp();
       if (badge) { badge.innerHTML = '&#9729; Live &middot; ' + rows.length + ' records';
         badge.style.background = 'rgba(46,160,67,.15)'; badge.style.color = 'var(--elite)'; }
     } else if (badge) { badge.innerHTML = '&#9888; Cached'; }
