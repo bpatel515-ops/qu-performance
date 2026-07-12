@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#00205B">
 <title>QU Daily Check-In</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="QU Check-In">
 <style>
 :root{--navy:#00205B;--gold:#E8A900;--bg:#0a0f1c;--s1:#111a30;--s2:#18233d;--br:#2a3a5c;--tx:#eef2fb;--tm:#8b97b5;--good:#00c896;--dev:#ef5350;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -61,6 +68,8 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
       <input type="password" id="code" inputmode="text" autocomplete="off" placeholder="Team code">
       <button class="sub" style="margin-top:14px" onclick="enterApp()">Continue</button>
       <div id="gateMsg" class="msg" style="display:none"></div>
+      <button id="installBtn" class="linkbtn" style="display:none;margin:10px auto 0" onclick="doInstall()">&#11015; Install app to home screen</button>
+      <div id="installHint" class="muted" style="text-align:center;margin-top:12px;font-size:12px;display:none"></div>
     </div>
   </div>
 
@@ -240,6 +249,17 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   var savedTeam; try{ savedTeam=localStorage.getItem('qu_checkin_team'); }catch(e){}
   if(savedTeam){ ge('team').value=savedTeam; loadRoster(); }
   if(code()) showApp();
+
+  // ---- PWA: service worker + install ----
+  if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferredPrompt=e; var b=ge('installBtn'); if(b) b.style.display='block'; });
+  window.doInstall=function(){ if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt=null; var b=ge('installBtn'); if(b) b.style.display='none'; } };
+  window.addEventListener('appinstalled',function(){ var b=ge('installBtn'); if(b) b.style.display='none'; });
+  (function(){ var ua=navigator.userAgent||''; var isIOS=/iPhone|iPad|iPod/.test(ua);
+    var standalone=window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    if(isIOS && !standalone){ var h=ge('installHint'); if(h){ h.innerHTML='Tip: tap the <strong>Share</strong> icon, then <strong>“Add to Home Screen”</strong> for one-tap access.'; h.style.display='block'; } }
+  })();
 })();
 </script>
 </body>

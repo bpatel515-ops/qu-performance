@@ -291,7 +291,8 @@ input,select,textarea{font-size:16px!important;}
     <a class="hbtn" href="index.html">&#8962; Home</a>
     <button class="ebtn" id="exportBtn" onclick="exportDashboard()">&#8681; Save &amp; Export</button>
     <div class="badge" id="topBadge">PRE-SEASON 25-26</div>
-    <button class="pbtn" onclick="window.print()">Print</button>
+    <button class="pbtn" onclick="printTeamPDF()" title="Team performance report PDF">&#128424; Team PDF</button>
+    <button class="pbtn" onclick="printPlayerPDF()" title="Selected player card PDF">&#128424; Player PDF</button>
     <button class="pbtn" id="importPlanBtn">&#8679; Import Plan CSV</button>
     <button class="ibtn" onclick="openImport()">&#8679; Import Fitness CSV</button>
     <span class="badge" id="fitCloud" title="Fitness data source &mdash; click to refresh" style="background:var(--s3);color:var(--tm);cursor:pointer;" onclick="loadFitnessFromDB(true)">&#9729; Loading&hellip;</span>
@@ -355,6 +356,17 @@ input,select,textarea{font-size:16px!important;}
       </select>
     </div>
   </div>
+  <div id="bcQuick" style="background:var(--s1);border:1px solid var(--br2);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:9px;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);">&#9878;&#65039; Body Comp Quick-Check</div>
+      <div style="font-size:11px;color:var(--tm);">Enter today's numbers to show the athlete on the spot &mdash; instant vs. their last test (not saved).</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+      <div><span class="fl">Bodyweight (lbs)</span><input type="number" step="0.1" min="0" id="bcBW" class="fs" style="width:120px" oninput="bcCompute()" placeholder="e.g. 185"></div>
+      <div><span class="fl">Body Fat (%)</span><input type="number" step="0.1" min="0" max="60" id="bcBF" class="fs" style="width:110px" oninput="bcCompute()" placeholder="e.g. 11.5"></div>
+    </div>
+    <div id="bcOut" style="margin-top:10px;"></div>
+  </div>
   <div class="rtabs" id="radarTabs"></div>
   <div class="pgrid">
     <div>
@@ -369,10 +381,16 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Pwr W</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
-  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div></div>
+  <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
+  <div class="sh" style="margin-top:18px;margin-bottom:8px;"><div class="st" style="font-size:13px;">ISOMETRIC <span>TESTING</span></div></div>
+  <div style="font-size:11px;color:var(--tm);margin-bottom:8px;">Force per joint over time with L/R asymmetry (<span style="color:var(--gold)">amber &gt;10%</span>, <span style="color:var(--dev)">red &gt;15%</span>). Show
+    <select id="isoStat" style="background:var(--s2);color:var(--tx);border:1px solid var(--br2);border-radius:4px;font-size:11px;padding:1px 4px" onchange="if(window._renderIso)window._renderIso()"><option value="Max">Max</option><option value="Avg">Avg</option></select></div>
+  <div id="isoTable" class="tw"></div>
+  <div id="isoTrend" style="overflow-x:auto;margin-top:10px;"></div>
+  <div id="isoEmpty" style="color:var(--td);font-size:11px;padding:6px"></div></div>
     </div>
   </div>
 </div>
@@ -469,12 +487,12 @@ input,select,textarea{font-size:16px!important;}
 <!-- WELLNESS -->
 <div id="wellness" class="sec">
   <div class="stabs">
-    <div class="stab on" data-sub="wlog">Log Entry</div>
-    <div class="stab" data-sub="wrecent">Recent Entries</div>
+    <div class="stab on" data-sub="wrecent">Wellness &amp; Load Log</div>
   </div>
+  <div style="background:var(--s1);border:1px solid var(--br2);border-left:3px solid var(--gold);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--tm);">&#128241; Athletes log their own wellness &amp; training load in the <strong style="color:var(--tx)">QU Daily Check-In</strong> app. This tab is coach monitoring (read-only).</div>
 
-  <!-- LOG ENTRY -->
-  <div id="wlog" class="sp2 on">
+  <!-- LOG ENTRY (retired — athletes use the QU Daily Check-In app; kept hidden) -->
+  <div id="wlog" class="sp2" style="display:none">
     <div class="wg">
       <!-- Left: athlete/date/wellness scales -->
       <div>
@@ -534,7 +552,7 @@ input,select,textarea{font-size:16px!important;}
   </div>
 
   <!-- RECENT ENTRIES -->
-  <div id="wrecent" class="sp2">
+  <div id="wrecent" class="sp2 on">
     <div class="sync-bar"><div class="sync-dot loading" id="syncDot"></div><span class="sync-msg" id="syncMsg">Connecting to cloud...</span><button class="sync-refresh" id="refreshWLog" onclick="loadWLog._lastFetch=0;updateSyncStatus('loading','Refreshing...');loadWLog(function(){renderWLog();},true)">&#8635; Refresh</button></div>
     <div id="compliancePanel" style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-bottom:12px;"></div>
     <div class="fbar"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="wFA" onchange="renderWLog()"><option value="All">All Athletes</option></select></div>
@@ -592,11 +610,120 @@ input,select,textarea{font-size:16px!important;}
   <div class="tw"><table class="tbl"><thead id="mvHead"></thead><tbody id="mvBody"></tbody></table></div>
 </div>
 <div id="planner" class="sec">
+<style>
+#planWeekly .pw-band{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;}
+.pw-band-lbl{font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tm);margin-right:4px;}
+.pw-pip{font-size:11px;color:var(--tx);background:var(--s2);border:1px solid var(--br2);border-radius:20px;padding:3px 10px;}
+.pw-chip{font-size:10px;font-weight:700;color:#0b1220;border-radius:20px;padding:3px 10px;}
+.q1-bg{background:#4FC3F7}.q2-bg{background:#9575CD}.q3-bg{background:#4DB6AC}.q4-bg{background:#EF7A6B}.qg-bg{background:var(--gold)}.qo-bg{background:#8890A6}
+.pw-setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;align-items:start;background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:12px;margin-bottom:12px;}
+.pw-fl{font-family:Barlow Condensed,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);margin-bottom:4px;display:block;}
+.pw-in{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:6px;color:var(--tx);padding:7px 8px;font-size:13px;box-sizing:border-box;}
+.pw-gdp{display:flex;gap:4px;flex-wrap:wrap;}
+.pw-gdp label{font-size:11px;color:var(--tx);background:var(--s2);border:1px solid var(--br2);border-radius:6px;padding:4px 7px;cursor:pointer;display:flex;gap:3px;align-items:center;}
+.pw-gdp input{accent-color:var(--gold);}
+.pw-build{background:var(--gold);color:#0b1220;border:none;border-radius:6px;padding:9px 16px;font-weight:800;cursor:pointer;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;text-transform:uppercase;}
+.pw-acstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0;}
+.pw-ac{background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:10px;text-align:center;}
+.pw-ac .l{font-family:Barlow Condensed,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tm);}
+.pw-ac .v{font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:900;color:var(--tx);line-height:1.15;}
+.pw-ac .s{font-size:9px;color:var(--tm);}
+.pw-daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px;}
+.pw-day{background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:8px;display:flex;flex-direction:column;gap:5px;}
+.pw-day .dn{font-family:Barlow Condensed,sans-serif;font-weight:700;color:var(--tx);font-size:13px;}
+.pw-day .dd{font-size:9px;color:var(--tm);}
+.pw-sel,.pw-vol,.pw-rpe{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:5px;color:var(--tx);padding:5px;font-size:11px;box-sizing:border-box;}
+.pw-qb{font-size:9px;font-weight:700;color:#0b1220;border-radius:5px;padding:4px;text-align:center;line-height:1.2;}
+.pw-load{font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:900;color:var(--gold);text-align:center;}
+.pw-theme{font-size:9px;color:var(--tm);text-align:center;min-height:20px;}
+.pw-rx{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;}
+.pw-rx th{background:#00205B;color:#fff;font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:6px 8px;text-align:left;}
+.pw-rx td{border-bottom:1px solid var(--br2);padding:6px 8px;color:var(--tx);vertical-align:top;}
+.pw-quads{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-bottom:8px;}
+.pw-quad{border-radius:var(--r);padding:10px;color:#0b1220;}
+.pw-quad .qn{font-size:22px;font-weight:900;font-family:Barlow Condensed,sans-serif;line-height:1;}
+.pw-quad .qname{font-weight:800;font-size:12px;}
+.pw-quad .qd{font-size:10px;opacity:.85;margin:3px 0;}
+.pw-quad .ql{font-size:10px;font-weight:700;}
+.psub{background:var(--s2);border:1px solid var(--br2);color:var(--tm);border-radius:6px;padding:6px 14px;cursor:pointer;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.psub.on{background:var(--gold);color:#0b1220;border-color:var(--gold);}
+</style>
+<div style="display:flex;gap:6px;margin-bottom:12px;">
+  <button class="psub on" data-plansub="weekly" onclick="switchPlanSub('weekly')">&#128197; Weekly Builder</button>
+  <button class="psub" data-plansub="yearly" onclick="switchPlanSub('yearly')">&#128200; Yearly / Season</button>
+</div>
+
+<div id="planWeekly">
+  <div class="pw-band">
+    <span class="pw-band-lbl">Patel RPE</span>
+    <span class="pw-pip">1 &mdash; Light</span><span class="pw-pip">2 &mdash; Easy</span><span class="pw-pip">3 &mdash; Average</span><span class="pw-pip">4 &mdash; Difficult</span><span class="pw-pip">5 &mdash; Very Difficult</span>
+  </div>
+  <div class="pw-band">
+    <span class="pw-band-lbl">Quadrants</span>
+    <span class="pw-chip q1-bg">Q1 &middot; Low Vol / Low Int</span>
+    <span class="pw-chip q2-bg">Q2 &middot; Low Vol / High Int</span>
+    <span class="pw-chip q3-bg">Q3 &middot; High Vol / Low-Med</span>
+    <span class="pw-chip q4-bg">Q4 &middot; High Vol / High Int</span>
+    <span class="pw-chip qg-bg">Game / Perform</span>
+    <span class="pw-chip qo-bg">Off / Recovery</span>
+  </div>
+  <div class="pw-setup">
+    <div><label class="pw-fl">Game Days This Week</label>
+      <div class="pw-gdp" id="pwGdp">
+        <label><input type="checkbox" class="pw-cb" value="0">Mon</label>
+        <label><input type="checkbox" class="pw-cb" value="1">Tue</label>
+        <label><input type="checkbox" class="pw-cb" value="2">Wed</label>
+        <label><input type="checkbox" class="pw-cb" value="3">Thu</label>
+        <label><input type="checkbox" class="pw-cb" value="4">Fri</label>
+        <label><input type="checkbox" class="pw-cb" value="5" checked>Sat</label>
+        <label><input type="checkbox" class="pw-cb" value="6">Sun</label>
+      </div>
+    </div>
+    <div><label class="pw-fl">Week Start (Monday)</label><input type="date" class="pw-in" id="pwWeekStart"></div>
+    <div><label class="pw-fl">Chronic Load (4-wk avg AU)</label><input type="number" class="pw-in" id="pwChronic" placeholder="e.g. 1800"></div>
+    <div style="display:flex;align-items:flex-end;"><button class="pw-build" onclick="buildWeekly()">Build Week &rarr;</button></div>
+  </div>
+  <div id="pwArea" style="display:none">
+    <div class="pw-acstrip">
+      <div class="pw-ac"><div class="l">Acute Load</div><div class="v" id="pwAcute">&mdash;</div><div class="s">AU (min&times;RPE)</div></div>
+      <div class="pw-ac"><div class="l">Chronic Load</div><div class="v" id="pwChron">&mdash;</div><div class="s">AU/wk (4-wk)</div></div>
+      <div class="pw-ac" id="pwRatioCard"><div class="l">A:C Ratio</div><div class="v" id="pwRatio">&mdash;</div><div class="s" id="pwZone">enter chronic</div></div>
+      <div class="pw-ac"><div class="l">Monotony</div><div class="v" id="pwMono">&mdash;</div><div class="s">mean &divide; SD</div></div>
+      <div class="pw-ac"><div class="l">Strain</div><div class="v" id="pwStrain">&mdash;</div><div class="s">load &times; monotony</div></div>
+      <div class="pw-ac"><div class="l">Total Min</div><div class="v" id="pwMin">&mdash;</div><div class="s">volume</div></div>
+      <div class="pw-ac"><div class="l">Avg RPE</div><div class="v" id="pwRpe">&mdash;</div><div class="s">training days</div></div>
+    </div>
+    <div class="pw-daygrid" id="pwDayGrid"></div>
+    <div class="sh"><div class="st">DAILY <span>PRESCRIPTIONS</span></div></div>
+    <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">From the Patel Training System daily objectives &mdash; edit any day above to override.</div>
+    <div style="overflow-x:auto;"><table class="pw-rx"><thead><tr><th>Day</th><th>Session</th><th>Ref</th><th>Quadrant</th><th>Daily Theme</th><th>Vol Target</th><th>RPE</th><th>Physical Focus</th></tr></thead><tbody id="pwRxBody"></tbody></table></div>
+    <div class="sh"><div class="st">WEEK <span>NOTES</span></div></div>
+    <textarea class="pw-in" id="pwNotes" rows="3" placeholder="Coach notes for this week — focus, travel, injuries, adjustments… (saved with the week and shown on the Yearly plan)" style="width:100%;resize:vertical;margin-bottom:12px;font-family:inherit;"></textarea>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="pw-build" id="pwSaveBtn" onclick="saveWeeklyToCloud()">&#9729; Save Week to Cloud</button>
+      <button class="ibtn" onclick="downloadWeekly()" style="cursor:pointer;">&#8681; Download CSV</button>
+      <span id="pwSaveMsg" style="font-size:11px;color:var(--tm);align-self:center;"></span>
+    </div>
+  </div>
+  <div class="sh"><div class="st">QUADRANT <span>REFERENCE</span></div></div>
+  <div class="pw-quads">
+    <div class="pw-quad q1-bg"><div class="qn">1</div><div class="qname">Low Vol / Low Int</div><div class="qd">Recovery, re-activation, dynamic warm-up. Post-game or open of week.</div><div class="ql">RPE 1&ndash;2 &middot; 0&ndash;30 min</div></div>
+    <div class="pw-quad q2-bg"><div class="qn">2</div><div class="qname">Low Vol / High Int</div><div class="qd">Strength development, higher loads, eccentrics &amp; iso's. Individual needs.</div><div class="ql">RPE 3&ndash;4 &middot; 60&ndash;75 min</div></div>
+    <div class="pw-quad q3-bg"><div class="qn">3</div><div class="qname">High Vol / Low-Med Int</div><div class="qd">Largest practice of the week. Team/tactical, aerobic. Builds chronic load.</div><div class="ql">RPE 2&ndash;3 &middot; 75&ndash;120 min</div></div>
+    <div class="pw-quad q4-bg"><div class="qn">4</div><div class="qname">High Vol / High Int</div><div class="qd">Game or game-like. Perform. Maximum load; high intensity, small games w/ rest.</div><div class="ql">RPE 4&ndash;5 &middot; 90&ndash;120 min</div></div>
+  </div>
+  <div style="font-size:11px;color:var(--tm);margin-top:8px;"><strong>Training Load</strong> = Minutes &times; RPE (1&ndash;5) &middot; <strong>A:C sweet spot</strong> 0.8&ndash;1.3 &middot; <strong>Danger</strong> &gt;1.5 &middot; Quadrants &amp; daily themes from the Patel Training System.</div>
+</div>
+
+<div id="planYearly" style="display:none">
   <div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-  <span style="font-size:12px;color:var(--tm);">&#128197; Showing <strong id="planWeekCount" style="color:var(--tx)">52</strong> weeks from your imported plan. To update, export the <code style="background:var(--s3);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--good)">Weekly Plan</code> sheet as CSV and re-import.</span>
+  <span style="font-size:12px;color:var(--tm);">&#128197; Showing <strong id="planWeekCount" style="color:var(--tx)">52</strong> weeks for the selected season &mdash; synced from your practice-planning workbook. Use the <strong style="color:var(--tx)">Season</strong> filter above to switch years.</span>
   <button class="ibtn" id="plannerImportBtn" style="white-space:nowrap;cursor:pointer;">&#8679; Import New Plan</button>
 </div>
 <div class="plan-filter-bar">
+    <div class="fg"><span class="fl">Season</span>
+      <select class="fs" id="planSeason" onchange="applyPlanSeason()"></select>
+    </div>
     <div class="fg"><span class="fl">Phase / Period</span>
       <select class="fs" id="planPhase" onchange="renderPlanner()">
         <option value="All">Full Season</option>
@@ -611,12 +738,19 @@ input,select,textarea{font-size:16px!important;}
       <button class="tb" data-planview="acwr">ACWR</button>
       <button class="tb" data-planview="session">Session Type</button>
     </div>
+    <div class="fg" style="margin-left:auto;"><span class="fl">Coach</span>
+      <button class="ibtn" id="planEditBtn" onclick="togglePlanEdit()" style="cursor:pointer;">&#9998; Edit Plan</button>
+      <button class="ibtn" id="planSaveBtn" onclick="savePlanToCloud()" style="cursor:pointer;display:none;background:var(--good);color:#fff;">&#9729; Save to Cloud</button>
+    </div>
   </div>
+
+  <!-- Planned vs Actual (AU) — from saved weekly builds + athlete sRPE -->
+  <div id="pvaWrap" style="margin-bottom:16px;"></div>
 
   <!-- Annual load chart -->
   <div class="plan-chart-wrap">
     <div class="plan-chart-title">
-      <span>ANNUAL LOAD PROFILE &mdash; Weekly Volume &amp; ACWR</span>
+      <span>ANNUAL LOAD PROFILE &mdash; Weekly Load (AU) &amp; ACWR</span>
       <div class="plan-legend">
         <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Volume (bars)</div>
         <div class="leg-item"><div class="leg-dot" style="background:#4FC3F7"></div>Under-training (&lt;0.8)</div>
@@ -635,15 +769,18 @@ input,select,textarea{font-size:16px!important;}
       <div id="weekDetailFlags" style="display:flex;gap:6px;"></div>
     </div>
     <div class="wd-days" id="weekDetailDays"></div>
+    <datalist id="sessTypes"><option value="Practice"><option value="Practice &amp; S/C"><option value="S/C"><option value="Game"><option value="Recovery"><option value="on own"><option value="Off"></datalist>
     <div class="fbar" style="margin-top:12px;padding:8px 12px;">
-      <div class="fg"><span class="fl">Weekly Hours</span><span class="mn" id="wdVol" style="font-size:15px;font-weight:700;color:var(--gold)">—</span></div>
+      <div class="fg"><span class="fl">Weekly Load</span><span class="mn" id="wdVol" style="font-size:15px;font-weight:700;color:var(--gold)">—</span></div>
       <div class="fg"><span class="fl">Total Minutes</span><span class="mn" id="wdMins" style="font-size:15px;font-weight:700">—</span></div>
       <div class="fg"><span class="fl">ACWR</span><span class="mn" id="wdACWR" style="font-size:15px;font-weight:700">—</span></div>
+      <div class="fg"><span class="fl">Monotony</span><span class="mn" id="wdMono" style="font-size:15px;font-weight:700">—</span></div>
+      <div class="fg"><span class="fl">Strain</span><span class="mn" id="wdStrain" style="font-size:15px;font-weight:700">—</span></div>
       <div class="fg"><span class="fl">Opponent / Context</span><span id="wdOpp" style="font-size:12px;color:var(--tm)">—</span></div>
     </div>
   </div>
 
-  <!-- Weekly grid table -->
+  <!-- Weekly grid table (AU — plannedAu for saved builds, estimated for legacy weeks) -->
   <div class="sh"><div class="st">WEEK-BY-WEEK <span>SCHEDULE</span></div></div>
   <div class="week-wrap">
     <div class="week-grid">
@@ -673,11 +810,296 @@ input,select,textarea{font-size:16px!important;}
   <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">Planned weekly volume by season (lines), with actual sRPE load overlaid where wellness data exists (bars). Aligned by season week (1&ndash;52).</div>
   <div id="seasonVolChart" style="overflow-x:auto;"></div>
   <div class="lg" id="seasonVolLegend" style="margin-top:6px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px;"></div>
+  </div><!-- /planYearly -->
 </div>
-<div class="st" style="margin-top:16px;margin-bottom:8px;">BODY COMPOSITION <span>TRENDS</span></div>
-<div class="fbar" style="margin-bottom:8px;"><div class="fg"><span class="fl">Athlete</span><select class="fs" id="anthroSel" onchange="renderAnthroTrends(this.value)"><option value="All">All Athletes</option></select></div></div>
-<div id="anthroTrends"></div>
 
+<script>
+/* ═══ WEEKLY BUILDER (Patel Load Management) ═══════════════════════════ */
+(function(){
+  var DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  var SHORT=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var ACTIVITIES=['Practice','Gym Training','Practice + Gym','Pre-Game','Extra Skills','Recovery','Game','Off'];
+  // Patel RPE 1-5 (user scale): 1 Light, 2 Easy, 3 Average, 4 Difficult, 5 Very Difficult
+  var RPE_LABELS={0:'0 — Off',1:'1 — Light',2:'2 — Easy',3:'3 — Average',4:'4 — Difficult',5:'5 — Very Difficult'};
+  var Q={1:{label:'Q1',cls:'q1-bg'},2:{label:'Q2',cls:'q2-bg'},3:{label:'Q3',cls:'q3-bg'},4:{label:'Q4',cls:'q4-bg'},'game':{label:'GAME',cls:'qg-bg'},'off':{label:'OFF',cls:'qo-bg'}};
+  // Patel microcycle, counting back from game day (index 6 = game)
+  var PATEL_BACK=[
+    {session:'Recovery',q:1,dayRef:'-6',theme:'Physical Improvement (Recovery)',vol:'0–30',rpe:1,focus:'Light movements; reciprocal alternating; dynamic warm-up; replace fluids'},
+    {session:'Practice',q:1,dayRef:'-5',theme:'Plan, Present & Prime',vol:'60–90',rpe:2,focus:'Low intensity movements; prime system for the week; review; skill development'},
+    {session:'Practice',q:3,dayRef:'-4',theme:'Priorities',vol:'90–120',rpe:4,focus:'Strength development; higher loads; eccentrics & isos; individual technical skills'},
+    {session:'Practice',q:2,dayRef:'-3',theme:'Principles',vol:'60–90',rpe:3,focus:'Alactic/aerobic development for those that need; individual needs; large-space tactical'},
+    {session:'Practice',q:3,dayRef:'-2',theme:'Precision',vol:'30–60',rpe:3,focus:'Speed/power; prioritize concentric actions; game-like execution and decision making'},
+    {session:'Practice',q:3,dayRef:'-1',theme:'Potentiate',vol:'30–45',rpe:3,focus:'Acceleration/speed; final rehearsal; execute at pace; no collision/contact'},
+    {session:'Game',q:'game',dayRef:'0',theme:'Perform',vol:'GAME',rpe:5,focus:'Execution — player led; speed to potentiate'}
+  ];
+  var DEV_WEEK=[
+    {session:'Recovery',q:1,dayRef:'—',theme:'Physical Improvement (Recovery)',vol:'0–30',rpe:1,focus:'Light movements, reciprocal alternating, dynamic warm-up'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Plan, Present & Prime',vol:'60–90',rpe:2,focus:'Low intensity movements; prime system for the week'},
+    {session:'Practice',q:4,dayRef:'—',theme:'Priorities',vol:'90–120',rpe:4,focus:'Strength development; emphasize higher loads; eccentrics & isos'},
+    {session:'Practice',q:2,dayRef:'—',theme:'Principles',vol:'60–75',rpe:3,focus:'Alactic/aerobic development for individual needs'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Precision',vol:'75–90',rpe:3,focus:'Speed/power; prioritize concentric actions; game-like execution'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Potentiate',vol:'30–60',rpe:3,focus:'Acceleration/speed; final rehearsal at pace'},
+    {session:'Off',q:'off',dayRef:'Off',theme:'Physical Improvement (Recovery)',vol:'0',rpe:0,focus:'Full rest day'}
+  ];
+  var PW_TPL=null;
+
+  function makeTemplate(gameDays){
+    var tpl=[];
+    for(var di=0;di<7;di++){
+      if(gameDays.indexOf(di)!==-1){ var g=JSON.parse(JSON.stringify(PATEL_BACK[6])); g.dayRef='0'; tpl.push(g); continue; }
+      if(gameDays.length===0){ tpl.push(JSON.parse(JSON.stringify(DEV_WEEK[di]))); continue; }
+      var minSince=999; gameDays.forEach(function(gd){ var s=(di-gd+7)%7; if(s>0&&s<minSince)minSince=s; });
+      var minDist=999;  gameDays.forEach(function(gd){ var d=(gd-di+7)%7; if(d>0&&d<minDist)minDist=d; });
+      var idx,ref;
+      if(minSince===1){ idx=0; ref='-6'; }
+      else if(minDist===1){ idx=5; ref='-1'; }
+      else if(minDist===2){ idx=4; ref='-2'; }
+      else if(minDist===3){ idx=3; ref='-3'; }
+      else if(minDist===4){ idx=2; ref='-4'; }
+      else { idx=1; ref='-5'; }
+      var r=JSON.parse(JSON.stringify(PATEL_BACK[idx])); r.dayRef=ref; tpl.push(r);
+    }
+    return tpl;
+  }
+  function midVol(v){ if(v==null) return ''; v=String(v); if(/GAME/i.test(v)) return 75; if(v.indexOf('–')>=0){ var p=v.split('–').map(Number); return Math.round((p[0]+p[1])/2); } var n=parseFloat(v); return isNaN(n)?'':n; }
+  function ge(id){ return document.getElementById(id); }
+
+  window.buildWeekly=function(){
+    var gameDays=[]; document.querySelectorAll('.pw-cb:checked').forEach(function(c){ gameDays.push(parseInt(c.value)); }); gameDays.sort(function(a,b){return a-b;});
+    var wStart=ge('pwWeekStart').value;
+    PW_TPL=makeTemplate(gameDays);
+    var html='';
+    DAYS.forEach(function(day,di){
+      var t=PW_TPL[di], q=Q[t.q], isOff=(t.q==='off'||t.session==='Off');
+      var dateStr='';
+      if(wStart){ var d=new Date(wStart+'T00:00:00'); d.setDate(d.getDate()+di); dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+      html+='<div class="pw-day">';
+      html+='<div><span class="dn">'+SHORT[di]+'</span> <span class="dd">'+dateStr+'</span></div>';
+      html+='<select class="pw-sel" id="pw-sess-'+di+'" onchange="pwSess('+di+')">'+ACTIVITIES.map(function(a){ return '<option'+(a===t.session?' selected':'')+'>'+a+'</option>'; }).join('')+'</select>';
+      html+='<div class="pw-qb '+q.cls+'">Day '+t.dayRef+'<br>'+q.label+'</div>';
+      html+='<div class="pw-fl" style="margin:0">Volume (min)</div>';
+      html+='<input class="pw-vol" type="number" min="0" max="180" id="pw-vol-'+di+'" value="'+(isOff?0:midVol(t.vol))+'" placeholder="'+t.vol+'" oninput="pwCalc('+di+')">';
+      html+='<div class="pw-fl" style="margin:0">RPE (1–5)</div>';
+      html+='<select class="pw-rpe" id="pw-rpe-'+di+'" onchange="pwCalc('+di+')">'+[0,1,2,3,4,5].map(function(r){ return '<option value="'+r+'"'+(r===(isOff?0:t.rpe)?' selected':'')+'>'+RPE_LABELS[r]+'</option>'; }).join('')+'</select>';
+      html+='<div class="pw-load" id="pw-load-'+di+'">—</div>';
+      html+='<div class="pw-theme">'+t.theme+'</div>';
+      html+='</div>';
+    });
+    ge('pwDayGrid').innerHTML=html;
+    for(var di=0;di<7;di++) pwCalc(di, true);
+    buildRx();
+    ge('pwArea').style.display='block';
+    pwSummary();
+    if(window.pwAutoChronic) pwAutoChronic();
+  };
+
+  window.pwCalc=function(di, silent){
+    var sess=ge('pw-sess-'+di)?ge('pw-sess-'+di).value:'';
+    var vol=parseFloat(ge('pw-vol-'+di).value)||0;
+    var rpe=parseFloat(ge('pw-rpe-'+di).value)||0;
+    var load=(sess==='Off')?0:Math.round(vol*rpe);
+    ge('pw-load-'+di).innerHTML=load+'<span style="font-size:10px;font-weight:400;color:var(--tm)"> AU</span>';
+    if(!silent) pwSummary();
+  };
+
+  // Per-day activity dropdown: picking (or clearing) Game syncs the game-day picker and rebuilds the microcycle
+  window.pwSess=function(di){
+    var sel=ge('pw-sess-'+di); if(!sel) return;
+    var val=sel.value;
+    var cb=document.querySelector('.pw-cb[value="'+di+'"]');
+    var wasGame=!!(cb && cb.checked);
+    if(val==='Game' && !wasGame){ if(cb) cb.checked=true; buildWeekly(); return; }
+    if(val!=='Game' && wasGame){ if(cb) cb.checked=false; buildWeekly(); return; }
+    pwCalc(di);
+    buildRx();
+  };
+
+  function dailyLoads(){ var arr=[]; for(var di=0;di<7;di++){ var sess=ge('pw-sess-'+di)?ge('pw-sess-'+di).value:''; var vol=parseFloat(ge('pw-vol-'+di).value)||0; var rpe=parseFloat(ge('pw-rpe-'+di).value)||0; arr.push(sess==='Off'?0:vol*rpe); } return arr; }
+
+  function pwSummary(){
+    var loads=dailyLoads();
+    var total=loads.reduce(function(a,b){return a+b;},0);
+    var totalMin=0, rpeSum=0, rpeN=0;
+    for(var di=0;di<7;di++){ var sess=ge('pw-sess-'+di)?ge('pw-sess-'+di).value:''; if(sess==='Off')continue; var v=parseFloat(ge('pw-vol-'+di).value)||0; var r=parseFloat(ge('pw-rpe-'+di).value)||0; totalMin+=v; if(r>0){rpeSum+=r;rpeN++;} }
+    var mean=total/7;
+    var sd=Math.sqrt(loads.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/7);
+    var mono=sd>0?(mean/sd):(mean>0?2:0);
+    var strain=total*mono;
+    var chronic=parseFloat(ge('pwChronic').value)||0;
+    var ratio=chronic>0?(total/chronic):null;
+    ge('pwAcute').textContent=Math.round(total);
+    ge('pwChron').textContent=chronic>0?Math.round(chronic):'—';
+    ge('pwMin').textContent=Math.round(totalMin);
+    ge('pwRpe').textContent=rpeN?(rpeSum/rpeN).toFixed(1):'—';
+    ge('pwMono').textContent=total>0?mono.toFixed(2):'—';
+    ge('pwStrain').textContent=total>0?Math.round(strain).toLocaleString():'—';
+    if(ratio!=null){
+      ge('pwRatio').textContent=ratio.toFixed(2);
+      var zn,col;
+      if(ratio<0.8){zn='Under-training';col='#4FC3F7';}
+      else if(ratio<=1.3){zn='Optimal Zone';col='var(--elite)';}
+      else if(ratio<=1.5){zn='Caution';col='var(--gold)';}
+      else{zn='High Risk';col='var(--dev)';}
+      ge('pwZone').textContent=zn; ge('pwRatio').style.color=col; ge('pwRatioCard').style.borderColor=col;
+    } else { ge('pwRatio').textContent='—'; ge('pwZone').textContent='enter chronic'; ge('pwRatio').style.color='var(--tx)'; ge('pwRatioCard').style.borderColor='var(--br2)'; }
+  }
+
+  function buildRx(){
+    var html='';
+    DAYS.forEach(function(day,di){
+      var t=PW_TPL[di], q=Q[t.q];
+      var sess=ge('pw-sess-'+di)?ge('pw-sess-'+di).value:t.session;
+      html+='<tr><td><b>'+SHORT[di]+'</b></td><td>'+sess+'</td><td>'+t.dayRef+'</td>'
+        +'<td><span class="pw-chip '+q.cls+'">'+q.label+'</span></td><td>'+t.theme+'</td>'
+        +'<td>'+t.vol+'</td><td>'+(RPE_LABELS[t.rpe]||t.rpe)+'</td><td style="font-size:10px;color:var(--tm)">'+t.focus+'</td></tr>';
+    });
+    ge('pwRxBody').innerHTML=html;
+  }
+
+  window.switchPlanSub=function(which){
+    document.querySelectorAll('[data-plansub]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-plansub')===which); });
+    ge('planWeekly').style.display = which==='weekly'?'block':'none';
+    ge('planYearly').style.display = which==='yearly'?'block':'none';
+    if(which==='yearly'){ if(window.renderPlanner){ try{ window.renderPlanner(); }catch(e){} } if(window.loadSeasonVolume){ try{ window.loadSeasonVolume(); }catch(e){} } if(window.renderYearlyAU) renderYearlyAU(); }
+  };
+
+  window.downloadWeekly=function(){
+    if(!PW_TPL){ return; }
+    var rows=[['Day','Date','Session','Quadrant','Day Ref','Theme','Volume (min)','RPE (1-5)','Load (AU)','Physical Focus']];
+    var wStart=ge('pwWeekStart').value;
+    DAYS.forEach(function(day,di){
+      var t=PW_TPL[di]; var d=''; if(wStart){var dt=new Date(wStart+'T00:00:00');dt.setDate(dt.getDate()+di);d=dt.toISOString().slice(0,10);}
+      var sess=ge('pw-sess-'+di).value, vol=ge('pw-vol-'+di).value||'', rpe=ge('pw-rpe-'+di).value||'';
+      var load=(sess==='Off')?0:(parseFloat(vol)||0)*(parseFloat(rpe)||0);
+      rows.push([day,d,sess,Q[t.q].label,t.dayRef,t.theme,vol,rpe,load,t.focus]);
+    });
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+    var notes=(ge('pwNotes')&&ge('pwNotes').value)||'';
+    if(notes) csv+='\n\n"Week Notes","'+notes.replace(/"/g,'""')+'"';
+    var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    a.download='Weekly-Plan-'+(wStart||'week')+'.csv'; a.click();
+  };
+
+  /* ---- Phase 2: cloud save + planned-vs-actual overlay + flags + auto-chronic ---- */
+  function cfg(){ return window.QUCFG||{}; }
+  function sbGet(path){ var c=cfg(); if(!c.SB_URL) return Promise.resolve([]); return fetch(c.SB_URL+'/rest/v1/'+path,{headers:{apikey:c.SB_KEY,Authorization:'Bearer '+c.SB_KEY}}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}); }
+  function seasonFromDate(ds){ var d=new Date(ds+'T00:00:00'); var y=d.getFullYear(), m=d.getMonth(); var s=(m>=6)?y:y-1; var a=('0'+(s%100)).slice(-2), b=('0'+((s+1)%100)).slice(-2); return a+'-'+b; }
+  // Season Week 1 = the coach's academic-year start = the 4th Monday of August of the season's start year
+  // (matches the imported convention, e.g. 26-27 → 2026-08-24). To shift the anchor, change the +21 below.
+  function seasonStartMonday(season){ var y=2000+parseInt(season.split('-')[0],10); var d=new Date(y,7,1); while(d.getDay()!==1) d.setDate(d.getDate()+1); d.setDate(d.getDate()+21); return d; }
+  function weekNumOfSeason(ds, season){ var start=seasonStartMonday(season); var d=new Date(ds+'T00:00:00'); var wk=Math.floor((d-start)/(7*864e5))+1; return Math.max(1,Math.min(52,wk)); }
+  var PW_PASS='';
+
+  window.saveWeeklyToCloud=function(){
+    if(!PW_TPL){ return; }
+    var c=cfg(); if(!c.SB_URL){ ge('pwSaveMsg').textContent='Config not ready — reload and retry.'; return; }
+    var wStart=ge('pwWeekStart').value; if(!wStart){ ge('pwSaveMsg').textContent='Set a Week Start (Monday) first.'; return; }
+    var season=seasonFromDate(wStart), wk=weekNumOfSeason(wStart,season);
+    var days=[], totalAU=0, totalMin=0;
+    DAYS.forEach(function(day,di){
+      var t=PW_TPL[di], sess=ge('pw-sess-'+di).value;
+      var mins=parseFloat(ge('pw-vol-'+di).value)||0, rpe=parseFloat(ge('pw-rpe-'+di).value)||0;
+      var load=(sess==='Off')?0:Math.round(mins*rpe);
+      totalAU+=load; if(sess!=='Off') totalMin+=mins;
+      days.push({day:day,session:sess,quadrant:String(Q[t.q].label),dayRef:t.dayRef,theme:t.theme,mins:mins,rpe:rpe,load:load});
+    });
+    if(!PW_PASS){ var p=window.prompt('Enter coach passcode to save this week:'); if(!p) return; PW_PASS=p; }
+    var payload={ passcode:PW_PASS, team:c.TEAM_ID, season:season, weeks:[{
+      week_start:wStart, week_label:'Week '+wk, opponent:null, days:days,
+      weekly_mins:Math.round(totalMin), weekly_vol:Math.round(totalAU), planned_au:Math.round(totalAU),
+      notes:(ge('pwNotes')&&ge('pwNotes').value.trim())||null, ewma:null }] };
+    ge('pwSaveMsg').textContent='Saving…';
+    fetch(c.SB_URL+'/functions/v1/save_plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(res.ok&&res.j&&res.j.ok){ ge('pwSaveMsg').textContent='✓ Saved '+season+' Week '+wk+' ('+Math.round(totalAU)+' AU). See it on the Yearly tab.'; if(typeof renderYearlyAU==='function') renderYearlyAU(); }
+        else if(res.j&&res.j.error==='unauthorized'){ PW_PASS=''; ge('pwSaveMsg').textContent='Wrong passcode — click Save and try again.'; }
+        else { ge('pwSaveMsg').textContent='Save failed: '+((res.j&&res.j.error)||'error'); }
+      })
+      .catch(function(e){ ge('pwSaveMsg').textContent='Save error: '+e; });
+  };
+
+  // Auto-fill chronic load from the trailing 4 weeks of ACTUAL team mean load (falls back to saved planned)
+  window.pwAutoChronic=function(){
+    var ch=ge('pwChronic'); var wStart=ge('pwWeekStart')?ge('pwWeekStart').value:''; if(!ch||!wStart||ch.value) return;
+    var c=cfg(); if(!c.TEAM_ID) return; var season=seasonFromDate(wStart);
+    sbGet('v_season_volume?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&season=eq.'+encodeURIComponent(season)+'&select=week_start,planned_au,actual_mean&order=week_start.asc').then(function(rows){
+      if(!rows||!rows.length) return;
+      var prior=rows.filter(function(r){return r.week_start < wStart;});
+      var act=prior.filter(function(r){return r.actual_mean!=null;}).slice(-4).map(function(r){return +r.actual_mean;});
+      var use=act, src='actual';
+      if(act.length<2){ var pl=prior.filter(function(r){return r.planned_au!=null;}).slice(-4).map(function(r){return +r.planned_au;}); if(pl.length>=2){ use=pl; src='planned'; } }
+      if(use.length>=2){ var avg=Math.round(use.reduce(function(a,b){return a+b;},0)/use.length); ch.value=avg; ch.dispatchEvent(new Event('input')); ge('pwSaveMsg').textContent='Chronic load auto-set to '+avg+' AU (avg of last '+use.length+' '+src+' weeks).'; }
+    });
+  };
+
+  // Yearly tab: planned AU (from saved builds) vs actual athlete load, per-athlete flags, notes
+  window.renderYearlyAU=function(){
+    var host=ge('pvaWrap'); if(!host) return;
+    var c=cfg(); if(!c.TEAM_ID){ host.innerHTML=''; return; }
+    var season=(ge('planSeason')&&ge('planSeason').value)||'';
+    host.innerHTML='<div style="font-size:11px;color:var(--tm);padding:6px">Loading planned vs actual…</div>';
+    Promise.all([
+      sbGet('v_season_volume?team=eq.'+encodeURIComponent(c.TEAM_ID)+(season?'&season=eq.'+encodeURIComponent(season):'')+'&select=week_start,week_num,planned_au,actual_mean,actual_srpe,actual_athletes&order=week_start.asc'),
+      sbGet('v_week_athlete_load?team=eq.'+encodeURIComponent(c.TEAM_ID)+(season?'&season=eq.'+encodeURIComponent(season):'')+'&select=week_start,week_label,planned_au,athlete,actual_au,sessions&order=week_start.asc'),
+      sbGet('v_dashboard_plan?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&select=date,week,season,notes')
+    ]).then(function(r){
+      var sv=r[0]||[], ath=r[1]||[], plan=r[2]||[];
+      var wk=sv.filter(function(d){return d.planned_au!=null;});
+      var title='<div class="sh" style="margin-bottom:8px;"><div class="st">PLANNED vs ACTUAL <span>LOAD (AU)</span></div></div>';
+      if(!wk.length){ host.innerHTML=title+'<div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;font-size:12px;color:var(--tm)">No saved weekly builds yet for '+(season||'this season')+'. Build a week on the <strong style="color:var(--tx)">Weekly Builder</strong> tab and click <strong style="color:var(--tx)">Save Week to Cloud</strong> — planned AU (line) will appear here against your athletes’ actual sRPE load (bars).</div>'; return; }
+      // chart
+      var maxV=0; wk.forEach(function(d){ maxV=Math.max(maxV, +d.planned_au||0, +d.actual_mean||0); }); maxV=Math.ceil((maxV||1)*1.15/100)*100;
+      var W=940,H=280,pad={t:14,r:14,b:34,l:40}, n=wk.length;
+      var sx=function(i){ return pad.l+(W-pad.l-pad.r)*(n<=1?0.5:i/(n-1)); };
+      var sy=function(v){ return H-pad.b-(H-pad.t-pad.b)*(v/maxV); };
+      var svg="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;min-width:640px;height:280px'>";
+      for(var g=0; g<=maxV; g+=Math.max(100,Math.round(maxV/5/100)*100)){ var y=sy(g); svg+="<line x1='"+pad.l+"' y1='"+y+"' x2='"+(W-pad.r)+"' y2='"+y+"' stroke='rgba(255,255,255,0.06)'/><text x='"+(pad.l-5)+"' y='"+(y+3)+"' text-anchor='end' fill='var(--td)' font-size='9'>"+g+"</text>"; }
+      var bw=Math.min(26,(W-pad.l-pad.r)/(n*1.6));
+      wk.forEach(function(d,i){ if(d.actual_mean==null) return; var x=sx(i), y=sy(+d.actual_mean); svg+="<rect x='"+(x-bw/2)+"' y='"+y+"' width='"+bw+"' height='"+(H-pad.b-y)+"' rx='2' fill='rgba(79,195,247,0.45)'><title>"+d.week_start+" actual: "+d.actual_mean+" AU/athlete ("+(d.actual_athletes||0)+")</title></rect>"; });
+      var poly=wk.map(function(d,i){ return sx(i)+','+sy(+d.planned_au); }).join(' ');
+      svg+="<polyline points='"+poly+"' fill='none' stroke='var(--gold)' stroke-width='2.5' stroke-linejoin='round'/>";
+      wk.forEach(function(d,i){ svg+="<circle cx='"+sx(i)+"' cy='"+sy(+d.planned_au)+"' r='3' fill='var(--gold)'><title>"+d.week_start+" planned: "+d.planned_au+" AU</title></circle>"; });
+      var step=Math.ceil(n/10);
+      wk.forEach(function(d,i){ if(i%step===0||i===n-1){ svg+="<text x='"+sx(i)+"' y='"+(H-12)+"' text-anchor='middle' fill='var(--td)' font-size='8'>"+String(d.week_start).slice(5)+"</text>"; } });
+      svg+="</svg>";
+      var legend='<div style="display:flex;gap:16px;font-size:11px;color:var(--tm);margin:4px 0 10px"><span><span style="display:inline-block;width:14px;height:3px;background:var(--gold);vertical-align:middle"></span> Planned AU (coach)</span><span><span style="display:inline-block;width:11px;height:11px;background:rgba(79,195,247,0.55);vertical-align:middle"></span> Actual mean AU/athlete</span></div>';
+      // flags — most recent planned week that has athlete actuals
+      var wkKeys=ath.filter(function(a){return a.planned_au!=null && a.actual_au!=null;}).map(function(a){return a.week_start;});
+      var lastWk=wkKeys.sort().slice(-1)[0];
+      var flagsHtml='';
+      if(lastWk){
+        var rowsW=ath.filter(function(a){return a.week_start===lastWk;}).sort(function(a,b){return b.actual_au-a.actual_au;});
+        var planAU=rowsW[0]?+rowsW[0].planned_au:0;
+        flagsHtml='<div class="sh" style="margin:14px 0 6px"><div class="st">ATHLETE <span>FLAGS</span> &mdash; week of '+lastWk+'</div></div>'
+          +'<div style="font-size:11px;color:var(--tm);margin-bottom:6px">Planned '+planAU+' AU. Actual vs plan per athlete (&plusmn;20% flagged).</div>'
+          +'<div style="overflow-x:auto"><table class="pw-rx"><thead><tr><th>Athlete</th><th>Planned</th><th>Actual</th><th>&Delta;%</th><th>Flag</th><th>Sessions</th></tr></thead><tbody>'
+          +rowsW.map(function(a){ var dev=planAU>0?Math.round((a.actual_au-planAU)/planAU*100):0; var col=dev>20?'var(--dev)':dev<-20?'#4FC3F7':'var(--elite)'; var lab=dev>20?'Over':dev<-20?'Under':'On plan'; return '<tr><td>'+(a.athlete||'').split(',')[0]+'</td><td>'+planAU+'</td><td>'+a.actual_au+'</td><td style="color:'+col+';font-weight:700">'+(dev>0?'+':'')+dev+'%</td><td style="color:'+col+';font-weight:700">'+lab+'</td><td>'+a.sessions+'</td></tr>'; }).join('')
+          +'</tbody></table></div>';
+      } else {
+        flagsHtml='<div style="font-size:11px;color:var(--tm);margin-top:10px">Per-athlete flags appear once a saved planned week overlaps athlete sRPE submissions.</div>';
+      }
+      // notes
+      var noteRows=plan.filter(function(p){ return p.notes && (!season||p.season===season); });
+      var notesHtml='';
+      if(noteRows.length){ notesHtml='<div class="sh" style="margin:14px 0 6px"><div class="st">WEEK <span>NOTES</span></div></div>'+noteRows.map(function(p){ return '<div style="background:var(--s1);border:1px solid var(--br2);border-left:3px solid var(--gold);border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:12px;color:var(--tx)"><strong style="color:var(--gold)">'+(p.week||p.date)+'</strong> &mdash; '+p.notes+'</div>'; }).join(''); }
+      host.innerHTML=title+'<div class="plan-chart-wrap">'+legend+svg+'</div>'+flagsHtml+notesHtml;
+    });
+  };
+
+  // default week start = this Monday; auto-build once DOM is ready
+  document.addEventListener('DOMContentLoaded', function(){
+    var ws=ge('pwWeekStart');
+    if(ws && !ws.value){ var t=new Date(); var day=(t.getDay()+6)%7; t.setDate(t.getDate()-day); ws.value=t.toISOString().slice(0,10); }
+    if(ge('pwDayGrid')) buildWeekly();
+    var ch=ge('pwChronic'); if(ch) ch.addEventListener('input', pwSummary);
+    // game-day picker rebuilds the microcycle live (no need to press Build Week)
+    document.querySelectorAll('.pw-cb').forEach(function(cb){ cb.addEventListener('change', buildWeekly); });
+    // re-render the yearly overlay when the season filter changes
+    var ps=ge('planSeason'); if(ps) ps.addEventListener('change', function(){ if(window.renderYearlyAU) renderYearlyAU(); });
+  });
+})();
+</script>
 
 </main>
 
@@ -742,6 +1164,7 @@ var LOCAL_KEY = 'qumhoc_w5';
 var SB_URL   = 'https://qpqvrekiujpcfugjqpft.supabase.co';
 var SB_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwcXZyZWtpdWpwY2Z1Z2pxcGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjMyODgsImV4cCI6MjA5NDU5OTI4OH0.g-mlooOha_GhaSAOH0Gurnl0cQzDzHTX8YveU6pFBSE';
 var SB_TABLE = 'wellness_log';
+try{ window.QUCFG = { SB_URL:SB_URL, SB_KEY:SB_KEY, TEAM_ID:TEAM_ID }; }catch(e){}
 
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
@@ -824,6 +1247,7 @@ function fillAthletes() {
 function populateDates() {
   var s = ge('ovSeason') ? ge('ovSeason').value : 'All';
   var p = ge('ovPeriod') ? ge('ovPeriod').value : 'All';
+  var cur = ge('ovDate') ? ge('ovDate').value : 'All';   // preserve current pick across rebuilds
   var d = DATA.slice();
   if (s !== 'All') d = d.filter(function(x) { return x.Season === s; });
   if (p !== 'All') d = d.filter(function(x) { return x['Time Period'] === p; });
@@ -831,6 +1255,7 @@ function populateDates() {
   ge('ovDate').innerHTML = dates.map(function(dt) {
     return '<option value="' + dt + '">' + (dt === 'All' ? 'All Dates' : dt) + '</option>';
   }).join('');
+  if (dates.indexOf(cur) >= 0) ge('ovDate').value = cur;  // restore if still valid
 }
 function updBadge() {
   var s = ge('ovSeason') ? ge('ovSeason').value : 'All';
@@ -936,6 +1361,122 @@ function showTab(id, el) {
 }
 
 // ─── OVERVIEW ────────────────────────────────────────────────────────────────
+// ─── PDF PRINTOUTS ─────────────────────────────────────────────────────────────
+function printReport(bodyHtml) {
+  var pa = ge('printArea');
+  if (!pa) { pa = document.createElement('div'); pa.id = 'printArea'; document.body.appendChild(pa); }
+  if (!ge('printStyle')) {
+    var st = document.createElement('style'); st.id = 'printStyle';
+    st.textContent = '#printArea{display:none}'
+      + '@media print{@page{margin:0.25in}body.printing>*:not(#printArea){display:none!important}body.printing #printArea{display:block!important}'
+      + '#printArea{font-family:Barlow,Arial,sans-serif;color:#111;background:#fff}#printArea *{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+      + '.pr-brand{display:flex;justify-content:space-between;align-items:center;background:#00205B;color:#fff;padding:6px 14px;margin-bottom:12px;border-radius:4px;font-family:"Barlow Condensed",Arial;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.pr-brand span:last-child{color:#E8A900}'
+      + '.pr-h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #00205B;padding-bottom:8px;margin-bottom:12px}'
+      + '.pr-h h1{font-family:"Barlow Condensed",Arial;font-size:24px;color:#00205B;margin:0;letter-spacing:1px}'
+      + '.pr-h .sub{font-size:11px;color:#555;text-align:right;line-height:1.5}'
+      + '.pr-sec{font-family:"Barlow Condensed",Arial;font-size:13px;color:#00205B;font-weight:700;margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}'
+      + '.pr-cats{display:flex;gap:8px}.pc-cat{flex:1;border:1px solid #ccc;border-radius:6px;padding:6px 9px}'
+      + '.pc-h{font-size:10px;font-weight:700;text-transform:uppercase;color:#00205B;letter-spacing:1px;margin-bottom:4px;border-bottom:1px solid #eee;padding-bottom:2px}'
+      + '.pc-r{display:flex;justify-content:space-between;font-size:11px;padding:1px 0}'
+      + 'table.pr-t{width:100%;border-collapse:collapse;font-size:10px}table.pr-t th{background:#00205B;color:#fff !important;padding:4px 5px;text-align:left;font-size:9px;text-transform:uppercase}'
+      + 'table.pr-t td{padding:3px 5px;border-bottom:1px solid #eee}table.pr-t tr:nth-child(even) td{background:#f5f5f5}'
+      + '.pbar{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:11px}.pbl{width:86px;color:#333;font-weight:600}.pbt{flex:1;height:12px;background:#eee;border-radius:6px;overflow:hidden}.pbf{display:block;height:12px}.pbv{width:30px;text-align:right;font-weight:800}'
+      + '.pm{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}.pmi{display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #eee;padding:2px 0}.pmi .l{color:#666}.pmi .v{font-weight:700;color:#111}'
+      + '.pr-split{display:flex;gap:18px;align-items:flex-start;margin:4px 0}.pr-split>div:first-child{flex:1}.pr-radar{width:232px;text-align:center;flex:none}.pr-radar-key{font-size:8px;color:#666;margin-top:2px}.pr-ranks{display:flex;flex-wrap:wrap;gap:5px}.prk{border:1px solid #ddd;border-radius:4px;padding:2px 8px;font-size:10px;background:#f7f7f7}.prk b{color:#00205B}'
+      + '.pr-foot{margin-top:14px;font-size:8px;color:#999;text-align:center}}';
+    document.head.appendChild(st);
+  }
+  var brandTeam = ((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
+  pa.innerHTML = '<div class="pr-brand"><span>Quinnipiac Bobcats &middot; ' + (brandTeam||'Athletics') + '</span><span>Strength &amp; Conditioning</span></div>'
+    + bodyHtml + '<div class="pr-foot">Quinnipiac Strength &amp; Conditioning &middot; generated ' + new Date().toLocaleDateString() + '</div>';
+  document.body.classList.add('printing');
+  window.onafterprint = function(){ document.body.classList.remove('printing'); };
+  window.print();
+}
+function printTeamPDF() {
+  var fd = filterData('ovSeason','ovPeriod','ovDate');
+  var s=(ge('ovSeason')||{}).value||'All', p=(ge('ovPeriod')||{}).value||'All';
+  var byA={}; fd.forEach(function(d){ var n=d['Athlete Name']; if(!byA[n]||new Date(d.Date)>new Date(byA[n].Date)) byA[n]=d; });
+  var rows=Object.keys(byA).map(function(n){return byA[n];}).sort(function(a,b){return (b['Score OVERALL']||0)-(a['Score OVERALL']||0);});
+  var team=((document.querySelector('.ts')||{}).textContent||'Team').split('·')[0].trim();
+  var cats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Conditioning']];
+  var callouts=cats.map(function(c){
+    var top=rows.filter(function(d){return d[c[0]]>0;}).sort(function(a,b){return b[c[0]]-a[c[0]];}).slice(0,3);
+    return '<div class="pc-cat"><div class="pc-h">'+c[1]+'</div>'+(top.length?top.map(function(d,i){return '<div class="pc-r"><span>'+(i+1)+'. '+dn(d['Athlete Name'])+'</span><b>'+fmtI(d[c[0]])+'</b></div>';}).join(''):'<div class="pc-r" style="color:#aaa">—</div>')+'</div>';
+  }).join('');
+  function scc(v){ return '<td style="text-align:center;color:#fff;font-weight:700;background:'+pdfSc(v)+'">'+fmtI(v)+'</td>'; }
+  var trs=rows.map(function(d){ return '<tr><td><b>'+dn(d['Athlete Name'])+'</b></td><td>'+(d.Position||'—')+'</td><td>'+(d.Group||'—')+'</td>'
+    +scc(d['Score POWER'])+scc(d['Score STRENGTH'])+scc(d['Score SPEED'])+scc(d['Score CONDITIONING'])+scc(d['Score OVERALL'])
+    +'<td style="text-align:center">'+fmt(d.Bodyweight)+'</td><td style="text-align:center">'+fmtI(d['Squat Max'])+'</td><td style="text-align:center">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td><td style="text-align:center">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td><td style="text-align:center">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td></tr>'; }).join('');
+  printReport('<div class="pr-h"><h1>'+team.toUpperCase()+'</h1><div class="sub"><b>Team Performance Report</b><br>'+(s!=='All'?s:'All Seasons')+' &middot; '+(p!=='All'?p:'All Periods')+'</div></div>'
+    +'<div class="pr-sec">Top Performers</div><div class="pr-cats">'+callouts+'</div>'
+    +'<div class="pr-sec">Roster &middot; '+rows.length+' athletes &mdash; category scores 0&ndash;100, color-coded (green high &rarr; red low)</div>'
+    +'<table class="pr-t"><thead>'
+    +'<tr><th colspan="3" style="background:#3a4a6b"></th><th colspan="5" style="text-align:center;background:#00205B;border-left:3px solid #fff;border-right:3px solid #fff">CATEGORY SCORES (0&ndash;100)</th><th colspan="5" style="text-align:center;background:#3a4a6b">KEY METRICS</th></tr>'
+    +'<tr><th>Athlete</th><th>Pos</th><th>Yr</th><th style="border-left:3px solid #fff">PWR</th><th>STR</th><th>SPD</th><th>COND</th><th style="border-right:3px solid #fff">OVR</th><th>BW</th><th>Squat</th><th>Bench</th><th>CMJ&Prime;</th><th>10yd</th></tr></thead><tbody>'+trs+'</tbody></table>');
+}
+function printPlayerPDF() {
+  var name=(ge('profSel')||{}).value; if(!name){ alert('Open a player profile first.'); return; }
+  var all=DATA.filter(function(d){return d['Athlete Name']===name;});
+  var ps=(ge('profSeason')||{}).value||'All', pp=(ge('profPeriod')||{}).value||'All';
+  var f=all.slice();
+  if(ps!=='All') f=f.filter(function(d){return d.Season===ps;});
+  if(pp!=='All') f=f.filter(function(d){return d['Time Period']===pp;});
+  f.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  if(!f.length){ alert('No record for this athlete in the selected season/period.'); return; }
+  // anchor to the most recent record that actually has scores/metrics (newest test date can be a roster-only entry)
+  var d=f.filter(function(x){return x['Score OVERALL']!=null;})[0] || f.filter(function(x){return x['Squat Max']!=null||x['CMJ Best (in)']!=null||x.Bodyweight!=null;})[0] || f[0];
+  var team=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
+  var cat=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Conditioning'],['Score MOVEMENT','Movement'],['Score ANTHRO','Anthro']];
+  var bars=cat.map(function(c){ var v=d[c[0]]; var pct=(v==null||isNaN(v))?0:Math.max(0,Math.min(100,v));
+    return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v))+'</span></div>';
+  }).join('');
+  // radar of category scores: this test vs the previous scored test
+  var scored=f.filter(function(x){return x['Score OVERALL']!=null;});
+  var prev=scored[1]||null;
+  var radarSvg=buildRadar(d, prev);
+  // team rank within the same season + time period as the printed record
+  var pW=d.Season, pP=d['Time Period'], peerRecs={};
+  DATA.forEach(function(x){ if(x.Season===pW && x['Time Period']===pP){ var n=x['Athlete Name']; if(!peerRecs[n]||new Date(x.Date)>new Date(peerRecs[n].Date)) peerRecs[n]=x; } });
+  var peers=Object.keys(peerRecs).map(function(n){return peerRecs[n];});
+  function rankOf(key){ var mine=d[key]; if(mine==null) return null; var vals=peers.map(function(x){return x[key];}).filter(function(v){return v!=null;}); if(vals.length<2) return null; var greater=vals.filter(function(v){return v>mine;}).length; return (greater+1)+' / '+vals.length; }
+  var rankCats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Cond'],['Score MOVEMENT','Move'],['Score ANTHRO','Anthro']];
+  var ranks=rankCats.map(function(c){ var r=rankOf(c[0]); return r?'<span class="prk"><b>'+c[1]+'</b> '+r+'</span>':''; }).join('');
+  var hist=all.filter(function(x){return x['Score OVERALL']>0;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  var trend='';
+  if(hist.length>=2){
+    var W=560,H=140,L=26,R=8,T=8,B=22;
+    var sx=function(i){return L+(W-L-R)*(hist.length<2?0:i/(hist.length-1));};
+    var sy=function(v){return H-B-(H-T-B)*(v/100);};
+    var grid='';
+    for(var gy=0;gy<=100;gy+=25){var y=sy(gy);grid+="<line x1='"+L+"' y1='"+y+"' x2='"+(W-R)+"' y2='"+y+"' stroke='#eee'/><text x='"+(L-4)+"' y='"+(y+3)+"' text-anchor='end' font-size='8' fill='#999'>"+gy+"</text>";}
+    var pts=hist.map(function(x,i){return sx(i)+','+sy(x['Score OVERALL']);}).join(' ');
+    var dots=hist.map(function(x,i){return "<circle cx='"+sx(i)+"' cy='"+sy(x['Score OVERALL'])+"' r='3' fill='#00205B'/><text x='"+sx(i)+"' y='"+(sy(x['Score OVERALL'])-6)+"' text-anchor='middle' font-size='8' font-weight='700' fill='#00205B'>"+Math.round(x['Score OVERALL'])+"</text>";}).join('');
+    var step=Math.ceil(hist.length/7);
+    var labs=hist.map(function(x,i){return (i%step===0||i===hist.length-1)?"<text x='"+sx(i)+"' y='"+(H-6)+"' text-anchor='middle' font-size='8' fill='#777'>"+String(x.Date||'').slice(2)+"</text>":'';}).join('');
+    trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:140px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
+  } else { trend='<div style="font-size:10px;color:#999;padding:4px 0">Not enough tests yet to plot a trend.</div>'; }
+  var metrics=[['Bodyweight','Bodyweight','lbs'],['Bodyfat','Body Fat','%'],['Lean Mass','Lean Mass','lbs'],['Squat Max','Squat','lbs'],['Bench Press Max','Bench','lbs'],['TBDL Max','TBDL','lbs'],['Pull-ups','Pull-up Max','lbs'],['NCMJ Mat Best (in)','NCMJ','in'],['CMJ Best (in)','CMJ','in'],['Broad Jump Best (in)','Broad','in'],['10 yd Best (s)','10yd','s'],['Pro Agility Best (s)','Pro Agility','s'],['Beep Test','Beep',''],['Peak Power (W)','Peak Power','W'],['Power Quotient','Power Quotient','']];
+  var mrows=metrics.map(function(m){var v=d[m[0]]; return (v==null)?'':'<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+(typeof v==='number'?Math.round(v*10)/10:v)+(m[2]?' '+m[2]:'')+'</span></div>';}).join('');
+  printReport('<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+team+'</b><br>'+(d.Position||'')+' &middot; '+(d.Group||'')+' &middot; '+(d.Season||'')+' &middot; '+(d['Time Period']||'')+' &middot; '+(d.Date||'')+'</div></div>'
+    +'<div class="pr-sec">Category Scores &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div>'
+    +'<div class="pr-split"><div>'+bars+'</div><div class="pr-radar">'+radarSvg+'<div class="pr-radar-key"><span style="color:#E8A900">&#9679; This test</span>'+(prev?' &nbsp; <span style="color:#00205B">&#9675; Prev ('+(prev.Date||'')+')</span>':'')+'</div></div></div>'
+    +(ranks?'<div class="pr-sec">Team Rank &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+'</div><div class="pr-ranks">'+ranks+'</div>':'')
+    +'<div class="pr-sec">Overall Score History &mdash; all tests</div>'+trend
+    +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div><div class="pm">'+mrows+'</div>');
+}
+function pdfSc(v){ return (v==null||isNaN(v))?'#9aa0a6':v>=80?'#1e7a46':v>=65?'#2f7d9e':v>=50?'#b8860b':v>=35?'#c26a2a':'#b23c3c'; }
+function buildRadar(cur, prev){
+  var axes=[['Score POWER','PWR'],['Score STRENGTH','STR'],['Score SPEED','SPD'],['Score CONDITIONING','COND'],['Score MOVEMENT','MOVE'],['Score ANTHRO','ANTH']];
+  var N=axes.length, cx=125, cy=118, Rmax=80;
+  function pt(i,val){ var ang=-Math.PI/2 + i*2*Math.PI/N; var r=Rmax*Math.max(0,Math.min(100,val||0))/100; return [Math.round((cx+r*Math.cos(ang))*10)/10, Math.round((cy+r*Math.sin(ang))*10)/10]; }
+  var rings=''; [25,50,75,100].forEach(function(rv){ rings+="<polygon points='"+axes.map(function(a,i){var p=pt(i,rv);return p[0]+','+p[1];}).join(' ')+"' fill='none' stroke='#e8e8e8'/>"; });
+  var spokes=axes.map(function(a,i){var p=pt(i,100);return "<line x1='"+cx+"' y1='"+cy+"' x2='"+p[0]+"' y2='"+p[1]+"' stroke='#e8e8e8'/>";}).join('');
+  var labels=axes.map(function(a,i){var p=pt(i,116);return "<text x='"+p[0]+"' y='"+(p[1]+3)+"' font-size='9' font-weight='700' fill='#555' text-anchor='middle'>"+a[1]+"</text>";}).join('');
+  function poly(rec,fill,stroke,dash){ if(!rec) return ''; return "<polygon points='"+axes.map(function(a,i){var p=pt(i,rec[a[0]]);return p[0]+','+p[1];}).join(' ')+"' fill='"+fill+"' stroke='"+stroke+"' stroke-width='2'"+(dash?" stroke-dasharray='4,2'":"")+"/>"; }
+  return "<svg viewBox='0 0 250 244' style='width:230px;height:224px'>"+rings+spokes+labels+poly(prev,'none','#00205B',true)+poly(cur,'rgba(232,169,0,0.30)','#E8A900',false)+"</svg>";
+}
+window.printTeamPDF = printTeamPDF; window.printPlayerPDF = printPlayerPDF;
 function ovFilter() { populateDates(); updBadge(); renderKPIs(); renderOvTable(); }
 
 function renderKPIs() {
@@ -1079,8 +1620,101 @@ window.renderWLog = renderWLog;
 window.renderTrends = renderTrends;
 
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
+function loadProfileIso(athlete) {
+  var host = ge('isoTable'); if (!host) return;
+  window._isoAthlete = athlete;
+  fetch(SB_URL + '/rest/v1/v_iso_measures?team=eq.' + TEAM_ID + '&select=*', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r){ return r.ok ? r.json() : []; })
+  .then(function(rows){ window._isoRows = rows; window._renderIso(); })
+  .catch(function(){ window._isoRows = []; window._renderIso(); });
+}
+window._renderIso = function() {
+  var host = ge('isoTable'), trend = ge('isoTrend'), empty = ge('isoEmpty');
+  if (!host) return;
+  var stat = ge('isoStat') ? ge('isoStat').value : 'Max';
+  var parsed = (window._isoRows || []).filter(function(d){ return d.athlete === window._isoAthlete; }).map(function(d){
+    var m = /^Iso (.+) ([LR]) (Max|Avg)$/.exec(d.measure); if (!m) return null;
+    return { action:m[1], side:m[2], stat:m[3], date:d.test_date, value:+d.value };
+  }).filter(Boolean).filter(function(x){ return x.stat === stat; });
+  if (!parsed.length) { host.innerHTML=''; trend.innerHTML=''; empty.textContent='No isometric data logged for this athlete yet — it appears here once you record it.'; return; }
+  empty.textContent='';
+  var dates = uniq(parsed.map(function(p){ return p.date; })).sort();
+  var actions = uniq(parsed.map(function(p){ return p.action; })).sort();
+  var val = function(a,s,d){ var f=parsed.filter(function(p){return p.action===a&&p.side===s&&p.date===d;}); return f.length?f[0].value:null; };
+  // ── table
+  var html='<table class="tbl"><thead><tr><th>Joint</th><th>Side</th>'+dates.map(function(d){return '<th>'+d.slice(5)+'</th>';}).join('')+'<th>Asym%</th></tr></thead><tbody>';
+  actions.forEach(function(a){
+    ['L','R'].forEach(function(s){
+      html+='<tr>'+(s==='L'?'<td rowspan="2" style="vertical-align:middle;font-weight:600">'+a+'</td>':'')+'<td style="color:var(--tm)">'+s+'</td>'
+        + dates.map(function(d){ var v=val(a,s,d); return '<td class="mn">'+(v==null?'—':Math.round(v))+'</td>'; }).join('');
+      if (s==='L') {
+        var ld=dates[dates.length-1], L=val(a,'L',ld), R=val(a,'R',ld);
+        var asym=(L!=null&&R!=null&&Math.max(L,R))?Math.round(Math.abs(L-R)/Math.max(L,R)*100):null;
+        var cls=asym==null?'mn':asym>15?'mn td3':asym>10?'mn tb2':'mn';
+        html+='<td rowspan="2" class="'+cls+'" style="vertical-align:middle">'+(asym==null?'—':asym+'%')+'</td>';
+      }
+      html+='</tr>';
+    });
+  });
+  host.innerHTML=html+'</tbody></table>';
+  // ── trend chart: Max/Avg over dates, one line per action+side
+  var W=680,H=200,pad={t:12,r:10,b:22,l:34};
+  var all=parsed.map(function(p){return p.value;}); var mx=Math.max.apply(null,all)*1.1, mn=Math.min(0,Math.min.apply(null,all));
+  var sx=function(i){ return pad.l+(W-pad.l-pad.r)*(dates.length<2?0.5:i/(dates.length-1)); };
+  var sy=function(v){ return H-pad.b-(H-pad.t-pad.b)*((v-mn)/((mx-mn)||1)); };
+  var COL=['#E8A900','#4FC3F7','#AB47BC','#66BB6A','#FF7043','#26C6DA'];
+  var svg="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;min-width:520px;height:200px'>";
+  for(var g=0;g<=4;g++){var y=pad.t+(H-pad.t-pad.b)*g/4;svg+="<line x1='"+pad.l+"' y1='"+y+"' x2='"+(W-pad.r)+"' y2='"+y+"' stroke='rgba(255,255,255,0.06)'/>";}
+  dates.forEach(function(d,i){ svg+="<text x='"+sx(i)+"' y='"+(H-7)+"' text-anchor='middle' fill='var(--td)' font-size='9'>"+d.slice(5)+"</text>"; });
+  var leg=''; var li=0;
+  actions.forEach(function(a,ai){
+    ['L','R'].forEach(function(s){
+      var pts=dates.map(function(d,i){var v=val(a,s,d);return v==null?null:sx(i)+','+sy(v);}).filter(Boolean);
+      if(pts.length){ svg+="<polyline points='"+pts.join(' ')+"' fill='none' stroke='"+COL[ai%COL.length]+"' stroke-width='2' stroke-dasharray='"+(s==='R'?'4 3':'0')+"'/>";
+        leg+="<span style='display:inline-flex;align-items:center;gap:4px;margin-right:10px'><span style='width:12px;height:2px;background:"+COL[ai%COL.length]+";display:inline-block;"+(s==='R'?'border-top:2px dashed '+COL[ai%COL.length]+';background:none;height:0':'')+"'></span>"+a+" "+s+"</span>"; }
+    });
+  });
+  svg+="</svg>";
+  trend.innerHTML=svg+"<div style='font-size:10px;color:var(--tm);margin-top:4px'>"+leg+" &nbsp;(solid = L, dashed = R)</div>";
+};
+// Body Comp Quick-Check — instant Lean/Fat Mass + change vs the athlete's last test
+function bcCompute(){
+  var out=ge('bcOut'); if(!out) return;
+  var bw=parseFloat(ge('bcBW').value), bf=parseFloat(ge('bcBF').value);
+  if(!(bw>0)||isNaN(bf)){ out.innerHTML=''; return; }
+  var lean=Math.round(bw*(1-bf/100)*10)/10, fat=Math.round(bw*bf/100*10)/10;
+  var name=(ge('profSel')||{}).value;
+  var prev=DATA.filter(function(d){return d['Athlete Name']===name && d.Bodyweight!=null;})
+               .sort(function(a,b){return new Date(b.Date)-new Date(a.Date);})[0];
+  function cell(label,val,unit,delta,goodDir){
+    var dh='';
+    if(delta!=null && !isNaN(delta)){
+      var d=Math.round(delta*10)/10;
+      var col=(d===0||goodDir===0)?'var(--tm)':(((d>0?1:-1)*goodDir>0)?'var(--elite)':'var(--dev)');
+      dh='<div style="font-size:11px;font-weight:700;color:'+col+'">'+(d>0?'+':'')+d+' vs last</div>';
+    }
+    return '<div style="background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:8px 10px;min-width:96px;">'
+      +'<div style="font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;">'+label+'</div>'
+      +'<div style="font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:800;color:var(--tx);">'+val+'<span style="font-size:11px;color:var(--tm)"> '+unit+'</span></div>'+dh+'</div>';
+  }
+  var pBW=prev?+prev.Bodyweight:null, pBF=(prev&&prev.Bodyfat!=null)?+prev.Bodyfat:null,
+      pLean=(prev&&prev['Lean Mass']!=null)?+prev['Lean Mass']:null, pFat=(prev&&prev['Fat Mass']!=null)?+prev['Fat Mass']:null;
+  var html='<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +cell('Bodyweight',bw,'lbs', pBW!=null?bw-pBW:null, 0)
+    +cell('Body Fat',bf,'%', pBF!=null?bf-pBF:null, -1)
+    +cell('Lean Mass',lean,'lbs', pLean!=null?lean-pLean:null, 1)
+    +cell('Fat Mass',fat,'lbs', pFat!=null?fat-pFat:null, -1)
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--tm);margin-top:7px;">'+(prev?('vs. last test &mdash; '+prev.Date+(prev['Time Period']?' ('+prev['Time Period']+')':'')):'No previous body-comp test on file for this athlete.')+'</div>';
+  out.innerHTML=html;
+}
+window.bcCompute=bcCompute;
 function renderProfile() {
   var name = ge('profSel').value;
+  if(ge('bcBW')){ ge('bcBW').value=''; ge('bcBF').value=''; if(ge('bcOut')) ge('bcOut').innerHTML=''; }
+  loadProfileIso(name);
   var allRecs = DATA.filter(function(x) { return x['Athlete Name'] === name; });
   var ps = ge('profSeason') ? ge('profSeason').value : 'All';
   var pp = ge('profPeriod') ? ge('profPeriod').value : 'All';
@@ -1168,7 +1802,9 @@ function renderProfile() {
       + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
       + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
+      + '<td class="mn">'+(d['NCMJ Mat Best (in)']!=null?fmt(d['NCMJ Mat Best (in)']):'—')+'</td>'
       + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
+      + '<td class="mn">'+(d['Broad Jump Best (in)']!=null?fmtI(d['Broad Jump Best (in)']):'—')+'</td>'
       + '<td class="mn '+(d['10 yd Best (s)']<1.54?'te':d['10 yd Best (s)']<1.63?'tg':'')+'">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
@@ -2081,18 +2717,25 @@ function renderPlanner() {
 // ACWR[i] = PLAN[i].weeklyVol / avg(PLAN[i-4..i-1].weeklyVol)
 // Uses the globally filtered "weeks" slice but resolves indices against PLAN
 // for correct 4-week lookback even when a phase filter is active.
+// ── Unified AU metric (Load = min × RPE 1-5) ─────────────────────────────────
+// Saved builder weeks carry plannedAu / per-day load. Legacy imported weeks store
+// a 0-1 "vol" fraction + minutes → estimate RPE from the fraction so the whole
+// season renders on one AU scale until each week is rebuilt in the Weekly Builder.
+function dayAU(d){ if(!d) return 0; if(d.load!=null) return +d.load||0; var m=+d.mins||0; if(m<=0) return 0; var r=(d.rpe!=null)?+d.rpe:((+d.vol>0)?Math.max(1,Math.min(5,Math.round(1+(+d.vol)*4))):0); return Math.round(m*r); }
+function weekAU(w){ if(!w) return 0; if(w.plannedAu!=null) return +w.plannedAu||0; return (w.days||[]).reduce(function(a,d){return a+dayAU(d);},0); }
+function dayIsOff(d){ return dayAU(d)===0 || String((d&&d.session)||'').toLowerCase()==='off'; }
 function computeRollingACWR(planArr) {
   // planArr is the full PLAN (not filtered) so lookback is always correct
   return planArr.map(function(w, i) {
     var chronic = 0, count = 0;
     for (var j = Math.max(0, i - 4); j < i; j++) {
-      chronic += planArr[j].weeklyVol || 0;
+      chronic += weekAU(planArr[j]) || 0;
       count++;
     }
     if (count === 0) return null;          // no history yet
     var avg4 = chronic / count;
     if (avg4 === 0) return null;           // avoid divide-by-zero
-    return Math.round((planArr[i].weeklyVol / avg4) * 1000) / 1000;
+    return Math.round((weekAU(planArr[i]) / avg4) * 1000) / 1000;
   });
 }
 
@@ -2114,8 +2757,8 @@ function renderPlanChart(weeks) {
 
   var W = el.offsetWidth || 900, H = 200;
   var pad = {t:14, b:32, l:42, r:36};
-  // Use hours (weeklyMins/60) for bar height and Y axis labels
-  var vols   = weeks.map(function(w){ return w.weeklyMins ? w.weeklyMins/60 : (w.weeklyVol*3); });
+  // Weekly planned load in AU (min × RPE); saved builds use plannedAu, legacy estimated
+  var vols   = weeks.map(function(w){ return weekAU(w); });
   var maxVol = Math.max.apply(null, vols) || 1;
   var maxACWR = 1.8;   // headroom above 1.5 high-risk line
 
@@ -2147,11 +2790,11 @@ function renderPlanChart(weeks) {
     var planIdx = PLAN.indexOf(w);
     var acwr    = planIdx >= 0 ? allACWR[planIdx] : null;
     var fill    = acwrBarColor(acwr);
-    var v  = w.weeklyMins ? w.weeklyMins/60 : (w.weeklyVol*3);
+    var v  = weekAU(w);
     var y  = syV(v), bh = H - pad.b - y;
     // Tooltip rect (invisible) for hover
     return '<rect x="'+(sx(i)-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+Math.max(0,bh)+'" rx="2" fill="'+fill+'">'
-         + '<title>'+w.week+' | Vol: '+v.toFixed(2)+' | ACWR: '+(acwr!=null?acwr.toFixed(2):'—')+'</title>'
+         + '<title>'+w.week+' | '+Math.round(v)+' AU | ACWR: '+(acwr!=null?acwr.toFixed(2):'—')+'</title>'
          + '</rect>';
   }).join('');
 
@@ -2185,13 +2828,13 @@ function renderPlanChart(weeks) {
 
   // ── Left Y axis (volume) ──
   var yticks = [0, maxVol*0.5, maxVol].map(function(v) {
-    return '<text x="'+(pad.l-4)+'" y="'+(syV(v)+3)+'" text-anchor="end" fill="var(--td)" font-size="8">'+v.toFixed(1)+'h</text>'
+    return '<text x="'+(pad.l-4)+'" y="'+(syV(v)+3)+'" text-anchor="end" fill="var(--td)" font-size="8">'+Math.round(v)+'</text>'
          + '<line x1="'+(pad.l-2)+'" y1="'+syV(v)+'" x2="'+(W-pad.r)+'" y2="'+syV(v)+'" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
   }).join('');
 
   // ── Axis labels ──
   var axisLabels =
-    '<text x="'+(pad.l-10)+'" y="'+(pad.t+((H-pad.t-pad.b)/2))+'" text-anchor="middle" fill="var(--td)" font-size="8" transform="rotate(-90,'+(pad.l-10)+','+(pad.t+((H-pad.t-pad.b)/2))+')">VOLUME</text>'
+    '<text x="'+(pad.l-10)+'" y="'+(pad.t+((H-pad.t-pad.b)/2))+'" text-anchor="middle" fill="var(--td)" font-size="8" transform="rotate(-90,'+(pad.l-10)+','+(pad.t+((H-pad.t-pad.b)/2))+')">LOAD (AU)</text>'
   + '<text x="'+(W-pad.r+20)+'" y="'+(pad.t+((H-pad.t-pad.b)/2))+'" text-anchor="middle" fill="var(--td)" font-size="8" transform="rotate(90,'+(W-pad.r+20)+','+(pad.t+((H-pad.t-pad.b)/2))+')">ACWR</text>';
 
   el.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:100%">'
@@ -2226,21 +2869,21 @@ function renderWeekGrid(weeks) {
     var dayCells = w.days.map(function(d) {
       var sc = sessColor(d.session);
       var abbr = sessionTypeAbbr(d.session);
-      var isOff = d.vol === 0 || d.session.toLowerCase() === 'off';
-      if (isOff) return '<div class="day-cell" style="opacity:.3"><div class="dc-sess" style="color:var(--td)">OFF</div></div>';
+      if (dayIsOff(d)) return '<div class="day-cell" style="opacity:.3"><div class="dc-sess" style="color:var(--td)">OFF</div></div>';
+      var au = dayAU(d);
       if (planView === 'vol') {
-        var pct = Math.min(1, d.vol);
+        var pct = Math.min(1, au/600);
         // Use the week-level ACWR color for each active day cell
         var cellBg = weekACWRColor;
         return '<div class="day-cell" style="background:'+cellBg.replace('0.75',''+Math.max(0.08,pct*0.55+0.05))+')">'
           + '<div class="dc-sess" style="color:var(--tx)">'+abbr+'</div>'
-          + '<div class="dc-vol">'+(Math.round(d.vol*100))+'%</div>'
+          + '<div class="dc-vol">'+au+'</div>'
           + (d.mins?'<div class="dc-mins">'+d.mins+'m</div>':'')
           + '</div>';
       } else if (planView === 'acwr') {
         return '<div class="day-cell" style="background:'+sc+'22">'
           + '<div class="dc-sess" style="color:'+sc+'">'+abbr+'</div>'
-          + '<div class="dc-vol">'+(Math.round(d.vol*100))+'%</div>'
+          + '<div class="dc-vol">'+au+'</div>'
           + '</div>';
       } else {
         return '<div class="day-cell" style="background:'+sc+'22">'
@@ -2274,6 +2917,53 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// ─── PLAN EDITOR (coach) ────────────────────────────────────────────────────────
+var planEditUnlocked = false, planPasscode = '';
+function togglePlanEdit() {
+  if (!planEditUnlocked) {
+    var pc = window.prompt('Enter coach passcode to edit the plan:');
+    if (!pc) return;
+    planPasscode = pc; planEditUnlocked = true;
+    var b=ge('planEditBtn'); if(b){ b.innerHTML='&#9998; Editing — click to lock'; b.style.background='var(--gold)'; b.style.color='var(--navy)'; }
+    var s=ge('planSaveBtn'); if(s) s.style.display='';
+  } else {
+    planEditUnlocked = false; planPasscode = '';
+    var b2=ge('planEditBtn'); if(b2){ b2.innerHTML='&#9998; Edit Plan'; b2.style.background=''; b2.style.color=''; }
+    var s2=ge('planSaveBtn'); if(s2) s2.style.display='none';
+  }
+  if (selectedWeekIdx>=0 && PLAN[selectedWeekIdx]) renderWeekDetail(PLAN[selectedWeekIdx], selectedWeekIdx);
+}
+function editDay(i, field, val) {
+  var w = PLAN[selectedWeekIdx]; if (!w) return;
+  if (field==='session') w.days[i].session = val;
+  else w.days[i][field] = Math.max(0, parseFloat(val)||0);
+  w.weeklyVol  = Math.round(w.days.reduce(function(a,d){return a+(d.vol||0);},0)*1000)/1000;
+  w.weeklyMins = w.days.reduce(function(a,d){return a+(d.mins||0);},0);
+  renderPlanner();
+}
+function editDayEl(el){ editDay(+el.getAttribute('data-di'), el.getAttribute('data-df'), el.value); }
+function editWeekOpp(val){ var w=PLAN[selectedWeekIdx]; if(w) w.opponent=val; }
+function savePlanToCloud() {
+  if (!planEditUnlocked) { alert('Unlock editing first.'); return; }
+  var season = (ge('planSeason')||{}).value || (PLAN[0]&&PLAN[0].season);
+  var weeks = (window.PLAN_ALL||PLAN).filter(function(r){return r.season===season;}).map(function(w){
+    return { week_start:w.date, week_label:w.week, opponent:w.opponent||null, days:w.days, weekly_mins:w.weeklyMins, weekly_vol:w.weeklyVol, ewma:w.ewma||null };
+  });
+  var btn=ge('planSaveBtn'); if(btn){ btn.textContent='Saving…'; btn.disabled=true; }
+  fetch(SB_URL + '/functions/v1/save_plan', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ passcode:planPasscode, team:TEAM_ID, season:season, weeks:weeks })
+  })
+  .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+  .then(function(res){
+    if(btn){ btn.disabled=false; btn.innerHTML='&#9729; Save to Cloud'; }
+    if(res.ok && res.j && res.j.ok){ alert('Saved '+res.j.saved+' weeks for '+season+'. Players/coaches see it on next refresh.'); }
+    else if(res.j && res.j.error==='unauthorized'){ alert('Wrong passcode — re-unlock and try again.'); if(planEditUnlocked) togglePlanEdit(); }
+    else { alert('Save failed: '+((res.j&&res.j.error)||'unknown error')); }
+  })
+  .catch(function(e){ if(btn){ btn.disabled=false; btn.innerHTML='&#9729; Save to Cloud'; } alert('Save error: '+e); });
+}
+window.togglePlanEdit=togglePlanEdit; window.editDay=editDay; window.editDayEl=editDayEl; window.editWeekOpp=editWeekOpp; window.savePlanToCloud=savePlanToCloud;
 function renderWeekDetail(w, idx) {
   ge('weekDetail').style.display = 'block';
   ge('weekDetailTitle').innerHTML = w.week + ' <span>' + w.date + '</span>';
@@ -2290,27 +2980,46 @@ function renderWeekDetail(w, idx) {
     else flags += '<span class="deload-flag">Optimal Zone</span>';
   }
   if (w.days.filter(function(d){return d.session==='Game';}).length >= 2) flags += ' <span class="spike-flag">Double Game Week</span>';
-  if (w.days.every(function(d){return d.vol<0.2;})) flags += ' <span class="deload-flag">Deload Week</span>';
+  if (w.days.every(function(d){return dayAU(d)<150;})) flags += ' <span class="deload-flag">Deload Week</span>';
   ge('weekDetailFlags').innerHTML = flags;
 
-  // Weekly total displayed as hours (from actual minutes) or % sum
-  var wkHrs = w.weeklyMins ? (w.weeklyMins / 60).toFixed(1) + ' hrs' : (w.weeklyVol ? (w.weeklyVol / 7 * 100).toFixed(0) + '% avg/day' : '—');
+  // Weekly planned load in AU (min × RPE)
   var wkMinsDisp = w.weeklyMins ? w.weeklyMins + ' min' : '—';
-  ge('wdVol').textContent  = wkHrs;
+  ge('wdVol').textContent  = weekAU(w) + ' AU';
   ge('wdMins').textContent = wkMinsDisp;
   var acwrCl = acwr==null?'var(--td)':acwr<0.8?'var(--good)':acwr<=1.3?'var(--elite)':acwr<=1.5?'var(--gold)':'var(--dev)';
   ge('wdACWR').textContent = acwr != null ? acwr.toFixed(2) : '—';
   ge('wdACWR').style.color = acwrCl;
-  ge('wdOpp').textContent  = w.opponent || 'No game / context';
+  if (ge('wdOpp')) {
+    if (planEditUnlocked) ge('wdOpp').innerHTML = '<input value="'+String(w.opponent||'').replace(/"/g,'&quot;')+'" placeholder="opponent / context" oninput="editWeekOpp(this.value)" style="background:var(--s2);border:1px solid var(--br2);color:var(--tx);border-radius:4px;font-size:11px;padding:2px 5px;width:150px">';
+    else ge('wdOpp').textContent = w.opponent || 'No game / context';
+  }
+  // monotony / strain from daily AU loads (min × RPE)
+  var loads = w.days.map(function(d){ return dayAU(d); });
+  var sum = loads.reduce(function(a,b){return a+b;},0), mean = sum/7;
+  var sd = Math.sqrt(loads.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/7);
+  var mono = sd>0 ? mean/sd : 0, strain = sum*mono;
+  if (ge('wdMono'))   { ge('wdMono').textContent = mono ? mono.toFixed(2) : '—'; ge('wdMono').style.color = mono>2 ? 'var(--dev)' : mono>1.5 ? 'var(--gold)' : 'var(--elite)'; }
+  if (ge('wdStrain')) ge('wdStrain').textContent = strain ? Math.round(strain) : '—';
 
   var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   ge('weekDetailDays').innerHTML = w.days.map(function(d, i) {
     var sc = sessColor(d.session);
-    var isOff = d.vol===0 || d.session.toLowerCase()==='off';
+    var isOff = dayIsOff(d);
+    if (planEditUnlocked) {
+      var inp = 'background:var(--s2);border:1px solid var(--br2);color:var(--tx);border-radius:3px;font-size:10px;padding:1px 2px';
+      return '<div class="wd-day" style="border-top:3px solid '+(isOff?'var(--s3)':sc)+'">'
+        + '<div class="wd-dayname">'+days[i]+'</div>'
+        + '<input list="sessTypes" data-di="'+i+'" data-df="session" value="'+String(d.session||'').replace(/"/g,'&quot;')+'" onchange="editDayEl(this)" style="width:90%;'+inp+';margin:2px 0">'
+        + '<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">'
+        + '<input type="number" step="0.05" min="0" max="1.5" data-di="'+i+'" data-df="vol" value="'+(d.vol||0)+'" title="volume 0-1" onchange="editDayEl(this)" style="width:42px;'+inp+'">'
+        + '<input type="number" step="5" min="0" data-di="'+i+'" data-df="mins" value="'+(d.mins||0)+'" title="minutes" onchange="editDayEl(this)" style="width:46px;'+inp+'"></div>'
+        + '</div>';
+    }
     return '<div class="wd-day" style="border-top:3px solid '+(isOff?'var(--s3)':sc)+'">'
       + '<div class="wd-dayname">'+days[i]+'</div>'
       + '<div class="wd-sess" style="color:'+(isOff?'var(--td)':sc)+'">'+d.session+'</div>'
-      + (d.vol>0?'<div class="wd-vol">'+(Math.round(d.vol*100))+'%</div>':'')
+      + (dayAU(d)>0?'<div class="wd-vol">'+dayAU(d)+' AU</div>':'')
       + (d.mins>0?'<div class="wd-mins">'+d.mins+' min</div>':'')
       + '</div>';
   }).join('');
@@ -2318,17 +3027,17 @@ function renderWeekDetail(w, idx) {
 
 function renderPlanInsights(weeks) {
   var el = ge('planInsights'); if (!el) return;
-  var vols = weeks.map(function(w){return w.weeklyVol||0;});
+  var vols = weeks.map(function(w){return weekAU(w);});
   var avgVol = vols.reduce(function(a,b){return a+b;},0) / (vols.length||1);
 
-  // Find deload candidates (vol drops > 30% from previous week)
+  // Find deload candidates (AU drops > 30% from previous week)
   var deloads = [], spikes = [], games = [];
   weeks.forEach(function(w, i) {
     if (i === 0) return;
-    var prev = weeks[i-1].weeklyVol || 0;
-    var curr = w.weeklyVol || 0;
-    if (prev > 0 && curr < prev * 0.7) deloads.push({week:w.week, from:(prev/7*100).toFixed(0)+'%avg', to:(curr/7*100).toFixed(0)+'%avg'});
-    if (prev > 0 && curr > prev * 1.2) spikes.push({week:w.week, from:(prev/7*100).toFixed(0)+'%avg', to:(curr/7*100).toFixed(0)+'%avg', acwr:w.ewma});
+    var prev = weekAU(weeks[i-1]);
+    var curr = weekAU(w);
+    if (prev > 0 && curr < prev * 0.7) deloads.push({week:w.week, from:Math.round(prev)+' AU', to:Math.round(curr)+' AU'});
+    if (prev > 0 && curr > prev * 1.2) spikes.push({week:w.week, from:Math.round(prev)+' AU', to:Math.round(curr)+' AU', acwr:w.ewma});
     var gameCt = w.days.filter(function(d){return d.session==='Game';}).length;
     if (gameCt >= 2) games.push({week:w.week, count:gameCt, date:w.date, opp:w.opponent});
   });
@@ -2676,6 +3385,18 @@ function warmSupabase() {
 // ─── LIVE FITNESS DATA (Supabase) ──────────────────────────────────────────────
 // Pulls testing rows (already scored server-side) from the v_dashboard_fitness view
 // in the exact DATA shape, then re-inits. Inline DATA stays as offline fallback.
+// Lean Mass = BW × (1 − BF%/100), Fat Mass = BW × BF%/100 — fills in when the sheet had no formula
+function deriveBodyComp(arr){
+  (arr||[]).forEach(function(d){
+    var bw=+d.Bodyweight, bf=+d.Bodyfat;
+    if(bw>0 && d.Bodyfat!=null && !isNaN(bf)){
+      if(!d['Fat Mass'])  d['Fat Mass']=Math.round(bw*bf/100*100)/100;
+      if(!d['Lean Mass']) d['Lean Mass']=Math.round(bw*(1-bf/100)*100)/100;
+    }
+  });
+  return arr;
+}
+window.deriveBodyComp=deriveBodyComp;
 function loadFitnessFromDB(force) {
   var badge = ge('fitCloud');
   if (badge) { badge.innerHTML = '&#9729; Syncing&hellip;'; }
@@ -2686,6 +3407,7 @@ function loadFitnessFromDB(force) {
   .then(function(rows){
     if (rows && rows.length) {
       DATA = rows;
+      deriveBodyComp(DATA);   // fill Lean/Fat Mass from Bodyweight + Bodyfat% when the sheet didn't
       initApp();
       if (badge) { badge.innerHTML = '&#9729; Live &middot; ' + rows.length + ' records';
         badge.style.background = 'rgba(46,160,67,.15)'; badge.style.color = 'var(--elite)'; }
@@ -2709,65 +3431,79 @@ function loadPlanFromDB() {
   .then(function(r){ return r.ok ? r.json() : null; })
   .then(function(rows){
     if (rows && rows.length) {
-      PLAN = rows;
-      if (ge('planWeekCount')) ge('planWeekCount').textContent = rows.length;
-      if (typeof renderPlanner === 'function' && ge('planner') && ge('planner').classList.contains('active')) renderPlanner();
+      window.PLAN_ALL = rows;                       // all seasons
+      var seasons = uniq(rows.map(function(r){ return r.season; })).sort(function(a,b){ return b.localeCompare(a); });
+      var sel = ge('planSeason');
+      if (sel) sel.innerHTML = seasons.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
+      applyPlanSeason();                            // default = latest season
     }
   })
   .catch(function(){ /* keep inline PLAN as fallback */ });
 }
+function applyPlanSeason() {
+  var all = window.PLAN_ALL; if (!all) return;
+  var sel = ge('planSeason');
+  var s = (sel && sel.value) ? sel.value : (all[0] && all[0].season);
+  PLAN = all.filter(function(r){ return r.season === s; });
+  if (ge('planWeekCount')) ge('planWeekCount').textContent = PLAN.length;
+  selectedWeekIdx = -1;
+  if (typeof renderPlanner === 'function' && ge('planner') && ge('planner').classList.contains('active')) renderPlanner();
+}
+window.applyPlanSeason = applyPlanSeason;
 
 // ─── SEASON-OVER-SEASON VOLUME (Supabase) ──────────────────────────────────────
 // Planned weekly volume per season (lines) + actual sRPE load overlay (bars),
 // aligned by season week number. Reads v_season_volume.
 function loadSeasonVolume() {
   var host = ge('seasonVolChart'); if (!host) return;
-  fetch(SB_URL + '/rest/v1/v_season_volume?team=eq.' + TEAM_ID + '&select=*&order=season.desc,week_num.asc', {
+  fetch(SB_URL + '/rest/v1/v_season_volume?team=eq.' + TEAM_ID + '&select=season,week_num,actual_mean&order=season.desc,week_num.asc', {
     headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
   })
-  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(r){ return r.ok ? r.json() : []; })
   .then(function(rows){
-    if (!rows || !rows.length) { host.innerHTML = '<div style="color:var(--td);font-size:11px;padding:8px">No season volume data.</div>'; return; }
-    var seasons = uniq(rows.map(function(d){ return d.season; })).sort(function(a,b){ return b.localeCompare(a); });
-    var COLORS = ['#E8A900','#4FC3F7','#AB47BC','#66BB6A','#FF7043'];
-    var maxVol = 0, maxAct = 0;
-    rows.forEach(function(d){ if (d.planned_vol>maxVol) maxVol=d.planned_vol; if (d.actual_srpe>maxAct) maxAct=d.actual_srpe; });
-    maxVol = Math.ceil((maxVol||1)*1.1); maxAct = maxAct || 1;
-    var W=940, H=300, pad={t:14,r:44,b:26,l:36};
-    var sx=function(w){ return pad.l + (W-pad.l-pad.r)*((w-1)/51); };
-    var syV=function(v){ return H-pad.b - (H-pad.t-pad.b)*(v/maxVol); };
-    var syA=function(v){ return H-pad.b - (H-pad.t-pad.b)*(v/maxAct); };
-    var svg = "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;min-width:760px;height:300px'>";
-    // gridlines + left axis (volume)
-    for (var g=0; g<=maxVol; g++){ var y=syV(g); svg += "<line x1='"+pad.l+"' y1='"+y+"' x2='"+(W-pad.r)+"' y2='"+y+"' stroke='rgba(255,255,255,0.06)'/>"; svg += "<text x='"+(pad.l-5)+"' y='"+(y+3)+"' text-anchor='end' fill='var(--td)' font-size='9'>"+g+"</text>"; }
-    // week axis labels
-    [1,8,16,24,32,40,48,52].forEach(function(w){ var x=sx(w); svg += "<text x='"+x+"' y='"+(H-8)+"' text-anchor='middle' fill='var(--td)' font-size='9'>W"+w+"</text>"; });
-    // actual sRPE bars (behind lines), current-ish season only (use latest season with actuals)
-    var actSeason = seasons.filter(function(s){ return rows.some(function(d){ return d.season===s && d.actual_srpe!=null; }); })[0];
-    if (actSeason){
-      rows.filter(function(d){ return d.season===actSeason && d.actual_srpe!=null; }).forEach(function(d){
-        var x=sx(d.week_num), y=syA(d.actual_srpe); var bw=(W-pad.l-pad.r)/54;
-        svg += "<rect x='"+(x-bw/2)+"' y='"+y+"' width='"+bw+"' height='"+(H-pad.b-y)+"' fill='rgba(255,255,255,0.22)'/>";
-      });
-    }
-    // planned volume lines per season
-    seasons.forEach(function(s,i){
-      var pts = rows.filter(function(d){ return d.season===s && d.planned_vol!=null; }).sort(function(a,b){return a.week_num-b.week_num;});
-      if (!pts.length) return;
-      var poly = pts.map(function(d){ return sx(d.week_num)+','+syV(d.planned_vol); }).join(' ');
-      svg += "<polyline points='"+poly+"' fill='none' stroke='"+COLORS[i%COLORS.length]+"' stroke-width='2' stroke-linejoin='round' opacity='"+(i===0?1:0.7)+"'/>";
+    // Planned AU per (season, week#) from PLAN_ALL — true plannedAu for saved builds, estimated for legacy
+    var planAU = {};
+    (window.PLAN_ALL || PLAN || []).forEach(function(w){
+      var wn = parseInt(String(w.week||'').replace(/\D/g,''),10); if(!wn) return;
+      var au = weekAU(w); if(!au) return;
+      (planAU[w.season] = planAU[w.season] || {})[wn] = au;
     });
-    // right axis label
-    svg += "<text x='"+(W-pad.r+6)+"' y='"+pad.t+"' fill='var(--td)' font-size='9'>sRPE</text>";
-    svg += "</svg>";
+    var seasons = uniq(Object.keys(planAU)).sort(function(a,b){ return b.localeCompare(a); });
+    if (!seasons.length) { host.innerHTML = '<div style="color:var(--td);font-size:11px;padding:8px">No planned data yet — build and save weeks to populate.</div>'; if(ge('seasonVolLegend')) ge('seasonVolLegend').innerHTML=''; return; }
+    // Actual mean AU/athlete per (season, week#)
+    var actBy = {};
+    (rows||[]).forEach(function(d){ if(d.actual_mean!=null){ (actBy[d.season]=actBy[d.season]||{})[d.week_num]=+d.actual_mean; } });
+    var actSeason = seasons.filter(function(s){ return actBy[s] && Object.keys(actBy[s]).length; })[0];
+    var COLORS = ['#E8A900','#4FC3F7','#AB47BC','#66BB6A','#FF7043'];
+    var maxV = 1;
+    seasons.forEach(function(s){ for(var k in planAU[s]) if(planAU[s][k]>maxV) maxV=planAU[s][k]; });
+    if (actSeason) for(var k in actBy[actSeason]) if(actBy[actSeason][k]>maxV) maxV=actBy[actSeason][k];
+    maxV = Math.ceil(maxV*1.1/100)*100;
+    var W=940, H=300, pad={t:14,r:16,b:26,l:46};
+    var sx=function(w){ return pad.l + (W-pad.l-pad.r)*((w-1)/51); };
+    var sy=function(v){ return H-pad.b - (H-pad.t-pad.b)*(v/maxV); };
+    var svg = "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;min-width:760px;height:300px'>";
+    var step = Math.max(200, Math.round(maxV/5/100)*100);
+    for (var g=0; g<=maxV; g+=step){ var y=sy(g); svg += "<line x1='"+pad.l+"' y1='"+y+"' x2='"+(W-pad.r)+"' y2='"+y+"' stroke='rgba(255,255,255,0.06)'/><text x='"+(pad.l-5)+"' y='"+(y+3)+"' text-anchor='end' fill='var(--td)' font-size='9'>"+g+"</text>"; }
+    [1,8,16,24,32,40,48,52].forEach(function(w){ var x=sx(w); svg += "<text x='"+x+"' y='"+(H-8)+"' text-anchor='middle' fill='var(--td)' font-size='9'>W"+w+"</text>"; });
+    // actual AU/athlete bars for the latest season with actuals
+    if (actSeason){ var bw=(W-pad.l-pad.r)/54; for(var wk in actBy[actSeason]){ var x=sx(+wk), y=sy(actBy[actSeason][wk]); svg += "<rect x='"+(x-bw/2)+"' y='"+y+"' width='"+bw+"' height='"+(H-pad.b-y)+"' fill='rgba(79,195,247,0.28)'><title>W"+wk+" actual "+Math.round(actBy[actSeason][wk])+" AU</title></rect>"; } }
+    // planned AU lines per season
+    seasons.forEach(function(s,i){
+      var ks = Object.keys(planAU[s]).map(Number).sort(function(a,b){return a-b;});
+      if (!ks.length) return;
+      var poly = ks.map(function(k){ return sx(k)+','+sy(planAU[s][k]); }).join(' ');
+      svg += "<polyline points='"+poly+"' fill='none' stroke='"+COLORS[i%COLORS.length]+"' stroke-width='2' stroke-linejoin='round' opacity='"+(i===0?1:0.65)+"'/>";
+    });
+    svg += "<text x='"+(pad.l-34)+"' y='"+(pad.t+8)+"' fill='var(--td)' font-size='9'>AU</text></svg>";
     host.innerHTML = svg;
-    // legend
-    var leg = seasons.map(function(s,i){ return "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:14px;height:3px;background:"+COLORS[i%COLORS.length]+";display:inline-block'></span>"+s+" planned</span>"; }).join('');
-    if (actSeason) leg += "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:11px;height:11px;background:rgba(255,255,255,0.35);display:inline-block'></span>"+actSeason+" actual sRPE</span>";
+    var leg = seasons.map(function(s,i){ return "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:14px;height:3px;background:"+COLORS[i%COLORS.length]+";display:inline-block'></span>"+s+" planned AU</span>"; }).join('');
+    if (actSeason) leg += "<span style='display:inline-flex;align-items:center;gap:5px'><span style='width:11px;height:11px;background:rgba(79,195,247,0.4);display:inline-block'></span>"+actSeason+" actual AU/athlete</span>";
     if (ge('seasonVolLegend')) ge('seasonVolLegend').innerHTML = leg;
   })
   .catch(function(){});
 }
+window.loadSeasonVolume = loadSeasonVolume;
 
 initApp();          // instant render from bundled DATA
 loadFitnessFromDB(); // then refresh fitness from the cloud (source of truth)
