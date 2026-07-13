@@ -1579,6 +1579,7 @@ function renderKPIs() {
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),            u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Pull-up Max',  v:fmtI(avgVal(fd,'Pull-ups')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Body Fat',     v:fmt(avgVal(fd,'Bodyfat'),1),                   u:'%',  s:'team average',           a:'#78909C'},
+    {l:'Avg Bodyweight',   v:fmtI(avgVal(fd,'Bodyweight')),             u:'lbs',s:'team average',           a:'#78909C'},
   ];
   ge('kpiGrid').innerHTML = kpis.map(function(k) {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';

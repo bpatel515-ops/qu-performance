@@ -1579,6 +1579,10 @@ function renderKPIs() {
     {l:'Avg Reed Best',    v:fmt(avgVal(fd,'On-ice Reed Min (s)2'),2),     u:'s',  s:'lower is faster',        a:'#AB47BC'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                  u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),           u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg Squat Max',    v:fmtI(avgVal(fd,'Squat Max')),              u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg NCMJ',         v:fmt(avgVal(fd,'NCMJ Mat Best (in)'),1),     u:'in', s:'team average',           a:'#4FC3F7'},
+    {l:'Avg Broad Jump',   v:fmt(avgVal(fd,'Broad Jump Best (in)'),1),   u:'in', s:'team average',           a:'#4FC3F7'},
+    {l:'Avg Pull-ups',     v:fmtI(avgVal(fd,'Pull-ups')),               u:'reps',s:'team average',          a:'var(--gold)'},
   ];
   ge('kpiGrid').innerHTML = kpis.map(function(k) {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';
