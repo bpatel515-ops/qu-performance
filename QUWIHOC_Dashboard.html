@@ -1810,7 +1810,8 @@ function renderProfile() {
   if (ps !== 'All') recs = recs.filter(function(x) { return x.Season === ps; });
   if (pp !== 'All') recs = recs.filter(function(x) { return x['Time Period'] === pp; });
   recs.sort(function(a, b) { return new Date(b.Date) - new Date(a.Date); });
-  var rec = recs[0]; if (!rec) return;
+  var rec = recs.find(function(x){return x['Score OVERALL']!=null;}) || recs[0]; if (!rec) return;
+  var carryVal = function(k){ var r = recs.find(function(x){ return x[k]!=null; }); return r ? r[k] : null; };
 
   // Radar season tabs — using data attributes, no inline JS
   var aseasons = ['All'].concat(uniq(allRecs.map(function(d) { return d.Season; })).sort(function(a,b){return b.localeCompare(a);}));
@@ -1879,7 +1880,7 @@ function renderProfile() {
     {l:'Movement Score',     k:'Score MOVEMENT',        u:'',   hi:100},
   ];
   ge('profBars').innerHTML = metrics.map(function(m) {
-    var rawVal = rec[m.k];
+    var rawVal = carryVal(m.k);
     var val = (m.strPct && typeof rawVal === 'string') ? parseFloat(rawVal) : rawVal;
     var pct = val != null ? (m.lb ? (m.hi-val)/(m.hi-(m.lo||0)) : val/m.hi)*100 : 0;
     var cp  = Math.max(0, Math.min(100, pct));
