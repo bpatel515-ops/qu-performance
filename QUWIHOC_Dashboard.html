@@ -1848,8 +1848,7 @@ function renderProfile() {
   + '<div class="mi"><div class="ml">Height</div><div class="mv">'+ht+'</div></div>'
   + '<div class="mi"><div class="ml">Lean Mass</div><div class="mv">'+fmt(rec['Lean Mass'])+' <span style="font-size:10px;color:var(--tm)">lbs</span></div></div>'
   + '<div class="mi"><div class="ml">Wingspan</div><div class="mv">'+(rec.Wingspan||'—')+'"</div></div>'
-  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>'
-  + '<div class="mi"><div class="ml">Power Quotient</div><div class="mv">'+fmt(rec['Power Quotient'])+'</div></div>';
+  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>';
 
   drawRadar(rd);
 
@@ -1873,6 +1872,7 @@ function renderProfile() {
     {l:'Reed %',             k:'On-ice Reed % Score',      u:'',   hi:100, strPct:true},
     {l:'Grip Right',         k:'Grip Right',            u:'lbs',hi:220},
     {l:'Grip Left',          k:'Grip Left',             u:'lbs',hi:220},
+    {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},

@@ -382,7 +382,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Jump"</th><th>10yd&#8595;</th><th>Lane Ag&#8595;</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>CMJ"</th><th>VJ"</th><th>Appr"</th><th>10yd&#8595;</th><th>Lane Ag&#8595;</th><th>Bike</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -1845,8 +1845,7 @@ function renderProfile() {
   + '<div class="mi"><div class="ml">Height</div><div class="mv">'+ht+'</div></div>'
   + '<div class="mi"><div class="ml">Lean Mass</div><div class="mv">'+fmt(rec['Lean Mass'])+' <span style="font-size:10px;color:var(--tm)">lbs</span></div></div>'
   + '<div class="mi"><div class="ml">Wingspan</div><div class="mv">'+(rec.Wingspan||'—')+'"</div></div>'
-  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>'
-  + '<div class="mi"><div class="ml">Power Quotient</div><div class="mv">'+fmt(rec['Power Quotient'])+'</div></div>';
+  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>';
 
   drawRadar(rd);
 
@@ -1862,6 +1861,7 @@ function renderProfile() {
     {l:'20 yd',              k:'20 yd Best (s)',         u:'s',  hi:3.2, lo:2.6, lb:true},
     {l:'Lane Agility',       k:'Lane Agility Best (s)', u:'s',  hi:12,  lo:10.5,lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
+    {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},
@@ -1891,9 +1891,12 @@ function renderProfile() {
       + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
       + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
-      + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):(d['VJ Vertec Best (in)']!=null?fmt(d['VJ Vertec Best (in)']):'—'))+'</td>'
+      + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
+      + '<td class="mn">'+(d['VJ Vertec Best (in)']!=null?fmt(d['VJ Vertec Best (in)']):'—')+'</td>'
+      + '<td class="mn">'+(d['Approach Jump Best (in)']!=null?fmt(d['Approach Jump Best (in)']):'—')+'</td>'
       + '<td class="mn '+(d['10 yd Best (s)']<1.54?'te':d['10 yd Best (s)']<1.63?'tg':'')+'">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Lane Agility Best (s)']!=null?fmt(d['Lane Agility Best (s)'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
       + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
       + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
