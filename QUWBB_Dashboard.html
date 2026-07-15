@@ -410,7 +410,7 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="fg"><span class="fl">Metric</span>
       <select class="fs" id="lbMetric" onchange="renderLB()">
-        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="VJ Vertec Best (in)">VJ Vertec (in)</option><option value="Approach Jump Best (in)">Approach Jump (in)</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="20 yd Best (s)">20 yd (s) lower=better</option><option value="Lane Agility Best (s)">Lane Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option>
+        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="VJ Vertec Best (in)">VJ Vertec (in)</option><option value="Approach Jump Best (in)">Approach Jump (in)</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="20 yd Best (s)">20 yd (s) lower=better</option><option value="Lane Agility Best (s)">Lane Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Shuttle Run">Shuttle</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -1576,6 +1576,7 @@ function renderKPIs() {
     {l:'Avg Lane Agility', v:fmt(avgVal(fd,'Lane Agility Best (s)'),2),      u:'s',  s:'lower is faster',        a:'var(--elite)'},
     {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),                 u:'',   s:'team average',           a:'var(--blow)'},
     {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),                 u:'W/kg',s:'5-min watts/kg',        a:'var(--blue)'},
+    {l:'Avg Shuttle',      v:fmt(avgVal(fd,'Shuttle Run'),1),               u:'',   s:'team average',           a:'var(--good)'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),            u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Pull-up Max',  v:fmtI(avgVal(fd,'Pull-ups')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
@@ -1604,7 +1605,7 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Shuttle</th>';
     colFn = function(d) {
       var spd = d['10 yd Best (s)']; var sc = (spd && spd < 1.54) ? 'te' : (spd && spd < 1.63 ? 'tg' : '');
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1617,7 +1618,8 @@ function renderOvTable() {
            + '<td class="mn '+sc+'">'+(spd!=null?fmt(spd,2):'—')+'</td>'
            + '<td class="mn">'+(d['Lane Agility Best (s)']!=null?fmt(d['Lane Agility Best (s)'],2):'—')+'</td>'
            + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>';
+           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>'
+           + '<td class="mn">'+(d['Shuttle Run']!=null?fmt(d['Shuttle Run'],1):'—')+'</td>';
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">BF%</th>'+'<th class="sh-col" onclick="sortOv(10)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(11)">Lean Mass</th>'+'<th class="sh-col" onclick="sortOv(12)">PQ</th>';
@@ -1639,7 +1641,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Standing Reach','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -1860,6 +1862,7 @@ function renderProfile() {
     {l:'20 yd',              k:'20 yd Best (s)',         u:'s',  hi:3.5, lo:2.9, lb:true},
     {l:'Lane Agility',       k:'Lane Agility Best (s)', u:'s',  hi:12,  lo:10,  lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
+    {l:'Shuttle',            k:'Shuttle Run',           u:'',   hi:20},
     {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
@@ -1994,7 +1997,7 @@ function renderCmp() {
     {l:'Squat Max',k:'Squat Max',lb:false},{l:'Bench Press',k:'Bench Press Max',lb:false},{l:'TBDL Max',k:'TBDL Max',lb:false},
     {l:'VJ Vertec (in)',k:'VJ Vertec Best (in)',lb:false},{l:'Approach Jump (in)',k:'Approach Jump Best (in)',lb:false},{l:'Broad Jump (in)',k:'Broad Jump Best (in)',lb:false},
     {l:'10 yd (s)',k:'10 yd Best (s)',lb:true},{l:'20 yd (s)',k:'20 yd Best (s)',lb:true},{l:'Lane Agility (s)',k:'Lane Agility Best (s)',lb:true},
-    {l:'Beep Test',k:'Beep Test',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},
+    {l:'Beep Test',k:'Beep Test',lb:false},{l:'Shuttle',k:'Shuttle Run',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},
   ];
   ge('cmpBody').innerHTML = cm.map(function(m) {
     var va=dA[m.k], vb=dB[m.k];
