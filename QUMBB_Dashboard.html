@@ -676,7 +676,7 @@ input,select,textarea{font-size:16px!important;}
     <div><label class="pw-fl">Week Start (Monday)</label><input type="date" class="pw-in" id="pwWeekStart" onchange="if(window.pwHead)pwHead()"></div>
     <div><label class="pw-fl">Chronic Load (4-wk avg AU)</label><input type="number" class="pw-in" id="pwChronic" placeholder="e.g. 1800"></div>
     <div><label class="pw-fl">Phase</label><select class="pw-in" id="pwPhase" onchange="if(window.pwHead)pwHead()"><option>Off-Season</option><option>Pre-Season</option><option selected>In-Season</option><option>Post-Season</option></select></div>
-    <div style="display:flex;align-items:flex-end;"><button class="pw-build" onclick="buildWeekly()">Build Week &rarr;</button></div>
+    <div style="display:flex;align-items:flex-end;gap:6px;"><button class="pw-build" onclick="buildWeekly()">Build Week &rarr;</button><button class="ibtn" onclick="loadSavedWeek()" style="cursor:pointer;white-space:nowrap;" title="Pull a previously saved week back into the builder to edit and re-save">&#8635; Load Saved Week</button></div>
   </div>
   <div id="pwWeekHead" style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;color:var(--gold);margin:2px 0 10px;"></div>
   <style>#pwArea.pw-notips .pw-qb,#pwArea.pw-notips .pw-theme,#pwArea.pw-notips #pwRxSection{display:none!important;}</style>
@@ -969,6 +969,35 @@ input,select,textarea{font-size:16px!important;}
     if(which==='yearly'){ if(window.renderPlanner){ try{ window.renderPlanner(); }catch(e){} } if(window.loadSeasonVolume){ try{ window.loadSeasonVolume(); }catch(e){} } if(window.renderYearlyAU) renderYearlyAU(); }
   };
 
+  // Pull a previously saved week (v_dashboard_plan) back into the builder so the coach can
+  // tweak it (notes, adjustments after events) and re-save - Save Week to Cloud fully replaces it.
+  window.loadSavedWeek=function(){
+    var c=cfg(); if(!c.SB_URL){ pwMsg('Config not ready - reload and retry.','err'); return; }
+    var ws=ge('pwWeekStart').value; if(!ws){ pwMsg('Pick the Week Start (Monday) of the saved week first.','err'); return; }
+    pwMsg('Loading saved week...','');
+    sbGet('v_dashboard_plan?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&date=eq.'+encodeURIComponent(ws)+'&select=*').then(function(rows){
+      var w=rows&&rows[0];
+      if(!w){ pwMsg('No saved week for '+ws+' - build it fresh instead.','err'); return; }
+      var days=w.days||[];
+      document.querySelectorAll('.pw-cb').forEach(function(cb){ cb.checked=false; });
+      window.PW_OPP=window.PW_OPP||{};
+      days.forEach(function(d){ var di=DAYS.indexOf(d.day); if(di<0) return;
+        if(d.session==='Game'){ var cb=document.querySelector('.pw-cb[value="'+di+'"]'); if(cb) cb.checked=true; }
+        window.PW_OPP[di]=d.opp||''; });
+      buildWeekly();
+      days.forEach(function(d){ var di=DAYS.indexOf(d.day); if(di<0) return;
+        var el;
+        el=ge('pw-sess-'+di); if(el&&d.session) el.value=d.session;
+        el=ge('pw-vol-'+di);  if(el) el.value=(d.mins!=null?d.mins:0);
+        el=ge('pw-rpe-'+di);  if(el&&d.rpe!=null) el.value=String(d.rpe);
+        el=ge('pw-opp-'+di);  if(el){ el.value=d.opp||''; el.style.display=(d.session==='Game')?'':'none'; }
+        pwCalc(di,true); });
+      if(ge('pwPhase')&&w.phase) ge('pwPhase').value=w.phase;
+      if(ge('pwNotes')) ge('pwNotes').value=w.notes||'';
+      buildRx(); pwSummary(); if(window.pwHead) pwHead();
+      pwMsg('Loaded '+(w.week||'saved week')+' ('+(w.plannedAu!=null?w.plannedAu:w.weeklyVol)+' AU) - edit, then Save Week to Cloud to update','ok');
+    });
+  };
   window.pwHead=function(){
     var el=ge('pwWeekHead');
     var ws=ge('pwWeekStart')?ge('pwWeekStart').value:'';
