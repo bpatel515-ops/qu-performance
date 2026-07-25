@@ -1673,6 +1673,9 @@ function renderOvTable() {
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Standing Reach','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
+  } else {
+    // default: keep each athlete's records together, newest test date first
+    fd=fd.slice().sort(function(a,b){ var an=(a['Athlete Name']||''),bn=(b['Athlete Name']||''); if(an!==bn) return an.localeCompare(bn); return String(b.Date||'').localeCompare(String(a.Date||'')); });
   }
 
   ge('ovHead').innerHTML = '<tr>' + baseH + colH + '</tr>';
