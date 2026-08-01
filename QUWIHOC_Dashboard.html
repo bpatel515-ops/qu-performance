@@ -410,7 +410,7 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="fg"><span class="fl">Metric</span>
       <select class="fs" id="lbMetric" onchange="renderLB()">
-        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="NCMJ Mat Best (in)">NCMJ (in)</option><option value="CMJ Best (in)">CMJ (in)</option><option value="Broad Jump Best (in)">Broad Jump</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Power Quotient">Power Quotient</option>
+        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="NCMJ Mat Best (in)">NCMJ (in)</option><option value="CMJ Best (in)">CMJ (in)</option><option value="Broad Jump Best (in)">Broad Jump</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Grip R">Grip R (lb)</option><option value="Grip L">Grip L (lb)</option><option value="Tibia">Tibia (in)</option><option value="Power Quotient">Power Quotient</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -1637,7 +1637,7 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>';
     colFn = function(d) {
       var spd = d['10 yd Best (s)']; var sc = (spd && spd < 1.54) ? 'te' : (spd && spd < 1.63 ? 'tg' : '');
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1650,16 +1650,21 @@ function renderOvTable() {
            + '<td class="mn '+sc+'">'+(spd!=null?fmt(spd,2):'—')+'</td>'
            + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
            + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>';
+           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>'
+           + '<td class="mn">'+(d['Grip R']!=null?fmtI(d['Grip R']):'—')+'</td>'
+           + '<td class="mn">'+(d['Grip L']!=null?fmtI(d['Grip L']):'—')+'</td>';
     };
   } else {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">BF%</th>'+'<th class="sh-col" onclick="sortOv(10)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(11)">Lean Mass</th>'+'<th class="sh-col" onclick="sortOv(12)">PQ</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">Hand</th>'+'<th class="sh-col" onclick="sortOv(10)">Reach</th>'+'<th class="sh-col" onclick="sortOv(11)">Tibia</th>'+'<th class="sh-col" onclick="sortOv(12)">BF%</th>'+'<th class="sh-col" onclick="sortOv(13)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(14)">Lean Mass</th>'+'<th class="sh-col" onclick="sortOv(15)">PQ</th>';
     colFn = function(d) {
       var ht  = d['Height (inches)'] ? Math.floor(d['Height (inches)']/12)+"'"+Math.round(d['Height (inches)']%12)+'"' : '—';
       var bfc = parseFloat(d.Bodyfat) > 12 ? 'td3' : parseFloat(d.Bodyfat) > 9 ? 'tb2' : '';
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
            + '<td class="mn">'+ht+'</td>'
            + '<td class="mn">'+(d.Wingspan||'—')+'"</td>'
+           + '<td class="mn">'+(d['Hand Size']||'—')+'"</td>'
+           + '<td class="mn">'+(d['Standing Reach']||'—')+'"</td>'
+           + '<td class="mn">'+(d['Tibia']||'—')+'"</td>'
            + '<td class="mn '+bfc+'">'+fmt(d.Bodyfat)+'%</td>'
            + '<td class="mn">'+fmt(d['Fat Mass'],1)+'</td>'
            + '<td class="mn">'+fmt(d['Lean Mass'],1)+'</td>'
@@ -1672,8 +1677,8 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg']);
-    else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Standing Reach','Bodyfat','Fat Mass','Lean Mass']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L']);
+    else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass','Power Quotient']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
   } else {
@@ -1880,7 +1885,9 @@ function renderProfile() {
   + '<div class="mi"><div class="ml">Height</div><div class="mv">'+ht+'</div></div>'
   + '<div class="mi"><div class="ml">Lean Mass</div><div class="mv">'+fmt(rec['Lean Mass'])+' <span style="font-size:10px;color:var(--tm)">lbs</span></div></div>'
   + '<div class="mi"><div class="ml">Wingspan</div><div class="mv">'+(rec.Wingspan||'—')+'"</div></div>'
-  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>';
+  + '<div class="mi"><div class="ml">Standing Reach</div><div class="mv">'+(rec['Standing Reach']||'—')+'"</div></div>'
+  + '<div class="mi"><div class="ml">Hand Size</div><div class="mv">'+(rec['Hand Size']||'—')+'"</div></div>'
+  + '<div class="mi"><div class="ml">Tibia</div><div class="mv">'+(rec['Tibia']||'—')+'"</div></div>';
 
   drawRadar(rd);
 
@@ -1889,6 +1896,8 @@ function renderProfile() {
     {l:'Squat Max',          k:'Squat Max',            u:'lbs', hi:450},
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
+    {l:'Grip R',             k:'Grip R',                u:'lb', hi:140},
+    {l:'Grip L',             k:'Grip L',                u:'lb', hi:140},
     {l:'NCMJ',               k:'NCMJ Mat Best (in)',    u:'"',  hi:40},
     {l:'CMJ',                k:'CMJ Best (in)',          u:'"',  hi:45},
     {l:'Power W',            k:'Power W (Mat)',          u:'W',  hi:9000},
@@ -2039,7 +2048,7 @@ function renderCmp() {
   var cm=[
     {l:'Overall',k:'Score OVERALL',lb:false},{l:'Power',k:'Score POWER',lb:false},{l:'Strength',k:'Score STRENGTH',lb:false},
     {l:'Speed',k:'Score SPEED',lb:false},{l:'Conditioning',k:'Score CONDITIONING',lb:false},
-    {l:'Squat Max',k:'Squat Max',lb:false},{l:'Bench Press',k:'Bench Press Max',lb:false},{l:'TBDL Max',k:'TBDL Max',lb:false},
+    {l:'Squat Max',k:'Squat Max',lb:false},{l:'Bench Press',k:'Bench Press Max',lb:false},{l:'TBDL Max',k:'TBDL Max',lb:false},{l:'Grip R (lb)',k:'Grip R',lb:false},{l:'Grip L (lb)',k:'Grip L',lb:false},{l:'Tibia (in)',k:'Tibia',lb:false},
     {l:'CMJ (in)',k:'CMJ Best (in)',lb:false},{l:'Broad Jump (in)',k:'Broad Jump Best (in)',lb:false},
     {l:'10 yd (s)',k:'10 yd Best (s)',lb:true},{l:'Pro Agility (s)',k:'Pro Agility Best (s)',lb:true},
     {l:'Beep Test',k:'Beep Test',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},
