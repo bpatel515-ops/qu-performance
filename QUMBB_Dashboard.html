@@ -271,6 +271,25 @@ body{overflow-x:unset!important;}
 input,select,textarea{font-size:16px!important;}
 @media(max-width:700px){.wi{font-size:16px;}.hrv-inp{font-size:16px;}}
 </style>
+<style id="ptsCSS">
+.ptsg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px}
+@media(max-width:760px){.ptsg{grid-template-columns:1fr}}
+.ptsc{background:var(--s1);border:1px solid var(--br2);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 14px}
+.ptsc .ph{font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.ptsc .pbig{font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:800;line-height:1}
+.ptsc .psub{font-size:10.5px;color:var(--tm);margin-top:4px}
+.ptsc .pdir{font-size:12px;margin-top:9px;line-height:1.45;color:var(--tx)}
+.ptb{display:inline-block;padding:1px 9px;border-radius:20px;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;vertical-align:middle}
+.b-hi{background:rgba(46,160,87,.16);color:var(--elite)}
+.b-mod{background:rgba(232,169,0,.16);color:var(--gold)}
+.b-lo{background:rgba(45,120,220,.20);color:#7fb2ff}
+.gpill{display:inline-block;min-width:54px;text-align:center;padding:1px 6px;border-radius:5px;font-size:11px;font-weight:700}
+.g-Elite{background:rgba(46,160,87,.20);color:var(--elite)}
+.g-Good{background:rgba(46,160,87,.10);color:var(--good)}
+.g-Average{background:rgba(232,169,0,.16);color:var(--gold)}
+.g-Poor{background:rgba(210,60,60,.16);color:var(--blow)}
+.g-none{background:var(--s2);color:var(--td)}
+</style>
 </head>
 <body>
 
@@ -303,6 +322,7 @@ input,select,textarea{font-size:16px!important;}
 <nav class="nav">
   <div class="ntab active" data-tab="overview">Overview</div>
   <div class="ntab" data-tab="profile">Player Profile</div>
+  <div class="ntab" data-tab="compass">Compass</div>
   <div class="ntab" data-tab="leaderboard">Leaderboards</div>
   <div class="ntab" data-tab="compare">Compare</div>
   <div class="ntab" data-tab="positions">Positions</div>
@@ -368,6 +388,9 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div id="bcOut" style="margin-top:10px;"></div>
   </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 0 6px"><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tm)">Training Direction &amp; Conditioning</div><button class="pbtn" onclick="printPlayerCompass()" title="Print / save this athlete's direction as a branded PDF">&#128424; Direction PDF</button></div>
+  <div id="ptsCards" class="ptsg"></div>
+  <div id="ptsRSA"></div>
   <div class="rtabs" id="radarTabs"></div>
   <div class="pgrid">
     <div>
@@ -1214,6 +1237,25 @@ input,select,textarea{font-size:16px!important;}
 })();
 </script>
 
+<!-- COMPASS -->
+<div id="compass" class="sec">
+  <div class="fbar">
+    <div class="fg"><span class="fl">Season</span><select class="fs" id="compassSeason" onchange="renderCompass()"></select></div>
+    <div class="fg"><span class="fl">Period</span>
+      <select class="fs" id="compassPeriod" onchange="renderCompass()">
+        <option value="All">All</option><option value="OffSeason">Off-Season</option>
+        <option value="PreSeason">Pre-Season</option><option value="InSeason">In-Season</option>
+        <option value="PostSeason">Post-Season</option>
+      </select>
+    </div>
+  </div>
+  <div class="sh"><div class="st">CONDITIONING COMPASS <span>&amp; POWER QUOTIENT</span></div><span style="font-size:10px;color:var(--td)">Each athlete's latest test in the selected season/period &middot; click a row to open the profile</span> <button class="pbtn" onclick="printCompass()" title="Print / save the roster's directions as a branded PDF" style="margin-left:auto">&#128424; Compass PDF</button></div>
+  <div class="tw"><table><thead><tr>
+    <th style="text-align:left">Athlete</th><th>Pos</th><th>PQ</th><th>Direction</th><th style="text-align:left">Prescribe</th><th>Beep</th><th>Bike</th><th style="text-align:left">Conditioning Need</th>
+  </tr></thead><tbody id="compassBody"></tbody></table></div>
+  <div class="note">PQ bands are sex-specific (M: High&gt;25 &middot; Mod 21&ndash;25 &middot; Low&lt;21 &nbsp;|&nbsp; F: High&gt;28 &middot; Mod 24&ndash;28 &middot; Low&lt;24). Beep &amp; Bike graded Elite/Good/Average/Poor vs PTS standards. Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged.</div>
+</div>
+
 </main>
 
 <div class="iovl" id="importOvl">
@@ -1458,6 +1500,7 @@ function showTab(id, el) {
   if (ge(id)) ge(id).classList.add('active');
   if (el) el.classList.add('active');
   if (id === 'profile')    renderProfile();
+  if (id === 'compass')    renderCompass();
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
@@ -1833,6 +1876,237 @@ function bcCompute(){
   out.innerHTML=html;
 }
 window.bcCompute=bcCompute;
+/* PTS Power Quotient & Conditioning Compass engine */
+var PTS_SEX = (TEAM_ID==='MHOC'||TEAM_ID==='MBB') ? 'M' : 'F';
+function ptsPQ(pq){
+  if(pq==null||isNaN(pq)) return null;
+  var hi=PTS_SEX==='M'?25:28, lo=PTS_SEX==='M'?21:24;
+  if(pq>hi)  return {band:'HIGH',cls:'b-hi',tag:'Power-dominant',dir:'Strength is the limiter — build max strength (heavy 80–95%).'};
+  if(pq>=lo) return {band:'MODERATE',cls:'b-mod',tag:'Balanced',dir:'Needs both — concurrent strength + strength-speed.'};
+  return          {band:'LOW',cls:'b-lo',tag:'Strength-dominant',dir:'Very strong but slow to express it — speed-strength, plyos, sprints.'};
+}
+function ptsGrade(v,t){ if(v==null||isNaN(v))return null; return v>=t[0]?'Elite':v>=t[1]?'Good':v>=t[2]?'Average':'Poor'; }
+function ptsBeep(v){ return ptsGrade(v, PTS_SEX==='M'?[13.1,12.1,11.1]:[11.1,10.1,9.1]); }
+function ptsBike(v){ return ptsGrade(v, PTS_SEX==='M'?[4.8,4.0,3.3]:[4.2,3.4,2.8]); }
+function ptsCompass(beep,bike){
+  var bg=ptsBeep(beep), kg=ptsBike(bike);
+  var weak=function(g){return g==='Poor'||g==='Average';}, solid=function(g){return g==='Good'||g==='Elite';};
+  var out={beep:bg,bike:kg,need:'',zone:''};
+  if(bg==null&&kg==null){ out.need='No conditioning KPI this period — run Beep or a 5-min bike'; return out; }
+  if(bg!=null&&kg!=null){
+    if(weak(bg)&&weak(kg)){ out.need='Base is thin — build Cardiac Output first, then Cardiac Power'; out.zone='Z2'; }
+    else if(weak(bg)&&solid(kg)){ out.need='Ceiling is the limiter — Cardiac Power Intervals + Threshold'; out.zone='Z5'; }
+    else if(solid(bg)&&weak(kg)){ out.need='Ceiling fine, base thin — Cardiac Output volume'; out.zone='Z2–4'; }
+    else { out.need='Well-conditioned aerobically — maintain, add sport-specific work'; out.zone='hold'; }
+  } else {
+    var g=bg!=null?bg:kg;
+    if(weak(g)){ out.need='Aerobic power is the limiter — Cardiac Power Intervals + Threshold/HRCT'; out.zone='Z5'; }
+    else { out.need='Aerobic engine solid — maintain; verify with the other KPI'; out.zone='hold'; }
+  }
+  return out;
+}
+function ptsGP(g){ return '<span class="gpill g-'+(g||'none')+'">'+(g||'—')+'</span>'; }
+function ptsZone(c){ return (c.zone&&c.zone!=='hold') ? ' <b style="color:var(--gold)">('+c.zone+')</b>' : ''; }
+function ptsProfileCards(recs){
+  var el=ge('ptsCards'); if(!el) return;
+  var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
+  var pq=cv('Power Quotient'), d=ptsPQ(pq);
+  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+  var bands=PTS_SEX==='M'?'High &gt;25 · Mod 21–25 · Low &lt;21':'High &gt;28 · Mod 24–28 · Low &lt;24';
+  var pqCard='<div class="ptsc"><div class="ph">⚡ Power Quotient — Training Direction</div>'
+    + (d ? '<div class="pbig" style="color:var(--tx)">'+fmt(pq,1)+' <span style="font-size:12px;color:var(--tm)">W/lb</span> &nbsp;<span class="ptb '+d.cls+'">'+d.band+'</span></div>'
+         + '<div class="psub">'+d.tag+' · '+PTS_SEX+' bands: '+bands+'</div>'
+         + '<div class="pdir">→ '+d.dir+'</div>'
+       : '<div class="psub">No Power Quotient for this season/period — needs CMJ + Squat.</div>')
+    + '</div>';
+  var cmpCard='<div class="ptsc"><div class="ph">🧭 Conditioning Compass — Energy-System Need</div>'
+    + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,1)+'</span>':'')
+    + ' &nbsp; Bike W/kg '+ptsGP(c.bike)+(bike!=null?' <span style="color:var(--tm)">'+fmt(bike,1)+'</span>':'')+'</div>'
+    + '<div class="pdir">→ '+c.need+ptsZone(c)+'</div>'
+    + '</div>';
+  el.innerHTML=pqCard+cmpCard;
+}
+function renderCompass(){
+  var el=ge('compassBody'); if(!el) return;
+  var ss=ge('compassSeason'), pp=ge('compassPeriod');
+  if(ss && !ss.options.length){
+    var seasons=['All'].concat(uniq(DATA.map(function(d){return d.Season;})).sort(function(a,b){return b.localeCompare(a);}));
+    ss.innerHTML=seasons.map(function(s){return '<option value="'+s+'">'+(s==='All'?'All Seasons':s)+'</option>';}).join('');
+  }
+  var sv=ss?ss.value:'All', pv=pp?pp.value:'All';
+  var names=uniq(DATA.map(function(d){return d['Athlete Name'];})).sort();
+  var rows=names.map(function(nm){
+    var recs=DATA.filter(function(x){return x['Athlete Name']===nm;});
+    if(sv!=='All') recs=recs.filter(function(x){return x.Season===sv;});
+    if(pv!=='All') recs=recs.filter(function(x){return x['Time Period']===pv;});
+    if(!recs.length) return '';
+    recs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+    var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
+    var pq=cv('Power Quotient'), d=ptsPQ(pq);
+    var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+    var pos=(recs[0].Position||'');
+    return '<tr data-nm="'+String(nm).replace(/"/g,'&quot;')+'" style="cursor:pointer">'
+      + '<td style="text-align:left;font-weight:600">'+dn(nm)+'</td>'
+      + '<td style="color:var(--tm)">'+pos+'</td>'
+      + '<td>'+(pq!=null?fmt(pq,1):'—')+'</td>'
+      + '<td>'+(d?'<span class="ptb '+d.cls+'">'+d.band+'</span>':'—')+'</td>'
+      + '<td style="text-align:left;color:var(--tm);font-size:11px">'+(d?d.dir:'')+'</td>'
+      + '<td>'+ptsGP(c.beep)+'</td>'
+      + '<td>'+ptsGP(c.bike)+'</td>'
+      + '<td style="text-align:left;font-size:11px">'+c.need+ptsZone(c)+'</td>'
+      + '</tr>';
+  }).filter(Boolean).join('');
+  el.innerHTML = rows || '<tr><td colspan="8" style="color:var(--td);padding:14px">No athletes for this season/period.</td></tr>';
+  if(!el._bound){ el._bound=1; el.addEventListener('click', function(e){
+    var tr=e.target.closest('tr[data-nm]'); if(!tr) return;
+    var sel=ge('profSel'); if(sel){ sel.value=tr.getAttribute('data-nm'); }
+    showTab('profile', document.querySelector('.ntab[data-tab=profile]'));
+  }); }
+}
+function ptsBandHex(b){ return b==='HIGH'?'#1f8f4d':b==='LOW'?'#2158c4':b==='MODERATE'?'#a9791a':'#666'; }
+function ptsGradeHex(g){ return g==='Elite'?'#1f8f4d':g==='Good'?'#2f7d3f':g==='Average'?'#a9791a':g==='Poor'?'#c0392b':'#999'; }
+function printCompass(){
+  var ss=ge('compassSeason'), pp=ge('compassPeriod');
+  var sv=ss?ss.value:'All', pv=pp?pp.value:'All';
+  var names=uniq(DATA.map(function(d){return d['Athlete Name'];})).sort();
+  var rows=names.map(function(nm){
+    var recs=DATA.filter(function(x){return x['Athlete Name']===nm;});
+    if(sv!=='All') recs=recs.filter(function(x){return x.Season===sv;});
+    if(pv!=='All') recs=recs.filter(function(x){return x['Time Period']===pv;});
+    if(!recs.length) return '';
+    recs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+    var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
+    var pq=cv('Power Quotient'), d=ptsPQ(pq);
+    var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+    var band=d?'<b style="color:'+ptsBandHex(d.band)+'">'+d.band+'</b>':'—';
+    var gr=function(g){return g?'<b style="color:'+ptsGradeHex(g)+'">'+g+'</b>':'—';};
+    var zone=(c.zone&&c.zone!=='hold')?' <b>('+c.zone+')</b>':'';
+    return '<tr><td><b>'+dn(nm)+'</b></td><td>'+(recs[0].Position||'')+'</td>'
+      +'<td style="text-align:center">'+(pq!=null?fmt(pq,1):'—')+'</td><td style="text-align:center">'+band+'</td>'
+      +'<td>'+(d?d.dir:'')+'</td>'
+      +'<td style="text-align:center">'+gr(c.beep)+(beep!=null?' '+fmt(beep,1):'')+'</td>'
+      +'<td style="text-align:center">'+gr(c.bike)+(bike!=null?' '+fmt(bike,1):'')+'</td>'
+      +'<td>'+c.need+zone+'</td></tr>';
+  }).filter(Boolean).join('');
+  if(!rows) rows='<tr><td colspan="8">No athletes for this season/period.</td></tr>';
+  var sexBands=PTS_SEX==='M'?'Males: High &gt;25 · Mod 21–25 · Low &lt;21':'Females: High &gt;28 · Mod 24–28 · Low &lt;24';
+  var teamName=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
+  var html='<div class="pr-h"><h1>Conditioning Compass &amp; Power Quotient</h1>'
+    +'<div class="sub"><b>'+(teamName||'')+'</b><br>'+(sv!=='All'?sv:'All Seasons')+' &middot; '+(pv!=='All'?pv:'All Periods')+'</div></div>'
+    +'<div class="pr-sec">Training Direction &amp; Energy-System Needs</div>'
+    +'<table class="pr-t"><thead><tr><th>Athlete</th><th>Pos</th><th style="text-align:center">PQ</th><th style="text-align:center">Direction</th><th>Prescribe (strength)</th><th style="text-align:center">Beep</th><th style="text-align:center">Bike</th><th>Conditioning Need</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<div style="font-size:8.5px;color:#666;margin-top:8px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. '+sexBands+'. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic.</div>';
+  printReport(html);
+}
+window.printCompass=printCompass;
+function printPlayerCompass(){
+  var name=ge('profSel')?ge('profSel').value:'';
+  if(!name){ return; }
+  var recs=DATA.filter(function(x){return x['Athlete Name']===name;});
+  var ps=ge('profSeason')?ge('profSeason').value:'All', pp=ge('profPeriod')?ge('profPeriod').value:'All';
+  if(ps!=='All') recs=recs.filter(function(x){return x.Season===ps;});
+  if(pp!=='All') recs=recs.filter(function(x){return x['Time Period']===pp;});
+  recs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  if(!recs.length){ alert('No test data for this athlete in the selected season/period.'); return; }
+  var rec=recs.find(function(x){return x['Score OVERALL']!=null;})||recs[0];
+  var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
+  var pq=cv('Power Quotient'), d=ptsPQ(pq);
+  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+  var sexBands=PTS_SEX==='M'?'Males: High &gt;25 · Mod 21–25 · Low &lt;21':'Females: High &gt;28 · Mod 24–28 · Low &lt;24';
+  var teamName=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
+  var gr=function(g){return g?'<b style="color:'+ptsGradeHex(g)+'">'+g+'</b>':'<span style="color:#999">not tested</span>';};
+  var pqBox = d
+    ? '<div style="font-size:22px;font-weight:800;color:'+ptsBandHex(d.band)+';font-family:\'Barlow Condensed\',Arial">'+fmt(pq,1)+' <span style="font-size:11px;color:#666;font-weight:600">W/lb</span> &nbsp;'+d.band+'</div>'
+      + '<div style="font-size:10px;color:#555;margin:2px 0 5px">'+d.tag+' &middot; '+sexBands+'</div>'
+      + '<div style="font-size:11.5px;color:#111">&rarr; '+d.dir+'</div>'
+    : '<div style="font-size:11px;color:#777">No Power Quotient for this season/period (needs CMJ + Squat).</div>';
+  var cmpBox = '<div class="pc-r"><span class="l">Beep Test</span><span>'+gr(c.beep)+(beep!=null?' &middot; '+fmt(beep,1):'')+'</span></div>'
+      + '<div class="pc-r"><span class="l">Bike W/kg</span><span>'+gr(c.bike)+(bike!=null?' &middot; '+fmt(bike,1):'')+'</span></div>'
+      + '<div style="font-size:11.5px;color:#111;margin-top:5px">&rarr; '+c.need+((c.zone&&c.zone!=='hold')?' <b>('+c.zone+')</b>':'')+'</div>';
+  var html='<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+(teamName||'')+'</b><br>'
+      +(rec.Position||'')+' &middot; '+(rec.Group||'')+' &middot; '+(pp!=='All'?pp:(rec['Time Period']||''))+' '+(ps!=='All'?ps:(rec.Season||''))+'</div></div>'
+    +'<div class="pr-sec">Training Direction &amp; Energy-System Need</div>'
+    +'<div class="pr-cats">'
+    +'<div class="pc-cat"><div class="pc-h">&#9889; Power Quotient — Training Direction</div>'+pqBox+'</div>'
+    +'<div class="pc-cat"><div class="pc-h">&#129517; Conditioning Compass — Conditioning Need</div>'+cmpBox+'</div>'
+    +'</div>'
+    +'<div style="font-size:8.5px;color:#666;margin-top:10px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic. Values carried forward to the latest test in the selected season/period.</div>';
+  html+=ptsRSAprintHTML(recs);
+  printReport(html);
+}
+window.printPlayerCompass=printPlayerCompass;
+function ptsCohort(key){
+  var v=DATA.map(function(d){return d[key];}).filter(function(x){return x!=null&&!isNaN(x);});
+  if(!v.length) return null;
+  return {mn:Math.min.apply(null,v), mx:Math.max.apply(null,v)};
+}
+function ptsRoute(goodSpeed, highDrop){
+  if(goodSpeed&&!highDrop) return {t:'Well-conditioned — maintain & sport-specific', z:''};
+  if(goodSpeed&&highDrop)  return {t:'Aerobic recovery + PCr — Explosive Repeat / Oxidative / Alactic Capacity', z:'Z3–4'};
+  if(!goodSpeed&&!highDrop) return {t:'Speed / power limited → Power Quotient (Alactic Power · Max Effort · Complex)', z:''};
+  return {t:'Base + power — build aerobic base first → then Power Quotient', z:'Z2'};
+}
+var PTS_RSA_SCR={box:'rgba(255,255,255,.12)',grid:'rgba(255,255,255,.10)',axis:'#7A8299',dotStroke:'#0b1020',reed:'#E8A900',sh:'#4FC3F7',qBase:'#d1584f',qAero:'#c99a2e',qSpeed:'#5a90ea',qWell:'#3aa869',line10:'#E8A900',zone:'#E8A900'};
+var PTS_RSA_PRN={box:'#b0b0b0',grid:'#dddddd',axis:'#555555',dotStroke:'#333333',reed:'#b8860b',sh:'#2158c4',qBase:'#c0392b',qAero:'#a9791a',qSpeed:'#3a6fd0',qWell:'#2f9e57',line10:'#b8860b',zone:'#00205B'};
+function ptsRSAbuild(recs, P){
+  var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
+  var tests=[
+    {id:'Reed', lab:'Reed', best:'Reed Best (s)', drop:'Reed Drop-off (%)', col:P.reed},
+    {id:'200 Shuttle', lab:'200', best:'Shuttle Best (s)', drop:'Shuttle Drop-off (%)', col:P.sh}
+  ];
+  var L=72,R=344,T=26,B=250,W=R-L,H=B-T,midX=(L+R)/2,maxD=16;
+  var yOf=function(d){ return B - Math.max(0,Math.min(maxD,d))/maxD*H; };
+  var splitY=yOf(10), s='';
+  s+='<rect x="'+L+'" y="'+T+'" width="'+(midX-L)+'" height="'+(splitY-T)+'" fill="rgba(210,60,60,.10)"/>';
+  s+='<rect x="'+midX+'" y="'+T+'" width="'+(R-midX)+'" height="'+(splitY-T)+'" fill="rgba(232,169,0,.10)"/>';
+  s+='<rect x="'+L+'" y="'+splitY+'" width="'+(midX-L)+'" height="'+(B-splitY)+'" fill="rgba(45,120,220,.10)"/>';
+  s+='<rect x="'+midX+'" y="'+splitY+'" width="'+(R-midX)+'" height="'+(B-splitY)+'" fill="rgba(46,160,87,.12)"/>';
+  s+='<line x1="'+midX+'" y1="'+T+'" x2="'+midX+'" y2="'+B+'" stroke="'+P.grid+'"/>';
+  s+='<line x1="'+L+'" y1="'+splitY+'" x2="'+R+'" y2="'+splitY+'" stroke="'+P.line10+'" stroke-dasharray="4 3" opacity=".6"/>';
+  s+='<rect x="'+L+'" y="'+T+'" width="'+W+'" height="'+H+'" fill="none" stroke="'+P.box+'"/>';
+  var qs=[[L+6,T+14,'start','BASE + POWER',P.qBase],[R-6,T+14,'end','AEROBIC RECOVERY',P.qAero],
+          [L+6,B-8,'start','SPEED/POWER → PQ',P.qSpeed],[R-6,B-8,'end','WELL-CONDITIONED',P.qWell]];
+  qs.forEach(function(q){ s+='<text x="'+q[0]+'" y="'+q[1]+'" text-anchor="'+q[2]+'" font-size="9" font-weight="700" fill="'+q[4]+'">'+q[3]+'</text>'; });
+  s+='<text x="'+(R-3)+'" y="'+(splitY-3)+'" text-anchor="end" font-size="8" fill="'+P.axis+'">10% drop-off</text>';
+  s+='<text x="'+((L+R)/2)+'" y="'+(B+16)+'" text-anchor="middle" font-size="9" fill="'+P.axis+'">&#8592; slower &#183; BEST-SPRINT SPEED (vs team) &#183; faster &#8594;</text>';
+  s+='<text transform="translate('+(L-14)+','+((T+B)/2)+') rotate(-90)" text-anchor="middle" font-size="9" fill="'+P.axis+'">&#8592; low &#183; % DROP-OFF &#183; high &#8594;</text>';
+  var routes='';
+  tests.forEach(function(tt){
+    var bv=cv(tt.best), dv=cv(tt.drop);
+    if(bv==null||dv==null) return;
+    var co=ptsCohort(tt.best);
+    var xf=(co&&co.mx>co.mn)?1-(bv-co.mn)/(co.mx-co.mn):0.5;
+    var x=L+xf*W, y=yOf(dv), good=xf>=0.5, high=dv>=10;
+    var lx=Math.max(L+16,Math.min(R-16,x));
+    s+='<circle cx="'+x+'" cy="'+y+'" r="6" fill="'+tt.col+'" stroke="'+P.dotStroke+'" stroke-width="1.5"/>';
+    s+='<text x="'+lx+'" y="'+(y-9)+'" text-anchor="middle" font-size="8" font-weight="700" fill="'+tt.col+'">'+tt.lab+'</text>';
+    var rt=ptsRoute(good,high);
+    routes+='<div style="font-size:11.5px;margin-top:5px"><b style="color:'+tt.col+'">'+tt.id+'</b> &middot; best '+fmt(bv,1)+'s &middot; drop-off '+fmt(dv,1)+'% &rarr; '+rt.t+(rt.z?' <b style="color:'+P.zone+'">('+rt.z+')</b>':'')+'</div>';
+  });
+  return {svg:s, routes:routes, W:R+10, Hh:B+28};
+}
+function ptsRSApanel(recs){
+  var el=ge('ptsRSA'); if(!el) return;
+  var r=ptsRSAbuild(recs, PTS_RSA_SCR);
+  var routes=r.routes || '<div style="font-size:11px;color:var(--tm);margin-top:6px">No repeat-sprint test (Reed / 200-shuttle) recorded for this season/period &mdash; the grid shows the four athlete types. Log the reps to plot this athlete.</div>';
+  el.innerHTML='<div class="ptsc" style="border-left-color:var(--good)"><div class="ph">&#127919; Repeat-Sprint Ability (RSA) &mdash; read the pattern, not the number</div>'
+    +'<svg viewBox="0 0 '+r.W+' '+r.Hh+'" style="width:100%;max-width:440px;display:block;margin:2px auto 0">'+r.svg+'</svg>'
+    +'<div style="font-size:10px;color:var(--tm);margin-top:4px">Decrement bands: Elite &lt;5% &middot; Good &lt;10% &middot; Poor &gt;12%. A high drop-off off fast sprints is an aerobic problem (PCr resynthesis is O&#8322;-dependent) &mdash; the fix is a bigger aerobic engine, not more sprints. Both poor-speed quadrants hand off to the Power Quotient.</div>'
+    +routes+'</div>';
+}
+function ptsRSAprintHTML(recs){
+  var r=ptsRSAbuild(recs, PTS_RSA_PRN);
+  if(!r.routes) return '';
+  return '<div class="pr-sec">Repeat-Sprint Ability (RSA)</div>'
+    +'<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">'
+    +'<svg viewBox="0 0 '+r.W+' '+r.Hh+'" style="width:352px;max-width:100%;flex:none">'+r.svg+'</svg>'
+    +'<div style="flex:1;min-width:200px">'+r.routes
+    +'<div style="font-size:8.5px;color:#666;margin-top:8px;line-height:1.5">Decrement bands: Elite &lt;5% &middot; Good &lt;10% &middot; Poor &gt;12%. A high drop-off off fast sprints is an aerobic problem &mdash; build the aerobic engine, don\'t just add sprints. Poor-speed quadrants hand off to the Power Quotient.</div>'
+    +'</div></div>';
+}
+window.ptsRSApanel=ptsRSApanel;
+window.renderCompass=renderCompass;
+
 function renderProfile() {
   var name = ge('profSel').value;
   if(ge('bcBW')){ ge('bcBW').value=''; ge('bcBF').value=''; if(ge('bcOut')) ge('bcOut').innerHTML=''; }
@@ -1845,6 +2119,8 @@ function renderProfile() {
   if (pp !== 'All') recs = recs.filter(function(x) { return x['Time Period'] === pp; });
   recs.sort(function(a, b) { return new Date(b.Date) - new Date(a.Date); });
   var rec = recs.find(function(x){return x['Score OVERALL']!=null;}) || recs[0]; if (!rec) return;
+  try{ptsProfileCards(recs);}catch(e){}
+  try{ptsRSApanel(recs);}catch(e){}
   var carryVal = function(k){ var r = recs.find(function(x){ return x[k]!=null; }); return r ? r[k] : null; };
 
   // Radar season tabs — using data attributes, no inline JS
