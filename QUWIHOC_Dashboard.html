@@ -406,7 +406,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>200yd&#8595;</th><th>200 Sc%</th><th>Reed&#8595;</th><th>Reed Sc%</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>200yd&#8595;</th><th>200 Drop%</th><th>Reed&#8595;</th><th>Reed Drop%</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -1914,7 +1914,7 @@ function ptsProfileCards(recs){
   var el=ge('ptsCards'); if(!el) return;
   var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
   var pq=cv('Power Quotient'), d=ptsPQ(pq);
-  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), shuttle=cv('Shuttle Run'), c=ptsCompass(beep,bike);
   var bands=PTS_SEX==='M'?'High &gt;25 · Mod 21–25 · Low &lt;21':'High &gt;28 · Mod 24–28 · Low &lt;24';
   var pqCard='<div class="ptsc"><div class="ph">⚡ Power Quotient — Training Direction</div>'
     + (d ? '<div class="pbig" style="color:var(--tx)">'+fmt(pq,1)+' <span style="font-size:12px;color:var(--tm)">W/lb</span> &nbsp;<span class="ptb '+d.cls+'">'+d.band+'</span></div>'
@@ -1925,6 +1925,7 @@ function ptsProfileCards(recs){
   var cmpCard='<div class="ptsc"><div class="ph">🧭 Conditioning Compass — Energy-System Need</div>'
     + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,1)+'</span>':'')
     + ' &nbsp; Bike W/kg '+ptsGP(c.bike)+(bike!=null?' <span style="color:var(--tm)">'+fmt(bike,1)+'</span>':'')+'</div>'
+    + (shuttle!=null?'<div style="font-size:11.5px;color:var(--tm);margin-bottom:2px">40s Shuttle: <b style="color:var(--tx)">'+fmt(shuttle,0)+'</b> reps <span style="font-size:10px">(more = better)</span></div>':'')
     + '<div class="pdir">→ '+c.need+ptsZone(c)+'</div>'
     + '</div>';
   el.innerHTML=pqCard+cmpCard;
@@ -2174,6 +2175,8 @@ function renderProfile() {
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:140},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:140},
+    {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
+    {l:'Grip L Score',       k:'Score Grip L',          u:'',   hi:100},
     {l:'NCMJ',               k:'NCMJ Mat Best (in)',    u:'"',  hi:40},
     {l:'CMJ',                k:'CMJ Best (in)',          u:'"',  hi:45},
     {l:'Power W',            k:'Power W (Mat)',          u:'W',  hi:9000},
@@ -2189,6 +2192,7 @@ function renderProfile() {
     {l:'Reed %',             k:'On-ice Reed % Score',      u:'',   hi:100, strPct:true},
     {l:'Grip Right',         k:'Grip Right',            u:'lbs',hi:220},
     {l:'Grip Left',          k:'Grip Left',             u:'lbs',hi:220},
+    {l:'Peak Power (Sayers)',k:'Peak Power (W)',        u:'W',  hi:5800},
     {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
@@ -2205,7 +2209,7 @@ function renderProfile() {
     var tA  = avgVal(peers, m.k);
     var delta = (val != null && tA != null) ? (m.lb ? tA-val : val-tA) : null;
     var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+(m.u||'')+' vs avg</span>' : '';
-    var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0 ? 0 : 1;
+    var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Peak')>=0 ? 0 : 1;
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?(m.strPct && typeof rawVal==='string'?rawVal:fmt(val,dec)+m.u):'—')+' '+ds+'</div></div>';
   }).join('');
   renderDeltaTable(name);
@@ -2225,12 +2229,12 @@ function renderProfile() {
       + '<td class="mn '+(d['10 yd Best (s)']<1.54?'te':d['10 yd Best (s)']<1.63?'tg':'')+'">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-      + '<td class="mn">'+(d['200 Min']!=null?fmt(d['200 Min'],2):'\u2014')+'</td>'
-      + '<td class="mn">'+(d['200 Score%']!=null?d['200 Score%']:'\u2014')+'</td>'
-      + '<td class="mn">'+(d['On-ice Reed Min (s)2']!=null?fmt(d['On-ice Reed Min (s)2'],2):'\u2014')+'</td>'
-      + '<td class="mn">'+(d['On-ice Reed % Score']!=null?d['On-ice Reed % Score']:'\u2014')+'</td>'
-      + '<td class="mn">'+(d['Grip Right']!=null?fmtI(d['Grip Right']):'\u2014')+'</td>'
-      + '<td class="mn">'+(d['Grip Left']!=null?fmtI(d['Grip Left']):'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Shuttle Best (s)']!=null?fmt(d['Shuttle Best (s)'],2):'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Shuttle Drop-off (%)']!=null?d['Shuttle Drop-off (%)']:'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Reed Best (s)']!=null?fmt(d['Reed Best (s)'],2):'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Reed Drop-off (%)']!=null?d['Reed Drop-off (%)']:'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Grip R']!=null?fmtI(d['Grip R']):'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Grip L']!=null?fmtI(d['Grip L']):'\u2014')+'</td>'
       + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
       + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
       + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'

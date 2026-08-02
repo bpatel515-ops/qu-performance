@@ -1912,7 +1912,7 @@ function ptsProfileCards(recs){
   var el=ge('ptsCards'); if(!el) return;
   var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
   var pq=cv('Power Quotient'), d=ptsPQ(pq);
-  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), c=ptsCompass(beep,bike);
+  var beep=cv('Beep Test'), bike=cv('Bike W/kg'), shuttle=cv('Shuttle Run'), c=ptsCompass(beep,bike);
   var bands=PTS_SEX==='M'?'High &gt;25 · Mod 21–25 · Low &lt;21':'High &gt;28 · Mod 24–28 · Low &lt;24';
   var pqCard='<div class="ptsc"><div class="ph">⚡ Power Quotient — Training Direction</div>'
     + (d ? '<div class="pbig" style="color:var(--tx)">'+fmt(pq,1)+' <span style="font-size:12px;color:var(--tm)">W/lb</span> &nbsp;<span class="ptb '+d.cls+'">'+d.band+'</span></div>'
@@ -1923,6 +1923,7 @@ function ptsProfileCards(recs){
   var cmpCard='<div class="ptsc"><div class="ph">🧭 Conditioning Compass — Energy-System Need</div>'
     + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,1)+'</span>':'')
     + ' &nbsp; Bike W/kg '+ptsGP(c.bike)+(bike!=null?' <span style="color:var(--tm)">'+fmt(bike,1)+'</span>':'')+'</div>'
+    + (shuttle!=null?'<div style="font-size:11.5px;color:var(--tm);margin-bottom:2px">40s Shuttle: <b style="color:var(--tx)">'+fmt(shuttle,0)+'</b> reps <span style="font-size:10px">(more = better)</span></div>':'')
     + '<div class="pdir">→ '+c.need+ptsZone(c)+'</div>'
     + '</div>';
   el.innerHTML=pqCard+cmpCard;
@@ -2172,6 +2173,8 @@ function renderProfile() {
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:140},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:140},
+    {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
+    {l:'Grip L Score',       k:'Score Grip L',          u:'',   hi:100},
     {l:'VJ Vertec',          k:'VJ Vertec Best (in)',    u:'"',  hi:34},
     {l:'Approach Jump',      k:'Approach Jump Best (in)',u:'"',  hi:38},
     {l:'Broad Jump',         k:'Broad Jump Best (in)',  u:'"',  hi:120},
@@ -2180,6 +2183,7 @@ function renderProfile() {
     {l:'Lane Agility',       k:'Lane Agility Best (s)', u:'s',  hi:12,  lo:10,  lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
     {l:'Shuttle',            k:'Shuttle Run',           u:'',   hi:20},
+    {l:'Peak Power (Sayers)',k:'Peak Power (W)',        u:'W',  hi:5800},
     {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
@@ -2195,7 +2199,7 @@ function renderProfile() {
     var tA  = avgVal(peers, m.k);
     var delta = (val != null && tA != null) ? (m.lb ? tA-val : val-tA) : null;
     var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+(m.u||'')+' vs avg</span>' : '';
-    var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0 ? 0 : 1;
+    var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Peak')>=0 ? 0 : 1;
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?fmt(val,dec)+m.u:'—')+' '+ds+'</div></div>';
   }).join('');
 
