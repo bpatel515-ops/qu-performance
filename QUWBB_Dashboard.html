@@ -688,16 +688,16 @@ input,select,textarea{font-size:16px!important;}
   <div class="pw-setup">
     <div><label class="pw-fl">Game Days This Week</label>
       <div class="pw-gdp" id="pwGdp">
-        <label><input type="checkbox" class="pw-cb" value="0">Mon</label>
-        <label><input type="checkbox" class="pw-cb" value="1">Tue</label>
-        <label><input type="checkbox" class="pw-cb" value="2">Wed</label>
-        <label><input type="checkbox" class="pw-cb" value="3">Thu</label>
-        <label><input type="checkbox" class="pw-cb" value="4">Fri</label>
-        <label><input type="checkbox" class="pw-cb" value="5" checked>Sat</label>
-        <label><input type="checkbox" class="pw-cb" value="6">Sun</label>
+        <label><input type="checkbox" class="pw-cb" value="0">Sun</label>
+        <label><input type="checkbox" class="pw-cb" value="1">Mon</label>
+        <label><input type="checkbox" class="pw-cb" value="2">Tue</label>
+        <label><input type="checkbox" class="pw-cb" value="3">Wed</label>
+        <label><input type="checkbox" class="pw-cb" value="4">Thu</label>
+        <label><input type="checkbox" class="pw-cb" value="5">Fri</label>
+        <label><input type="checkbox" class="pw-cb" value="6" checked>Sat</label>
       </div>
     </div>
-    <div><label class="pw-fl">Week Start (Monday)</label><input type="date" class="pw-in" id="pwWeekStart" onchange="if(window.pwHead)pwHead()"></div>
+    <div><label class="pw-fl">Week Start (Sunday)</label><input type="date" class="pw-in" id="pwWeekStart" onchange="if(window.pwHead)pwHead()"></div>
     <div><label class="pw-fl">Chronic Load (4-wk avg AU)</label><input type="number" class="pw-in" id="pwChronic" placeholder="e.g. 1800"></div>
     <div><label class="pw-fl">Phase</label><select class="pw-in" id="pwPhase" onchange="if(window.pwHead)pwHead()"><option>Off-Season</option><option>Pre-Season</option><option selected>In-Season</option><option>Post-Season</option></select></div>
     <div style="display:flex;align-items:flex-end;gap:6px;"><button class="pw-build" onclick="buildWeekly()">Build Week &rarr;</button><button class="ibtn" onclick="loadSavedWeek()" style="cursor:pointer;white-space:nowrap;" title="Pull a previously saved week back into the builder to edit and re-save">&#8635; Load Saved Week</button></div>
@@ -843,8 +843,8 @@ input,select,textarea{font-size:16px!important;}
 <script>
 /* ═══ WEEKLY BUILDER (Patel Load Management) ═══════════════════════════ */
 (function(){
-  var DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  var SHORT=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var ACTIVITIES=['Practice','Gym Training','Practice + Gym','Pre-Game','Extra Skills','Recovery','Game','Off'];
   // Patel RPE 1-5 (user scale): 1 Light, 2 Easy, 3 Average, 4 Difficult, 5 Very Difficult
   var RPE_LABELS={0:'0 — Off',1:'1 — Light',2:'2 — Easy',3:'3 — Average',4:'4 — Difficult',5:'5 — Very Difficult'};
@@ -997,7 +997,7 @@ input,select,textarea{font-size:16px!important;}
   // tweak it (notes, adjustments after events) and re-save - Save Week to Cloud fully replaces it.
   window.loadSavedWeek=function(){
     var c=cfg(); if(!c.SB_URL){ pwMsg('Config not ready - reload and retry.','err'); return; }
-    var ws=ge('pwWeekStart').value; if(!ws){ pwMsg('Pick the Week Start (Monday) of the saved week first.','err'); return; }
+    var ws=ge('pwWeekStart').value; if(!ws){ pwMsg('Pick the Week Start (Sunday) of the saved week first.','err'); return; }
     pwMsg('Loading saved week...','');
     sbGet('v_dashboard_plan?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&date=eq.'+encodeURIComponent(ws)+'&select=*').then(function(rows){
       var w=rows&&rows[0];
@@ -1115,10 +1115,10 @@ input,select,textarea{font-size:16px!important;}
   /* ---- Phase 2: cloud save + planned-vs-actual overlay + flags + auto-chronic ---- */
   function cfg(){ return window.QUCFG||{}; }
   function sbGet(path){ var c=cfg(); if(!c.SB_URL) return Promise.resolve([]); return fetch(c.SB_URL+'/rest/v1/'+path,{headers:{apikey:c.SB_KEY,Authorization:'Bearer '+c.SB_KEY}}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}); }
-  function seasonFromDate(ds){ var d=new Date(ds+'T00:00:00'); var y=d.getFullYear(); var anc=new Date(y,7,1); while(anc.getDay()!==1) anc.setDate(anc.getDate()+1); anc.setDate(anc.getDate()+21); var s=(d>=anc)?y:y-1; var a=('0'+(s%100)).slice(-2), b=('0'+((s+1)%100)).slice(-2); return a+'-'+b; }
+  function seasonFromDate(ds){ var d=new Date(ds+'T00:00:00'); var y=d.getFullYear(); var anc=new Date(y,7,1); while(anc.getDay()!==0) anc.setDate(anc.getDate()+1); anc.setDate(anc.getDate()+21); var s=(d>=anc)?y:y-1; var a=('0'+(s%100)).slice(-2), b=('0'+((s+1)%100)).slice(-2); return a+'-'+b; }
   // Season Week 1 = the coach's academic-year start = the 4th Monday of August of the season's start year
   // (matches the imported convention, e.g. 26-27 → 2026-08-24). To shift the anchor, change the +21 below.
-  function seasonStartMonday(season){ var y=2000+parseInt(season.split('-')[0],10); var d=new Date(y,7,1); while(d.getDay()!==1) d.setDate(d.getDate()+1); d.setDate(d.getDate()+21); return d; }
+  function seasonStartMonday(season){ var y=2000+parseInt(season.split('-')[0],10); var d=new Date(y,7,1); while(d.getDay()!==0) d.setDate(d.getDate()+1); d.setDate(d.getDate()+21); return d; }
   function weekNumOfSeason(ds, season){ var start=seasonStartMonday(season); var d=new Date(ds+'T00:00:00'); var wk=Math.floor((d-start)/(7*864e5))+1; return Math.max(1,Math.min(52,wk)); }
   var PW_PASS='';
 
@@ -1126,8 +1126,8 @@ input,select,textarea{font-size:16px!important;}
   window.saveWeeklyToCloud=function(){
     if(!PW_TPL){ return; }
     var c=cfg(); if(!c.SB_URL){ pwMsg('Config not ready — reload and retry.','err'); return; }
-    var wStart=ge('pwWeekStart').value; if(!wStart){ pwMsg('Set a Week Start (Monday) first.','err'); return; }
-    (function(){ var _d=new Date(wStart+'T00:00:00'); var _o=(_d.getDay()+6)%7; if(_o){ _d.setDate(_d.getDate()-_o); wStart=_d.toISOString().slice(0,10); } if(ge('pwWeekStart')) ge('pwWeekStart').value=wStart; })();
+    var wStart=ge('pwWeekStart').value; if(!wStart){ pwMsg('Set a Week Start (Sunday) first.','err'); return; }
+    (function(){ var _d=new Date(wStart+'T00:00:00'); var _o=_d.getDay(); if(_o){ _d.setDate(_d.getDate()-_o); wStart=_d.toISOString().slice(0,10); } if(ge('pwWeekStart')) ge('pwWeekStart').value=wStart; })();
     var season=seasonFromDate(wStart), wk=weekNumOfSeason(wStart,season);
     var days=[], totalAU=0, totalMin=0;
     DAYS.forEach(function(day,di){
@@ -1227,7 +1227,7 @@ input,select,textarea{font-size:16px!important;}
   // default week start = this Monday; auto-build once DOM is ready
   document.addEventListener('DOMContentLoaded', function(){
     var ws=ge('pwWeekStart');
-    if(ws && !ws.value){ var t=new Date(); var day=(t.getDay()+6)%7; t.setDate(t.getDate()-day); ws.value=t.toISOString().slice(0,10); }
+    if(ws && !ws.value){ var t=new Date(); var day=t.getDay(); t.setDate(t.getDate()-day); ws.value=t.toISOString().slice(0,10); }
     if(ge('pwDayGrid')) buildWeekly();
     var ch=ge('pwChronic'); if(ch) ch.addEventListener('input', pwSummary);
     // game-day picker rebuilds the microcycle live (no need to press Build Week)
@@ -2597,7 +2597,7 @@ function renderTrends() {
 
 function getWkLoad(entries){
   var weeks={};
-  entries.forEach(function(e){var d=new Date(e.date),m=new Date(d);m.setDate(d.getDate()-d.getDay()+1);var k=m.toISOString().slice(0,10);weeks[k]=(weeks[k]||0)+(e.load||0);});
+  entries.forEach(function(e){var d=new Date(e.date),m=new Date(d);m.setDate(d.getDate()-d.getDay());var k=m.toISOString().slice(0,10);weeks[k]=(weeks[k]||0)+(e.load||0);});
   return Object.keys(weeks).sort().map(function(k){return{x:k.slice(5),y:weeks[k]};});
 }
 function getCumLoad(entries){ var c=0; return entries.map(function(e){return{x:e.date.slice(5),y:(c+=e.load||0)};}); }
@@ -3814,7 +3814,7 @@ function loadFitnessFromDB(force) {
   .catch(function(){ if (badge) { badge.innerHTML = '&#9888; Offline (cached)';
     badge.style.background = 'rgba(210,60,60,.15)'; badge.style.color = 'var(--dev)'; } });
 }
-function quSeasonAnchorMonday(y){ var d=new Date(y,7,1); while(d.getDay()!==1) d.setDate(d.getDate()+1); d.setDate(d.getDate()+21); return d; }
+function quSeasonAnchorMonday(y){ var d=new Date(y,7,1); while(d.getDay()!==0) d.setDate(d.getDate()+1); d.setDate(d.getDate()+21); return d; }
 function quCurrentSeasonStartYear(){ var t=new Date(); var y=t.getFullYear(); return (t>=quSeasonAnchorMonday(y))?y:y-1; }
 function quSeasonCode(y){ return ('0'+(y%100)).slice(-2)+'-'+('0'+((y+1)%100)).slice(-2); }
 function populatePlanSeasonDropdown(dataSeasons){
