@@ -1651,7 +1651,7 @@ function renderKPIs() {
     {l:'Avg Shuttle',      v:fmt(avgVal(fd,'Shuttle Run'),1),               u:'',   s:'team average',           a:'var(--good)'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),            u:'lbs',s:'team average',           a:'var(--gold)'},
-    {l:'Avg Pull-up Max',  v:fmtI(avgVal(fd,'Pull-ups')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
+    {l:'Avg Pull-ups',  v:fmtI(avgVal(fd,'Pull-ups')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
   ];
   ge('kpiGrid').innerHTML = kpis.map(function(k) {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';
