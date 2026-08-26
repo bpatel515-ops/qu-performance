@@ -1890,7 +1890,7 @@ function ptsPQ(pq){
   return          {band:'LOW',cls:'b-lo',tag:'Strength-dominant',dir:'Very strong but slow to express it — speed-strength, plyos, sprints.'};
 }
 function ptsGrade(v,t){ if(v==null||isNaN(v))return null; return v>=t[0]?'Elite':v>=t[1]?'Good':v>=t[2]?'Average':'Poor'; }
-function ptsBeep(v){ return ptsGrade(v, PTS_SEX==='M'?[13.1,12.1,11.1]:[11.1,10.1,9.1]); }
+function ptsBeep(v){ if(v==null||isNaN(v))return null; return ptsGrade(Math.floor(v), PTS_SEX==='M'?[13,12,11]:[11,10,9]); }  // beep is level.shuttle — grade by level reached (e.g. 11.05 = L11 sh5 is Elite; a decimal 11.1 cutoff wrongly demoted it)
 function ptsBike(v){ return ptsGrade(v, PTS_SEX==='M'?[4.8,4.0,3.3]:[4.2,3.4,2.8]); }
 function ptsCompass(beep,bike){
   var bg=ptsBeep(beep), kg=ptsBike(bike);
@@ -1924,7 +1924,7 @@ function ptsProfileCards(recs){
        : '<div class="psub">No Power Quotient for this season/period — needs CMJ + Squat.</div>')
     + '</div>';
   var cmpCard='<div class="ptsc"><div class="ph">🧭 Conditioning Compass — Energy-System Need</div>'
-    + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,1)+'</span>':'')
+    + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,2)+'</span>':'')
     + ' &nbsp; Bike W/kg '+ptsGP(c.bike)+(bike!=null?' <span style="color:var(--tm)">'+fmt(bike,1)+'</span>':'')+'</div>'
     + (shuttle!=null?'<div style="font-size:11.5px;color:var(--tm);margin-bottom:2px">40s Shuttle: <b style="color:var(--tx)">'+fmt(shuttle,0)+'</b> reps <span style="font-size:10px">(more = better)</span></div>':'')
     + '<div class="pdir">→ '+c.need+ptsZone(c)+'</div>'
@@ -1989,7 +1989,7 @@ function printCompass(){
     return '<tr><td><b>'+dn(nm)+'</b></td><td>'+(recs[0].Position||'')+'</td>'
       +'<td style="text-align:center">'+(pq!=null?fmt(pq,1):'—')+'</td><td style="text-align:center">'+band+'</td>'
       +'<td>'+(d?d.dir:'')+'</td>'
-      +'<td style="text-align:center">'+gr(c.beep)+(beep!=null?' '+fmt(beep,1):'')+'</td>'
+      +'<td style="text-align:center">'+gr(c.beep)+(beep!=null?' '+fmt(beep,2):'')+'</td>'
       +'<td style="text-align:center">'+gr(c.bike)+(bike!=null?' '+fmt(bike,1):'')+'</td>'
       +'<td>'+c.need+zone+'</td></tr>';
   }).filter(Boolean).join('');
@@ -2025,7 +2025,7 @@ function printPlayerCompass(){
       + '<div style="font-size:10px;color:#555;margin:2px 0 5px">'+d.tag+' &middot; '+sexBands+'</div>'
       + '<div style="font-size:11.5px;color:#111">&rarr; '+d.dir+'</div>'
     : '<div style="font-size:11px;color:#777">No Power Quotient for this season/period (needs CMJ + Squat).</div>';
-  var cmpBox = '<div class="pc-r"><span class="l">Beep Test</span><span>'+gr(c.beep)+(beep!=null?' &middot; '+fmt(beep,1):'')+'</span></div>'
+  var cmpBox = '<div class="pc-r"><span class="l">Beep Test</span><span>'+gr(c.beep)+(beep!=null?' &middot; '+fmt(beep,2):'')+'</span></div>'
       + '<div class="pc-r"><span class="l">Bike W/kg</span><span>'+gr(c.bike)+(bike!=null?' &middot; '+fmt(bike,1):'')+'</span></div>'
       + '<div style="font-size:11.5px;color:#111;margin-top:5px">&rarr; '+c.need+((c.zone&&c.zone!=='hold')?' <b>('+c.zone+')</b>':'')+'</div>';
   var html='<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+(teamName||'')+'</b><br>'
@@ -2174,6 +2174,7 @@ function renderProfile() {
     {l:'Squat Max',          k:'Squat Max',            u:'lbs', hi:450},
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
+    {l:'Pull-up 1RM',        k:'Pull-ups',              u:'lbs',hi:100},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:220},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:220},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},

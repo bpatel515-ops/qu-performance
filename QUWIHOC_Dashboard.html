@@ -433,7 +433,7 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="fg"><span class="fl">Metric</span>
       <select class="fs" id="lbMetric" onchange="renderLB()">
-        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Score ANTHRO">Anthro Score</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="NCMJ Mat Best (in)">NCMJ (in)</option><option value="CMJ Best (in)">CMJ (in)</option><option value="Broad Jump Best (in)">Broad Jump</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Grip R">Grip R (lb)</option><option value="Grip L">Grip L (lb)</option><option value="Tibia">Tibia (in)</option><option value="Power Quotient">Power Quotient</option>
+        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="NCMJ Mat Best (in)">NCMJ (in)</option><option value="CMJ Best (in)">CMJ (in)</option><option value="Broad Jump Best (in)">Broad Jump</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="Pro Agility Best (s)">Pro Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Grip R">Grip R (lb)</option><option value="Grip L">Grip L (lb)</option><option value="Tibia">Tibia (in)</option><option value="Power Quotient">Power Quotient</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -1670,13 +1670,12 @@ function renderOvTable() {
   var baseH = '<th class="sh-col" onclick="sortOv(0)">Athlete</th>'+'<th class="sh-col" onclick="sortOv(1)">Pos</th>'+'<th class="sh-col" onclick="sortOv(2)">Yr</th>'+'<th class="sh-col" onclick="sortOv(3)">Season</th>'+'<th class="sh-col" onclick="sortOv(4)">Period</th>'+'<th class="sh-col" onclick="sortOv(5)">Date</th>';
   var colH, colFn;
   if (viewMode === 'scores') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">Power</th>'+'<th class="sh-col" onclick="sortOv(7)">Strength</th>'+'<th class="sh-col" onclick="sortOv(8)">Speed</th>'+'<th class="sh-col" onclick="sortOv(9)">Cond</th>'+'<th class="sh-col" onclick="sortOv(10)">Anthro</th>'+'<th class="sh-col" onclick="sortOv(11)">Overall</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">Power</th>'+'<th class="sh-col" onclick="sortOv(7)">Strength</th>'+'<th class="sh-col" onclick="sortOv(8)">Speed</th>'+'<th class="sh-col" onclick="sortOv(9)">Cond</th>'+'<th class="sh-col" onclick="sortOv(10)">Overall</th>';
     colFn = function(d) {
       return '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score ANTHRO'])+'">'+fmtI(d['Score ANTHRO'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
@@ -1719,7 +1718,7 @@ function renderOvTable() {
   // Apply sort
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
-    if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
+    if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score OVERALL']);
     else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass','Power Quotient']);
     var _sk=_keys[ovSortCol]||'';
@@ -1889,7 +1888,7 @@ function ptsPQ(pq){
   return          {band:'LOW',cls:'b-lo',tag:'Strength-dominant',dir:'Very strong but slow to express it — speed-strength, plyos, sprints.'};
 }
 function ptsGrade(v,t){ if(v==null||isNaN(v))return null; return v>=t[0]?'Elite':v>=t[1]?'Good':v>=t[2]?'Average':'Poor'; }
-function ptsBeep(v){ return ptsGrade(v, PTS_SEX==='M'?[13.1,12.1,11.1]:[11.1,10.1,9.1]); }
+function ptsBeep(v){ if(v==null||isNaN(v))return null; return ptsGrade(Math.floor(v), PTS_SEX==='M'?[13,12,11]:[11,10,9]); }  // beep is level.shuttle — grade by level reached (e.g. 11.05 = L11 sh5 is Elite; a decimal 11.1 cutoff wrongly demoted it)
 function ptsBike(v){ return ptsGrade(v, PTS_SEX==='M'?[4.8,4.0,3.3]:[4.2,3.4,2.8]); }
 function ptsCompass(beep,bike){
   var bg=ptsBeep(beep), kg=ptsBike(bike);
@@ -1923,7 +1922,7 @@ function ptsProfileCards(recs){
        : '<div class="psub">No Power Quotient for this season/period — needs CMJ + Squat.</div>')
     + '</div>';
   var cmpCard='<div class="ptsc"><div class="ph">🧭 Conditioning Compass — Energy-System Need</div>'
-    + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,1)+'</span>':'')
+    + '<div style="font-size:12px;margin-bottom:2px">Beep '+ptsGP(c.beep)+(beep!=null?' <span style="color:var(--tm)">'+fmt(beep,2)+'</span>':'')
     + ' &nbsp; Bike W/kg '+ptsGP(c.bike)+(bike!=null?' <span style="color:var(--tm)">'+fmt(bike,1)+'</span>':'')+'</div>'
     + (shuttle!=null?'<div style="font-size:11.5px;color:var(--tm);margin-bottom:2px">40s Shuttle: <b style="color:var(--tx)">'+fmt(shuttle,0)+'</b> reps <span style="font-size:10px">(more = better)</span></div>':'')
     + '<div class="pdir">→ '+c.need+ptsZone(c)+'</div>'
@@ -1988,7 +1987,7 @@ function printCompass(){
     return '<tr><td><b>'+dn(nm)+'</b></td><td>'+(recs[0].Position||'')+'</td>'
       +'<td style="text-align:center">'+(pq!=null?fmt(pq,1):'—')+'</td><td style="text-align:center">'+band+'</td>'
       +'<td>'+(d?d.dir:'')+'</td>'
-      +'<td style="text-align:center">'+gr(c.beep)+(beep!=null?' '+fmt(beep,1):'')+'</td>'
+      +'<td style="text-align:center">'+gr(c.beep)+(beep!=null?' '+fmt(beep,2):'')+'</td>'
       +'<td style="text-align:center">'+gr(c.bike)+(bike!=null?' '+fmt(bike,1):'')+'</td>'
       +'<td>'+c.need+zone+'</td></tr>';
   }).filter(Boolean).join('');
@@ -2024,7 +2023,7 @@ function printPlayerCompass(){
       + '<div style="font-size:10px;color:#555;margin:2px 0 5px">'+d.tag+' &middot; '+sexBands+'</div>'
       + '<div style="font-size:11.5px;color:#111">&rarr; '+d.dir+'</div>'
     : '<div style="font-size:11px;color:#777">No Power Quotient for this season/period (needs CMJ + Squat).</div>';
-  var cmpBox = '<div class="pc-r"><span class="l">Beep Test</span><span>'+gr(c.beep)+(beep!=null?' &middot; '+fmt(beep,1):'')+'</span></div>'
+  var cmpBox = '<div class="pc-r"><span class="l">Beep Test</span><span>'+gr(c.beep)+(beep!=null?' &middot; '+fmt(beep,2):'')+'</span></div>'
       + '<div class="pc-r"><span class="l">Bike W/kg</span><span>'+gr(c.bike)+(bike!=null?' &middot; '+fmt(bike,1):'')+'</span></div>'
       + '<div style="font-size:11.5px;color:#111;margin-top:5px">&rarr; '+c.need+((c.zone&&c.zone!=='hold')?' <b>('+c.zone+')</b>':'')+'</div>';
   var html='<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+(teamName||'')+'</b><br>'
@@ -2173,6 +2172,7 @@ function renderProfile() {
     {l:'Squat Max',          k:'Squat Max',            u:'lbs', hi:450},
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
+    {l:'Pull-ups',           k:'Pull-ups',              u:'',   hi:20},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:140},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:140},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
@@ -2242,7 +2242,7 @@ function drawRadar(sc) {
   var c = ge('radarC'); if (!c) return;
   var ctx = c.getContext('2d'), W=252, H=252, cx=126, cy=126, r=88;
   ctx.clearRect(0,0,W,H);
-  var cats = [{l:'POWER',v:sc.pwr},{l:'STRENGTH',v:sc.str},{l:'SPEED',v:sc.spd},{l:'COND',v:sc.cond},{l:'ANTHRO',v:sc.anthro}];
+  var cats = [{l:'POWER',v:sc.pwr},{l:'STRENGTH',v:sc.str},{l:'SPEED',v:sc.spd},{l:'COND',v:sc.cond}];
   var n = cats.length;
   function ang(i) { return i*2*Math.PI/n - Math.PI/2; }
   [20,40,60,80,100].forEach(function(ring) {
