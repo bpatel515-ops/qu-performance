@@ -1642,6 +1642,7 @@ function renderKPIs() {
   var kpis = [
     {l:'Athletes Tested',  v:String(t.length),                              u:'',   s:'of '+fd.length+' total', a:'var(--gold)'},
     {l:'Avg Overall Score',v:ao.toFixed(1),                                  u:'',   s:'team score',             a:co(ao)},
+    {l:'Avg Power Quotient',v:fmt(avgVal(fd,'Power Quotient'),1),u:'',s:'W/lb · training direction',a:'var(--gold)'},
     {l:'Avg 10 yd',        v:fmt(avgVal(fd,'10 yd Best (s)'),2),            u:'s',  s:'lower is faster',        a:'var(--elite)'},
     {l:'Avg Vertical',     v:fmt(avgVal(fd,'VJ Vertec Best (in)'),1),       u:'in', s:'team average',           a:'#4FC3F7'},
     {l:'Avg Approach',     v:fmt(avgVal(fd,'Approach Jump Best (in)'),1),   u:'in', s:'team average',           a:'#4FC3F7'},
@@ -1667,13 +1668,14 @@ function renderOvTable() {
   var baseH = '<th class="sh-col" onclick="sortOv(0)">Athlete</th>'+'<th class="sh-col" onclick="sortOv(1)">Pos</th>'+'<th class="sh-col" onclick="sortOv(2)">Yr</th>'+'<th class="sh-col" onclick="sortOv(3)">Season</th>'+'<th class="sh-col" onclick="sortOv(4)">Period</th>'+'<th class="sh-col" onclick="sortOv(5)">Date</th>';
   var colH, colFn;
   if (viewMode === 'scores') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">Power</th>'+'<th class="sh-col" onclick="sortOv(7)">Strength</th>'+'<th class="sh-col" onclick="sortOv(8)">Speed</th>'+'<th class="sh-col" onclick="sortOv(9)">Cond</th>'+'<th class="sh-col" onclick="sortOv(10)">Overall</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">Power</th>'+'<th class="sh-col" onclick="sortOv(7)">Strength</th>'+'<th class="sh-col" onclick="sortOv(8)">Speed</th>'+'<th class="sh-col" onclick="sortOv(9)">Cond</th>'+'<th class="sh-col" onclick="sortOv(10)">Overall</th>'+'<th class="sh-col" onclick="sortOv(11)">PQ</th>';
     colFn = function(d) {
       return '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'
            + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
+           + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>'
+           + '<td style="text-align:center"><span class="mn" style="font-weight:700;color:'+(d['Power Quotient']!=null?ptsBandHex((ptsPQ(d['Power Quotient'])||{}).band):'var(--td)')+'">'+(d['Power Quotient']!=null?fmt(d['Power Quotient'],1):'—')+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Shuttle</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(19)">Grip L</th>';
@@ -1716,7 +1718,7 @@ function renderOvTable() {
   // Apply sort
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
-    if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score OVERALL']);
+    if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score OVERALL','Power Quotient']);
     else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass','Power Quotient']);
     var _sk=_keys[ovSortCol]||'';
