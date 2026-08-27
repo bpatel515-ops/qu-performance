@@ -1622,7 +1622,7 @@ function printPlayerPDF() {
 }
 function pdfSc(v){ return (v==null||isNaN(v))?'#9aa0a6':v>=80?'#1e7a46':v>=65?'#2f7d9e':v>=50?'#b8860b':v>=35?'#c26a2a':'#b23c3c'; }
 function buildRadar(cur, prev){
-  var axes=[['Score POWER','PWR'],['Score STRENGTH','STR'],['Score SPEED','SPD'],['Score CONDITIONING','COND'],['Score MOVEMENT','MOVE'],['Score ANTHRO','ANTH']];
+  var axes=[['Score POWER','PWR'],['Score STRENGTH','STR'],['Score SPEED','SPD'],['Score CONDITIONING','COND'],['Score ANTHRO','ANTH']];
   var N=axes.length, cx=125, cy=118, Rmax=80;
   function pt(i,val){ var ang=-Math.PI/2 + i*2*Math.PI/N; var r=Rmax*Math.max(0,Math.min(100,val||0))/100; return [Math.round((cx+r*Math.cos(ang))*10)/10, Math.round((cy+r*Math.sin(ang))*10)/10]; }
   var rings=''; [25,50,75,100].forEach(function(rv){ rings+="<polygon points='"+axes.map(function(a,i){var p=pt(i,rv);return p[0]+','+p[1];}).join(' ')+"' fill='none' stroke='#e8e8e8'/>"; });
