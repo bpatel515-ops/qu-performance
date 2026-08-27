@@ -1583,7 +1583,7 @@ function printPlayerPDF() {
   if(!f.length){ alert('No record for this athlete in the selected season/period.'); return; }
   var d=f.filter(function(x){return x['Score OVERALL']!=null;})[0] || f.filter(function(x){return x['Squat Max']!=null||x['CMJ Best (in)']!=null||x.Bodyweight!=null;})[0] || f[0];
   var team=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
-  var cat=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Conditioning'],['Score MOVEMENT','Movement'],['Score ANTHRO','Anthro']];
+  var cat=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Conditioning']];
   var bars=cat.map(function(c){ var v=d[c[0]]; var pct=(v==null||isNaN(v))?0:Math.max(0,Math.min(100,v));
     return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v))+'</span></div>';
   }).join('');
@@ -1596,9 +1596,9 @@ function printPlayerPDF() {
   DATA.forEach(function(x){ if(x.Season===pW && x['Time Period']===pP){ var n=x['Athlete Name']; if(!peerRecs[n]||new Date(x.Date)>new Date(peerRecs[n].Date)) peerRecs[n]=x; } });
   var peers=Object.keys(peerRecs).map(function(n){return peerRecs[n];});
   function rankOf(key){ var mine=d[key]; if(mine==null) return null; var vals=peers.map(function(x){return x[key];}).filter(function(v){return v!=null;}); if(vals.length<2) return null; var greater=vals.filter(function(v){return v>mine;}).length; return (greater+1)+' / '+vals.length; }
-  var rankCats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Cond'],['Score MOVEMENT','Move'],['Score ANTHRO','Anthro']];
+  var rankCats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Cond']];
   var ranks=rankCats.map(function(c){ var r=rankOf(c[0]); return r?'<span class="prk"><b>'+c[1]+'</b> '+r+'</span>':''; }).join('');
-  var hist=all.filter(function(x){return x['Score OVERALL']>0;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && x['Score OVERALL']>0;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
   var trend='';
   if(hist.length>=2){
     var W=560,H=140,L=26,R=8,T=8,B=22;
@@ -1658,6 +1658,18 @@ function renderKPIs() {
     return '<div class="kc" style="--acc:'+k.a+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'<span class="ku">'+k.u+'</span></div><div class="ks">'+k.s+'</div></div>';
   }).join('');
 }
+// Metrics-view cell colored by the value's percentile within the visible cohort (direction-aware),
+// using the same 0-100 color scale as the category scores. So each raw metric reads as "scored".
+function mCell(val, pool, lowBetter, dec){
+  if(val==null||isNaN(val)) return '<td class="mn">—</td>';
+  var col='var(--tx)';
+  if(pool && pool.length>=3){
+    var worse=0,eq=0,i,p;
+    for(i=0;i<pool.length;i++){ p=pool[i]; if(p===val) eq++; else if(lowBetter?p>val:p<val) worse++; }
+    col=co(Math.round((worse+eq/2)/pool.length*100));
+  }
+  return '<td class="mn" style="color:'+col+'">'+fmt(val,dec)+'</td>';
+}
 function renderOvTable() {
   var fd = filterData('ovSeason','ovPeriod','ovDate');
   var s  = ge('ovSeason') ? ge('ovSeason').value : 'All';
@@ -1678,24 +1690,25 @@ function renderOvTable() {
     };
   } else if (viewMode === 'metrics') {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Shuttle</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(19)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(20)">PQ</th>'+'<th class="sh-col" onclick="sortOv(21)">Power Metric</th>';
+    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L','Peak Power (W)'];
+    var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
-      var spd = d['10 yd Best (s)']; var sc = (spd && spd < 1.54) ? 'te' : (spd && spd < 1.63 ? 'tg' : '');
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
-           + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
-           + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
-           + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
-           + '<td class="mn">'+(d['Pull-ups']!=null?fmtI(d['Pull-ups']):'—')+'</td>'
-           + '<td class="mn">'+(d['NCMJ Mat Best (in)']!=null?fmt(d['NCMJ Mat Best (in)']):'—')+'</td>'
-           + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
-           + '<td class="mn '+sc+'">'+(spd!=null?fmt(spd,2):'—')+'</td>'
-           + '<td class="mn">'+(d['Lane Agility Best (s)']!=null?fmt(d['Lane Agility Best (s)'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Bike W/kg']!=null?fmt(d['Bike W/kg'],2):'—')+'</td>'
-           + '<td class="mn">'+(d['Shuttle Run']!=null?fmt(d['Shuttle Run'],1):'—')+'</td>'
-           + '<td class="mn">'+(d['Grip R']!=null?fmtI(d['Grip R']):'—')+'</td>'
-           + '<td class="mn">'+(d['Grip L']!=null?fmtI(d['Grip L']):'—')+'</td>'
+           + mCell(d['Squat Max'], mPool['Squat Max'], false, 0)
+           + mCell(d['Bench Press Max'], mPool['Bench Press Max'], false, 0)
+           + mCell(d['TBDL Max'], mPool['TBDL Max'], false, 0)
+           + mCell(d['Pull-ups'], mPool['Pull-ups'], false, 0)
+           + mCell(d['NCMJ Mat Best (in)'], mPool['NCMJ Mat Best (in)'], false, 1)
+           + mCell(d['CMJ Best (in)'], mPool['CMJ Best (in)'], false, 1)
+           + mCell(d['10 yd Best (s)'], mPool['10 yd Best (s)'], true, 2)
+           + mCell(d['Lane Agility Best (s)'], mPool['Lane Agility Best (s)'], true, 2)
+           + mCell(d['Beep Test'], mPool['Beep Test'], false, 2)
+           + mCell(d['Bike W/kg'], mPool['Bike W/kg'], false, 2)
+           + mCell(d['Shuttle Run'], mPool['Shuttle Run'], false, 1)
+           + mCell(d['Grip R'], mPool['Grip R'], false, 0)
+           + mCell(d['Grip L'], mPool['Grip L'], false, 0)
            + '<td class="mn" style="color:'+(d['Power Quotient']!=null?ptsBandHex((ptsPQ(d['Power Quotient'])||{}).band):'var(--td)')+'">'+(d['Power Quotient']!=null?fmt(d['Power Quotient'],1):'—')+'</td>'
-           + '<td class="mn">'+(d['Peak Power (W)']!=null?fmtI(d['Peak Power (W)']):'—')+'</td>';
+           + mCell(d['Peak Power (W)'], mPool['Peak Power (W)'], false, 0);
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">Hand</th>'+'<th class="sh-col" onclick="sortOv(10)">Reach</th>'+'<th class="sh-col" onclick="sortOv(11)">Tibia</th>'+'<th class="sh-col" onclick="sortOv(12)">BF%</th>'+'<th class="sh-col" onclick="sortOv(13)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(14)">Lean Mass</th>';
@@ -2191,7 +2204,6 @@ function renderProfile() {
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},
     {l:'Conditioning',       k:'Score CONDITIONING',    u:'',   hi:100},
-    {l:'Movement Score',     k:'Score MOVEMENT',        u:'',   hi:100},
   ];
   ge('profBars').innerHTML = metrics.map(function(m) {
     var val = carryVal(m.k);
