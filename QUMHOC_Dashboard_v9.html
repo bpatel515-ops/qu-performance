@@ -405,7 +405,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Lean</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -2226,6 +2226,7 @@ function renderProfile() {
       + '<td style="color:var(--tm);font-size:10px">'+(d['Time Period']||'—')+'</td>'
       + '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
       + '<td class="mn '+(parseFloat(d.Bodyfat)>12?'td3':parseFloat(d.Bodyfat)>9?'tb2':'')+'">'+fmt(d.Bodyfat)+'%</td>'
+      + '<td class="mn">'+(d['Lean Mass']!=null?fmt(d['Lean Mass'],1):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
       + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
