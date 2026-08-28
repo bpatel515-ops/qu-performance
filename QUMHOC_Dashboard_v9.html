@@ -1672,6 +1672,22 @@ function mCell(val, pool, lowBetter, dec){
   }
   return '<td class="mn" style="color:'+col+'">'+fmt(val,dec)+'</td>';
 }
+// Metrics-view cell colored by CLOSENESS to an ideal midpoint (e.g. BW/Height, ideal 2.5).
+function midCell(val, mid, dec){
+  if(val==null||isNaN(val)) return '<td class="mn">—</td>';
+  var cp=Math.max(0, 100-Math.abs(val-mid)/mid*200);
+  return '<td class="mn" style="color:'+co(Math.round(cp))+'">'+fmt(val,dec)+'</td>';
+}
+// per-athlete relative-strength + BW/Height ratios, computed once so they're sortable & colorable
+function addRatios(){
+  DATA.forEach(function(d){
+    var bw=d.Bodyweight, ht=d['Height (inches)'];
+    d['Squat/BW']=(d['Squat Max']&&bw)?Math.round(d['Squat Max']/bw*100)/100:null;
+    d['Bench/BW']=(d['Bench Press Max']&&bw)?Math.round(d['Bench Press Max']/bw*100)/100:null;
+    d['TBDL/BW']=(d['TBDL Max']&&bw)?Math.round(d['TBDL Max']/bw*100)/100:null;
+    d['BW/Ht']=(bw&&ht)?Math.round(bw/ht*100)/100:null;
+  });
+}
 function renderOvTable() {
   var fd = filterData('ovSeason','ovPeriod','ovDate');
   var s  = ge('ovSeason') ? ge('ovSeason').value : 'All';
@@ -1692,8 +1708,8 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>';
-    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)'];
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>';
+    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW'];
     var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1710,7 +1726,11 @@ function renderOvTable() {
            + mCell(d['Grip R'], mPool['Grip R'], false, 0)
            + mCell(d['Grip L'], mPool['Grip L'], false, 0)
            + '<td class="mn" style="color:'+(d['Power Quotient']!=null?ptsBandHex((ptsPQ(d['Power Quotient'])||{}).band):'var(--td)')+'">'+(d['Power Quotient']!=null?fmt(d['Power Quotient'],1):'—')+'</td>'
-           + mCell(d['Peak Power (W)'], mPool['Peak Power (W)'], false, 0);
+           + mCell(d['Peak Power (W)'], mPool['Peak Power (W)'], false, 0)
+           + mCell(d['Squat/BW'], mPool['Squat/BW'], false, 2)
+           + mCell(d['Bench/BW'], mPool['Bench/BW'], false, 2)
+           + mCell(d['TBDL/BW'], mPool['TBDL/BW'], false, 2)
+           + midCell(d['BW/Ht'], 2.5, 2);
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">Hand</th>'+'<th class="sh-col" onclick="sortOv(10)">Reach</th>'+'<th class="sh-col" onclick="sortOv(11)">Tibia</th>'+'<th class="sh-col" onclick="sortOv(12)">BF%</th>'+'<th class="sh-col" onclick="sortOv(13)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(14)">Lean Mass</th>';
@@ -1734,7 +1754,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -2190,6 +2210,10 @@ function renderProfile() {
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
     {l:'Pull-up 1RM',        k:'Pull-ups',              u:'lbs',hi:100},
+    {l:'Squat / BW',    calc:function(cv){var s=cv('Squat Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},       u:'', hi:2.5, dec:2},
+    {l:'Bench / BW',    calc:function(cv){var s=cv('Bench Press Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;}, u:'', hi:1.8, dec:2},
+    {l:'Trap Bar / BW', calc:function(cv){var s=cv('TBDL Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},        u:'', hi:3.0, dec:2},
+    {l:'BW / Height',   calc:function(cv){var b=cv('Bodyweight'),h=cv('Height (inches)');return(b&&h)?b/h:null;}, u:'', mid:2.5, dec:2},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:220},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:220},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
@@ -2207,14 +2231,16 @@ function renderProfile() {
     {l:'Conditioning',       k:'Score CONDITIONING',    u:'',   hi:100},
   ];
   ge('profBars').innerHTML = metrics.map(function(m) {
-    var val = carryVal(m.k);
-    var pct = val != null ? (m.lb ? (m.hi-val)/(m.hi-(m.lo||0)) : val/m.hi)*100 : 0;
-    var cp  = Math.max(0, Math.min(100, pct));
+    var val = m.calc ? m.calc(carryVal) : carryVal(m.k);
+    var cp;
+    if (val == null) cp = 0;
+    else if (m.mid != null) cp = Math.max(0, 100 - Math.abs(val-m.mid)/m.mid*200);   // color by closeness to ideal
+    else cp = Math.max(0, Math.min(100, (m.lb ? (m.hi-val)/(m.hi-(m.lo||0)) : val/m.hi)*100));
     var bc  = cp>=75 ? 'var(--elite)' : cp>=55 ? 'var(--good)' : cp>=35 ? 'var(--gold)' : 'var(--blow)';
-    var tA  = avgVal(peers, m.k);
+    var tA  = m.calc ? null : avgVal(peers, m.k);
     var delta = (val != null && tA != null) ? (m.lb ? tA-val : val-tA) : null;
-    var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+(m.u||'')+' vs avg</span>' : '';
-    var dec = m.lb || m.k.indexOf('Beep')>=0 ? 2 : m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Peak')>=0 ? 0 : 1;
+    var ds  = delta != null ? '<span style="color:'+(delta>=0?'var(--elite)':'var(--blow)')+'">'+( delta>=0?'+':'')+fmt(delta,1)+(m.u||'')+' vs avg</span>' : (m.mid!=null&&val!=null?'<span style="color:var(--tm)">ideal '+m.mid+'</span>':'');
+    var dec = m.dec != null ? m.dec : (m.lb || (m.k&&m.k.indexOf('Beep')>=0) ? 2 : (m.k&&(m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Peak')>=0)) ? 0 : 1);
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?fmt(val,dec)+m.u:'—')+' '+ds+'</div></div>';
   }).join('');
 
@@ -2904,6 +2930,7 @@ function parsePlanCSV(text) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 function initApp() {
+  addRatios();
   fillSeasons(['ovSeason','lbSeason','posSeason','profSeason','cmpAS','cmpBS','trSeason','mvSeason']);
   fillAthletes();
   populateDates();
