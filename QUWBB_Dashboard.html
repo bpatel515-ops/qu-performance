@@ -1689,8 +1689,8 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Shuttle</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(19)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(20)">PQ</th>'+'<th class="sh-col" onclick="sortOv(21)">Power Metric</th>';
-    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L','Peak Power (W)'];
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">VJ</th>'+'<th class="sh-col" onclick="sortOv(12)">Appr</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Shuttle</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(19)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(20)">PQ</th>'+'<th class="sh-col" onclick="sortOv(21)">Power Metric</th>';
+    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L','Peak Power (W)'];
     var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1698,8 +1698,8 @@ function renderOvTable() {
            + mCell(d['Bench Press Max'], mPool['Bench Press Max'], false, 0)
            + mCell(d['TBDL Max'], mPool['TBDL Max'], false, 0)
            + mCell(d['Pull-ups'], mPool['Pull-ups'], false, 0)
-           + mCell(d['NCMJ Mat Best (in)'], mPool['NCMJ Mat Best (in)'], false, 1)
-           + mCell(d['CMJ Best (in)'], mPool['CMJ Best (in)'], false, 1)
+           + mCell(d['VJ Vertec Best (in)'], mPool['VJ Vertec Best (in)'], false, 1)
+           + mCell(d['Approach Jump Best (in)'], mPool['Approach Jump Best (in)'], false, 1)
            + mCell(d['10 yd Best (s)'], mPool['10 yd Best (s)'], true, 2)
            + mCell(d['Lane Agility Best (s)'], mPool['Lane Agility Best (s)'], true, 2)
            + mCell(d['Beep Test'], mPool['Beep Test'], false, 2)
@@ -1732,7 +1732,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L','Power Quotient','Peak Power (W)']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Shuttle Run','Grip R','Grip L','Power Quotient','Peak Power (W)']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -2193,13 +2193,13 @@ function renderProfile() {
     {l:'VJ Vertec',          k:'VJ Vertec Best (in)',    u:'"',  hi:34},
     {l:'Approach Jump',      k:'Approach Jump Best (in)',u:'"',  hi:38},
     {l:'Broad Jump',         k:'Broad Jump Best (in)',  u:'"',  hi:120},
+    {l:'Power Metric',       k:'Peak Power (W)',        u:'W',  hi:5800},
+    {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'10 yd',              k:'10 yd Best (s)',         u:'s',  hi:2.0, lo:1.6, lb:true},
     {l:'20 yd',              k:'20 yd Best (s)',         u:'s',  hi:3.5, lo:2.9, lb:true},
     {l:'Lane Agility',       k:'Lane Agility Best (s)', u:'s',  hi:12,  lo:10,  lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
     {l:'Shuttle',            k:'Shuttle Run',           u:'',   hi:20},
-    {l:'Power Metric',k:'Peak Power (W)',        u:'W',  hi:5800},
-    {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'Power Score',        k:'Score POWER',           u:'',   hi:100},
     {l:'Strength Score',     k:'Score STRENGTH',        u:'',   hi:100},
     {l:'Speed Score',        k:'Score SPEED',           u:'',   hi:100},
