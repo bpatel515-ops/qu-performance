@@ -406,7 +406,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>200yd&#8595;</th><th>200 Drop%</th><th>Reed&#8595;</th><th>Reed Drop%</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>200yd&#8595;</th><th>200 Drop%</th><th>Reed&#8595;</th><th>Reed Drop%</th><th>Grip R</th><th>Grip L</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -2232,6 +2232,7 @@ function renderProfile() {
       + '<td class="mn">'+fmtI(d['Squat Max'])+'</td>'
       + '<td class="mn">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td>'
       + '<td class="mn">'+fmtI(d['TBDL Max'])+'</td>'
+      + '<td class="mn">'+(d['Pull-ups']!=null?fmtI(d['Pull-ups']):'—')+'</td>'
       + '<td class="mn">'+(d['NCMJ Mat Best (in)']!=null?fmt(d['NCMJ Mat Best (in)']):'—')+'</td>'
       + '<td class="mn">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td>'
       + '<td class="mn">'+(d['Broad Jump Best (in)']!=null?fmtI(d['Broad Jump Best (in)']):'—')+'</td>'
