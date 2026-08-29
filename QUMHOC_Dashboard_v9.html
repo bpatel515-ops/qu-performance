@@ -1616,7 +1616,7 @@ function printPlayerPDF() {
     return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v)+pflag(d,c[0].replace('Score ','')))+'</span></div>';
   }).join('');
   // radar: current full test + up to 2 previous FULL-TEST-PERIOD (PreSeason/PostSeason) snapshots
-  var fullTests=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && x['Score OVERALL']!=null;}).sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  var fullTests=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && dispOverall(x)!=null;}).sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
   var priors=fullTests.filter(function(x){return new Date(x.Date) < new Date(d.Date);});
   var radarRecs=[d].concat(priors.slice(0,2));
   var rStyles=[{fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false},{fill:'none',stroke:'#00205B',dash:true},{fill:'none',stroke:'#2f7d9e',dash:true}];
@@ -1630,7 +1630,7 @@ function printPlayerPDF() {
   function rankOf(key){ var mine=d[key]; if(mine==null) return null; var vals=peers.map(function(x){return x[key];}).filter(function(v){return v!=null;}); if(vals.length<2) return null; var greater=vals.filter(function(v){return v>mine;}).length; return (greater+1)+' / '+vals.length; }
   var rankCats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Cond']];
   var ranks=rankCats.map(function(c){ var r=rankOf(c[0]); return r?'<span class="prk"><b>'+c[1]+'</b> '+r+'</span>':''; }).join('');
-  var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && x['Score OVERALL']>0;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && dispOverall(x)!=null;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
   var trend='';
   if(hist.length>=2){
     var W=560,H=140,L=26,R=8,T=8,B=22;
@@ -1638,8 +1638,8 @@ function printPlayerPDF() {
     var sy=function(v){return H-B-(H-T-B)*(v/100);};
     var grid='';
     for(var gy=0;gy<=100;gy+=25){var y=sy(gy);grid+="<line x1='"+L+"' y1='"+y+"' x2='"+(W-R)+"' y2='"+y+"' stroke='#eee'/><text x='"+(L-4)+"' y='"+(y+3)+"' text-anchor='end' font-size='8' fill='#999'>"+gy+"</text>";}
-    var pts=hist.map(function(x,i){return sx(i)+','+sy(x['Score OVERALL']);}).join(' ');
-    var dots=hist.map(function(x,i){return "<circle cx='"+sx(i)+"' cy='"+sy(x['Score OVERALL'])+"' r='3' fill='#00205B'/><text x='"+sx(i)+"' y='"+(sy(x['Score OVERALL'])-6)+"' text-anchor='middle' font-size='8' font-weight='700' fill='#00205B'>"+Math.round(x['Score OVERALL'])+"</text>";}).join('');
+    var pts=hist.map(function(x,i){return sx(i)+','+sy(dispOverall(x));}).join(' ');
+    var dots=hist.map(function(x,i){var ov=dispOverall(x);return "<circle cx='"+sx(i)+"' cy='"+sy(ov)+"' r='3' fill='#00205B'/><text x='"+sx(i)+"' y='"+(sy(ov)-6)+"' text-anchor='middle' font-size='8' font-weight='700' fill='#00205B'>"+Math.round(ov)+"</text>";}).join('');
     var step=Math.ceil(hist.length/7);
     var labs=hist.map(function(x,i){return (i%step===0||i===hist.length-1)?"<text x='"+sx(i)+"' y='"+(H-6)+"' text-anchor='middle' font-size='8' fill='#777'>"+String(x.Date||'').slice(2)+"</text>":'';}).join('');
     trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:140px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
@@ -1673,6 +1673,15 @@ function printPlayerPDF() {
     +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+') &middot; value + change vs first test</div>'+metricsHtml);
 }
 function pdfSc(v){ return (v==null||isNaN(v))?'#9aa0a6':v>=80?'#1e7a46':v>=65?'#2f7d9e':v>=50?'#b8860b':v>=35?'#c26a2a':'#b23c3c'; }
+// Display-overall for an athlete's OWN progression views (radar timeline / trend chart): use the strict
+// Overall when present, else self-normalize over whatever category scores exist — so the scout report
+// still shows the full pre/post timeline for a period that wasn't a complete battery. (Team RANKING
+// still uses the strict Overall, which is null unless all 4 categories were tested.)
+function dispOverall(r){
+  if(r['Score OVERALL']!=null) return r['Score OVERALL'];
+  var vs=['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING'].map(function(k){return r[k];}).filter(function(v){return v!=null&&!isNaN(v);});
+  return vs.length? Math.round(vs.reduce(function(a,b){return a+b;},0)/vs.length*10)/10 : null;
+}
 // layers: array of {rec, fill, stroke, dash} drawn back-to-front (put the current/highlight LAST)
 function buildRadar(layers){
   if(!Array.isArray(layers)) layers=[{rec:layers,fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false}];
