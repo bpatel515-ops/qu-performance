@@ -1616,7 +1616,7 @@ function printPlayerPDF() {
     return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v)+pflag(d,c[0].replace('Score ','')))+'</span></div>';
   }).join('');
   // radar: current full test + up to 2 previous FULL-TEST-PERIOD (PreSeason/PostSeason) snapshots
-  var fullTests=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && dispOverall(x)!=null;}).sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  var fullTests=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && isComplete(x);}).sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
   var priors=fullTests.filter(function(x){return new Date(x.Date) < new Date(d.Date);});
   var radarRecs=[d].concat(priors.slice(0,2));
   var rStyles=[{fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false},{fill:'none',stroke:'#00205B',dash:true},{fill:'none',stroke:'#2f7d9e',dash:true}];
@@ -1630,7 +1630,7 @@ function printPlayerPDF() {
   function rankOf(key){ var mine=d[key]; if(mine==null) return null; var vals=peers.map(function(x){return x[key];}).filter(function(v){return v!=null;}); if(vals.length<2) return null; var greater=vals.filter(function(v){return v>mine;}).length; return (greater+1)+' / '+vals.length; }
   var rankCats=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Cond']];
   var ranks=rankCats.map(function(c){ var r=rankOf(c[0]); return r?'<span class="prk"><b>'+c[1]+'</b> '+r+'</span>':''; }).join('');
-  var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && dispOverall(x)!=null;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && isComplete(x);}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
   var trend='';
   if(hist.length>=2){
     var W=560,H=140,L=26,R=8,T=8,B=22;
@@ -1682,6 +1682,11 @@ function dispOverall(r){
   var vs=['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING'].map(function(k){return r[k];}).filter(function(v){return v!=null&&!isNaN(v);});
   return vs.length? Math.round(vs.reduce(function(a,b){return a+b;},0)/vs.length*10)/10 : null;
 }
+// A "complete" test date = all 4 category scores calculated (≈ a full-battery combine, ~90%+ of tests).
+// The radar timeline and the Overall-history line chart plot ONLY these, so a partial week (e.g. strength-
+// only, or a period missing a category) never skews the picture. Tolerates the beep/bike swap: a bike-only
+// (or beep-only) conditioning day still produces a Conditioning score, so it still counts as complete.
+function isComplete(r){ return r['Score POWER']!=null && r['Score STRENGTH']!=null && r['Score SPEED']!=null && r['Score CONDITIONING']!=null; }
 // layers: array of {rec, fill, stroke, dash} drawn back-to-front (put the current/highlight LAST)
 function buildRadar(layers){
   if(!Array.isArray(layers)) layers=[{rec:layers,fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false}];
