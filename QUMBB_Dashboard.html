@@ -1566,7 +1566,7 @@ function printReport(bodyHtml) {
       + 'table.pr-t{width:100%;border-collapse:collapse;font-size:10px}table.pr-t th{background:#00205B;color:#fff !important;padding:4px 5px;text-align:left;font-size:9px;text-transform:uppercase}'
       + 'table.pr-t td{padding:3px 5px;border-bottom:1px solid #eee}table.pr-t tr:nth-child(even) td{background:#f5f5f5}'
       + '.pbar{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:11px}.pbl{width:86px;color:#333;font-weight:600}.pbt{flex:1;height:12px;background:#eee;border-radius:6px;overflow:hidden}.pbf{display:block;height:12px}.pbv{width:30px;text-align:right;font-weight:800}'
-      + '.pm{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}.pmi{display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #eee;padding:2px 0}.pmi .l{color:#666}.pmi .v{font-weight:700;color:#111}'
+      + '.pm{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}.pmi{display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #eee;padding:2px 0}.pmi .l{color:#666}.pmi .v{font-weight:700;color:#111}.pmg{font-family:"Barlow Condensed",Arial;font-size:11px;font-weight:700;color:#00205B;text-transform:uppercase;letter-spacing:1px;margin:9px 0 2px;border-bottom:1px solid #ddd;padding-bottom:1px}'
       + '.pr-split{display:flex;gap:18px;align-items:flex-start;margin:4px 0}.pr-split>div:first-child{flex:1}.pr-radar{width:232px;text-align:center;flex:none}.pr-radar-key{font-size:8px;color:#666;margin-top:2px}.pr-ranks{display:flex;flex-wrap:wrap;gap:5px}.prk{border:1px solid #ddd;border-radius:4px;padding:2px 8px;font-size:10px;background:#f7f7f7}.prk b{color:#00205B}'
       + '.pr-foot{margin-top:14px;font-size:8px;color:#999;text-align:center}}';
     document.head.appendChild(st);
@@ -1616,10 +1616,14 @@ function printPlayerPDF() {
   var bars=cat.map(function(c){ var v=d[c[0]]; var pct=(v==null||isNaN(v))?0:Math.max(0,Math.min(100,v));
     return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v)+pflag(d,c[0].replace('Score ','')))+'</span></div>';
   }).join('');
-  // radar of category scores: this test vs the previous scored test
-  var scored=f.filter(function(x){return x['Score OVERALL']!=null;});
-  var prev=scored[1]||null;
-  var radarSvg=buildRadar(d, prev);
+  // radar: current full test + up to 2 previous FULL-TEST-PERIOD (PreSeason/PostSeason) snapshots
+  var fullTests=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && x['Score OVERALL']!=null;}).sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  var priors=fullTests.filter(function(x){return new Date(x.Date) < new Date(d.Date);});
+  var radarRecs=[d].concat(priors.slice(0,2));
+  var rStyles=[{fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false},{fill:'none',stroke:'#00205B',dash:true},{fill:'none',stroke:'#2f7d9e',dash:true}];
+  var layers=radarRecs.map(function(r,i){return {rec:r,fill:rStyles[i].fill,stroke:rStyles[i].stroke,dash:rStyles[i].dash};}).reverse(); // draw oldest first, current on top
+  var radarSvg=buildRadar(layers);
+  var radarKey=radarRecs.map(function(r,i){return "<span style='color:"+rStyles[i].stroke+";white-space:nowrap'>"+(i===0?'&#9679;':'&#9675;')+' '+(r['Time Period']||'')+' '+String(r.Date||'').slice(2)+"</span>";}).join(' &nbsp; ');
   // team rank within the same season + time period as the printed record
   var pW=d.Season, pP=d['Time Period'], peerRecs={};
   DATA.forEach(function(x){ if(x.Season===pW && x['Time Period']===pP){ var n=x['Athlete Name']; if(!peerRecs[n]||new Date(x.Date)>new Date(peerRecs[n].Date)) peerRecs[n]=x; } });
@@ -1641,18 +1645,38 @@ function printPlayerPDF() {
     var labs=hist.map(function(x,i){return (i%step===0||i===hist.length-1)?"<text x='"+sx(i)+"' y='"+(H-6)+"' text-anchor='middle' font-size='8' fill='#777'>"+String(x.Date||'').slice(2)+"</text>":'';}).join('');
     trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:140px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
   } else { trend='<div style="font-size:10px;color:#999;padding:4px 0">Not enough tests yet to plot a trend.</div>'; }
-  var metrics=[['Bodyweight','Bodyweight','lbs'],['Bodyfat','Body Fat','%'],['Lean Mass','Lean Mass','lbs'],['Squat Max','Squat','lbs'],['Bench Press Max','Bench','lbs'],['TBDL Max','TBDL','lbs'],['Pull-ups','Pull-up Max','lbs'],['NCMJ Mat Best (in)','NCMJ','in'],['VJ Vertec Best (in)','Vertec','in'],['CMJ Best (in)','CMJ','in'],['Broad Jump Best (in)','Broad','in'],['10 yd Best (s)','10yd','s'],['Lane Agility Best (s)','Lane Agility','s'],['Beep Test','Beep',''],['Peak Power (W)','Peak Power','W'],['Power Quotient','Power Quotient','']];
-  var mrows=metrics.map(function(m){var v=d[m[0]]; return (v==null)?'':'<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+(typeof v==='number'?Math.round(v*10)/10:v)+(m[2]?' '+m[2]:'')+'</span></div>';}).join('');
+  // category-ordered, grouped metrics with CHANGE (first -> latest across all this athlete's records)
+  var chron=all.slice().sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  function firstLast(k){var fr=null,ls=null;chron.forEach(function(r){var v=r[k];if(v!=null&&!isNaN(v)){if(fr==null)fr=v;ls=v;}});return {last:ls,delta:(fr!=null&&ls!=null)?Math.round((ls-fr)*100)/100:null};}
+  function dChip(dl,lowerBetter){ if(dl==null||dl===0) return ''; var good=lowerBetter?dl<0:dl>0; return " <span style='color:"+(good?'#1e7a46':'#b23c3c')+";font-size:9px;font-weight:700'>"+(dl>0?'+':'')+dl+"</span>"; }
+  var GROUPS=[
+    ['Body Composition',[['Bodyweight','Bodyweight','lbs',0],['Bodyfat','Body Fat','%',1],['Lean Mass','Lean Mass','lbs',1],['BW/Ht','BW / Height','',2],['FFMI','FFMI (D1 avg 21.5)','',1]]],
+    ['Strength',[['Squat Max','Squat','lbs',0],['Bench Press Max','Bench','lbs',0],['TBDL Max','Trap Bar DL','lbs',0],['Pull-ups','Pull-up 1RM','lbs',0],['Grip R','Grip R','lb',0],['Grip L','Grip L','lb',0],['Squat/BW','Squat / BW','',2],['Bench/BW','Bench / BW','',2],['TBDL/BW','Trap Bar / BW','',2]]],
+    ['Power',[['VJ Vertec Best (in)','Vertical (VJ)','in',1],['Approach Jump Best (in)','Approach Jump','in',1],['CMJ Best (in)','CMJ','in',1],['Reactive (in)','Approach Lift','in',1],['Peak Power (W)','Peak Power','W',0],['Power Quotient','Power Quotient','',1]]],
+    ['Speed',[['10 yd Best (s)','10 yd','s',2],['Lane Agility Best (s)','Lane Agility','s',2]]],
+    ['Conditioning',[['Beep Test','Beep Test','',2],['Bike W/kg','Bike','W/kg',2]]]
+  ];
+  var metricsHtml=GROUPS.map(function(g){
+    var rows=g[1].map(function(m){
+      var info=firstLast(m[0]); if(info.last==null) return '';
+      var lb=(m[0].indexOf('(s)')>=0)||m[0]==='Bodyfat';
+      var val=(typeof info.last==='number')?(Math.round(info.last*Math.pow(10,m[3]))/Math.pow(10,m[3])):info.last;
+      return '<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+val+(m[2]?' '+m[2]:'')+dChip(info.delta,lb)+'</span></div>';
+    }).filter(Boolean).join('');
+    return rows?'<div class="pmg">'+g[0]+'</div><div class="pm">'+rows+'</div>':'';
+  }).join('');
   printReport('<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+team+'</b><br>'+(d.Position||'')+' &middot; '+(d.Group||'')+' &middot; '+(d.Season||'')+' &middot; '+(d['Time Period']||'')+' &middot; '+(d.Date||'')+'</div></div>'
     +'<div class="pr-sec">Category Scores &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div>'
-    +'<div class="pr-split"><div>'+bars+'</div><div class="pr-radar">'+radarSvg+'<div class="pr-radar-key"><span style="color:#E8A900">&#9679; This test</span>'+(prev?' &nbsp; <span style="color:#00205B">&#9675; Prev ('+(prev.Date||'')+')</span>':'')+'</div></div></div>'
+    +'<div class="pr-split"><div>'+bars+'</div><div class="pr-radar">'+radarSvg+'<div class="pr-radar-key">'+radarKey+'</div></div></div>'
     +((d['__P_POWER']||d['__P_STRENGTH']||d['__P_SPEED']||d['__P_CONDITIONING'])?'<div style="font-size:8.5px;color:#666;margin-top:2px"><b style="color:#E8A900">*</b> category scored from an incomplete test battery &mdash; a test was skipped that teammates completed, so the self-normalizing score may over-credit this athlete.</div>':'')
     +(ranks?'<div class="pr-sec">Team Rank &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+'</div><div class="pr-ranks">'+ranks+'</div>':'')
     +'<div class="pr-sec">Overall Score History &mdash; all tests</div>'+trend
-    +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div><div class="pm">'+mrows+'</div>');
+    +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+') &middot; value + change vs first test</div>'+metricsHtml);
 }
 function pdfSc(v){ return (v==null||isNaN(v))?'#9aa0a6':v>=80?'#1e7a46':v>=65?'#2f7d9e':v>=50?'#b8860b':v>=35?'#c26a2a':'#b23c3c'; }
-function buildRadar(cur, prev){
+// layers: array of {rec, fill, stroke, dash} drawn back-to-front (put the current/highlight LAST)
+function buildRadar(layers){
+  if(!Array.isArray(layers)) layers=[{rec:layers,fill:'rgba(232,169,0,0.30)',stroke:'#E8A900',dash:false}];
   var axes=[['Score POWER','PWR'],['Score STRENGTH','STR'],['Score SPEED','SPD'],['Score CONDITIONING','COND']];
   var N=axes.length, cx=125, cy=118, Rmax=80;
   function pt(i,val){ var ang=-Math.PI/2 + i*2*Math.PI/N; var r=Rmax*Math.max(0,Math.min(100,val||0))/100; return [Math.round((cx+r*Math.cos(ang))*10)/10, Math.round((cy+r*Math.sin(ang))*10)/10]; }
@@ -1660,7 +1684,8 @@ function buildRadar(cur, prev){
   var spokes=axes.map(function(a,i){var p=pt(i,100);return "<line x1='"+cx+"' y1='"+cy+"' x2='"+p[0]+"' y2='"+p[1]+"' stroke='#e8e8e8'/>";}).join('');
   var labels=axes.map(function(a,i){var p=pt(i,116);return "<text x='"+p[0]+"' y='"+(p[1]+3)+"' font-size='9' font-weight='700' fill='#555' text-anchor='middle'>"+a[1]+"</text>";}).join('');
   function poly(rec,fill,stroke,dash){ if(!rec) return ''; return "<polygon points='"+axes.map(function(a,i){var p=pt(i,rec[a[0]]);return p[0]+','+p[1];}).join(' ')+"' fill='"+fill+"' stroke='"+stroke+"' stroke-width='2'"+(dash?" stroke-dasharray='4,2'":"")+"/>"; }
-  return "<svg viewBox='0 0 250 244' style='width:230px;height:224px'>"+rings+spokes+labels+poly(prev,'none','#00205B',true)+poly(cur,'rgba(232,169,0,0.30)','#E8A900',false)+"</svg>";
+  var polys=layers.map(function(L){ return poly(L.rec,L.fill,L.stroke,L.dash); }).join('');
+  return "<svg viewBox='0 0 250 244' style='width:230px;height:224px'>"+rings+spokes+labels+polys+"</svg>";
 }
 window.printTeamPDF = printTeamPDF; window.printPlayerPDF = printPlayerPDF; window.printReport = printReport;
 function ovFilter() { populateDates(); updBadge(); renderKPIs(); renderOvTable(); }
