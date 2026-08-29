@@ -60,6 +60,13 @@ th.sd:after{content:" ↓";color:var(--gold);}
 tbody tr{border-bottom:1px solid var(--br2);cursor:pointer;}
 tbody tr:last-child{border-bottom:none;}
 tbody tr:hover{background:var(--s2);}
+/* Team Overview: scrollable box with a frozen header row + frozen athlete column */
+.tw:has(#ovTable){max-height:70vh;overflow:auto!important;}
+#ovTable thead th{position:sticky;top:0;z-index:3;background:var(--s2);}
+#ovTable th:first-child,#ovTable td:first-child{position:sticky;left:0;background:var(--s1);box-shadow:2px 0 6px -3px rgba(0,0,0,.55);}
+#ovTable tbody td:first-child{z-index:2;}
+#ovTable thead th:first-child{left:0;top:0;z-index:5;background:var(--s2);}
+#ovTable tbody tr:hover td:first-child{background:var(--s2);}
 td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .ac{display:flex;align-items:center;gap:7px;}
 .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:10px;color:var(--navy);flex-shrink:0;}
@@ -87,7 +94,8 @@ td{padding:8px 10px;font-size:12px;white-space:nowrap;}
 .srv{font-size:38px;font-weight:900;line-height:1;}
 .srl{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--tm);}
 .mbars{display:flex;flex-direction:column;gap:9px;}
-.mr{display:grid;grid-template-columns:115px 1fr 65px;align-items:center;gap:7px;}
+.mr{display:grid;grid-template-columns:115px minmax(40px,1fr) auto;align-items:center;gap:7px;}
+.mv2{padding-left:4px;}
 .mn2{font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--tm);}
 .bt{height:4px;background:var(--s3);border-radius:3px;overflow:hidden;}
 .bf{height:100%;border-radius:3px;}
@@ -361,7 +369,7 @@ input,select,textarea{font-size:16px!important;}
   <div class="kg" id="kpiGrid"></div>
   <div class="sh"><div class="st">ROSTER <span>RESULTS</span></div><span style="font-size:10px;color:var(--td)" id="tblSub"></span></div>
   <div class="tw"><table id="ovTable"><thead id="ovHead"></thead><tbody id="ovBody"></tbody></table></div>
-  <div class="note">Click any row to open Player Profile &middot; View toggles between Score, Metric, and Anthropometric columns</div>
+  <div class="note">Click any row to open Player Profile &middot; View toggles between Score, Metric, and Anthropometric columns &middot; <span style="color:#E8A900;font-weight:700">*</span> = category scored from an incomplete battery (athlete skipped a test teammates did &mdash; the self-normalizing score can over-credit them)</div>
 </div>
 
 <!-- PROFILE -->
@@ -404,7 +412,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Lean</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Lean</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Sq/BW</th><th>Bn/BW</th><th>TB/BW</th><th>BW/Ht</th><th>FFMI</th><th>React</th><th>Grip &#916;%</th><th>PQ</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -1579,13 +1587,14 @@ function printTeamPDF() {
     var top=rows.filter(function(d){return d[c[0]]>0;}).sort(function(a,b){return b[c[0]]-a[c[0]];}).slice(0,3);
     return '<div class="pc-cat"><div class="pc-h">'+c[1]+'</div>'+(top.length?top.map(function(d,i){return '<div class="pc-r"><span>'+(i+1)+'. '+dn(d['Athlete Name'])+'</span><b>'+fmtI(d[c[0]])+'</b></div>';}).join(''):'<div class="pc-r" style="color:#aaa">—</div>')+'</div>';
   }).join('');
-  function scc(v){ return '<td style="text-align:center;color:#fff;font-weight:700;background:'+pdfSc(v)+'">'+fmtI(v)+'</td>'; }
+  function scc(v,fl){ return '<td style="text-align:center;color:#fff;font-weight:700;background:'+pdfSc(v)+'">'+fmtI(v)+(fl||'')+'</td>'; }
   var trs=rows.map(function(d){ return '<tr><td><b>'+dn(d['Athlete Name'])+'</b></td><td>'+(d.Position||'—')+'</td><td>'+(d.Group||'—')+'</td>'
-    +scc(d['Score POWER'])+scc(d['Score STRENGTH'])+scc(d['Score SPEED'])+scc(d['Score CONDITIONING'])+scc(d['Score OVERALL'])
+    +scc(d['Score POWER'],pflag(d,'POWER'))+scc(d['Score STRENGTH'],pflag(d,'STRENGTH'))+scc(d['Score SPEED'],pflag(d,'SPEED'))+scc(d['Score CONDITIONING'],pflag(d,'CONDITIONING'))+scc(d['Score OVERALL'],pflag(d,'OVERALL'))
     +'<td style="text-align:center">'+fmt(d.Bodyweight)+'</td><td style="text-align:center">'+fmtI(d['Squat Max'])+'</td><td style="text-align:center">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td><td style="text-align:center">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td><td style="text-align:center">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td></tr>'; }).join('');
   printReport('<div class="pr-h"><h1>'+team.toUpperCase()+'</h1><div class="sub"><b>Team Performance Report</b><br>'+(s!=='All'?s:'All Seasons')+' &middot; '+(p!=='All'?p:'All Periods')+'</div></div>'
     +'<div class="pr-sec">Top Performers</div><div class="pr-cats">'+callouts+'</div>'
     +'<div class="pr-sec">Roster &middot; '+rows.length+' athletes &mdash; category scores 0&ndash;100, color-coded (green high &rarr; red low)</div>'
+    +'<div style="font-size:8.5px;color:#666;margin:-4px 0 6px"><b style="color:#E8A900">*</b> category scored from an incomplete test battery &mdash; the athlete skipped a test their teammates did, so the self-normalizing score may over-credit them.</div>'
     +'<table class="pr-t"><thead>'
     +'<tr><th colspan="3" style="background:#3a4a6b"></th><th colspan="5" style="text-align:center;background:#00205B;border-left:3px solid #fff;border-right:3px solid #fff">CATEGORY SCORES (0&ndash;100)</th><th colspan="5" style="text-align:center;background:#3a4a6b">KEY METRICS</th></tr>'
     +'<tr><th>Athlete</th><th>Pos</th><th>Yr</th><th style="border-left:3px solid #fff">PWR</th><th>STR</th><th>SPD</th><th>COND</th><th style="border-right:3px solid #fff">OVR</th><th>BW</th><th>Squat</th><th>Bench</th><th>CMJ&Prime;</th><th>10yd</th></tr></thead><tbody>'+trs+'</tbody></table>');
@@ -1604,7 +1613,7 @@ function printPlayerPDF() {
   var team=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
   var cat=[['Score OVERALL','Overall'],['Score POWER','Power'],['Score STRENGTH','Strength'],['Score SPEED','Speed'],['Score CONDITIONING','Conditioning'],['Score ANTHRO','Anthro']];
   var bars=cat.map(function(c){ var v=d[c[0]]; var pct=(v==null||isNaN(v))?0:Math.max(0,Math.min(100,v));
-    return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v))+'</span></div>';
+    return '<div class="pbar"><span class="pbl">'+c[1]+'</span><span class="pbt"><span class="pbf" style="width:'+pct+'%;background:'+pdfSc(v)+'"></span></span><span class="pbv" style="color:'+pdfSc(v)+'">'+(v==null?'—':Math.round(v)+pflag(d,c[0].replace('Score ','')))+'</span></div>';
   }).join('');
   // radar of category scores: this test vs the previous scored test
   var scored=f.filter(function(x){return x['Score OVERALL']!=null;});
@@ -1636,6 +1645,7 @@ function printPlayerPDF() {
   printReport('<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+team+'</b><br>'+(d.Position||'')+' &middot; '+(d.Group||'')+' &middot; '+(d.Season||'')+' &middot; '+(d['Time Period']||'')+' &middot; '+(d.Date||'')+'</div></div>'
     +'<div class="pr-sec">Category Scores &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div>'
     +'<div class="pr-split"><div>'+bars+'</div><div class="pr-radar">'+radarSvg+'<div class="pr-radar-key"><span style="color:#E8A900">&#9679; This test</span>'+(prev?' &nbsp; <span style="color:#00205B">&#9675; Prev ('+(prev.Date||'')+')</span>':'')+'</div></div></div>'
+    +((d['__P_POWER']||d['__P_STRENGTH']||d['__P_SPEED']||d['__P_CONDITIONING'])?'<div style="font-size:8.5px;color:#666;margin-top:2px"><b style="color:#E8A900">*</b> category scored from an incomplete test battery &mdash; a test was skipped that teammates completed, so the self-normalizing score may over-credit this athlete.</div>':'')
     +(ranks?'<div class="pr-sec">Team Rank &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+'</div><div class="pr-ranks">'+ranks+'</div>':'')
     +'<div class="pr-sec">Overall Score History &mdash; all tests</div>'+trend
     +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div><div class="pm">'+mrows+'</div>');
@@ -1717,11 +1727,43 @@ function addRatios(){
     d['FFMI']=(lm&&ht)?Math.round(lm*0.453592/Math.pow(ht*0.0254,2)*10)/10:null;
   });
   addTrends(['Squat Max','Bench Press Max','TBDL Max','Pull-ups','CMJ Best (in)','NCMJ Mat Best (in)','10 yd Best (s)','Pro Agility Best (s)','Bike W/kg','Grip R','Bodyweight']);
+  flagPartial(CATMAP);
+}
+// Category → component metrics. Flags a category score "partial" when an athlete did some but not
+// all of the tests their teammates did (self-normalizing scoring then over-credits them). A component
+// nobody / <half the tested squad ran this season isn't "expected", so universal gaps don't flag.
+var CATMAP={
+  POWER:['CMJ Best (in)','NCMJ Mat Best (in)','Broad Jump Best (in)'],
+  SPEED:['10 yd Best (s)','Pro Agility Best (s)'],
+  STRENGTH:['Squat Max','Bench Press Max','TBDL Max','Pull-ups','Grip R','Grip L'],
+  CONDITIONING:['Beep Test','Bike W/kg']
+};
+function flagPartial(CM){
+  var bySea={}; DATA.forEach(function(d){ (bySea[d.Season]=bySea[d.Season]||[]).push(d); });
+  Object.keys(bySea).forEach(function(sea){
+    var byA={}; bySea[sea].forEach(function(d){ (byA[d['Athlete Name']]=byA[d['Athlete Name']]||[]).push(d); });
+    var names=Object.keys(byA), present={};
+    names.forEach(function(a){ var s={}; byA[a].forEach(function(d){ for(var c in CM){ CM[c].forEach(function(m){ if(d[m]!=null) s[m]=1; }); } }); present[a]=s; });
+    Object.keys(CM).forEach(function(cat){
+      var comps=CM[cat];
+      var did=names.filter(function(a){ return comps.some(function(m){return present[a][m];}); });
+      var need=Math.max(1,Math.ceil(did.length*0.5));
+      var exp=comps.filter(function(m){ return did.filter(function(a){return present[a][m];}).length>=need; });
+      names.forEach(function(a){
+        var isP = comps.some(function(m){return present[a][m];}) && exp.some(function(m){ return !present[a][m]; });
+        byA[a].forEach(function(d){ d['__P_'+cat]=isP; });
+      });
+    });
+  });
+}
+function pflag(d,cat){
+  var p = cat==='OVERALL' ? (d['__P_POWER']||d['__P_STRENGTH']||d['__P_SPEED']||d['__P_CONDITIONING']) : d['__P_'+cat];
+  return p ? '<sup style="color:#E8A900;font-weight:700" title="Partial — scored from an incomplete test battery">*</sup>' : '';
 }
 // Δ vs previous test (Overall + key lifts) and test-completeness % (carry-forward within season)
 function addTrends(CORE){
   var byA={}; DATA.forEach(function(d){ (byA[d['Athlete Name']]=byA[d['Athlete Name']]||[]).push(d); });
-  var LIFTS={'Δ Overall':'Score OVERALL','Δ Squat':'Squat Max','Δ Bench':'Bench Press Max','Δ TBDL':'TBDL Max'};
+  var LIFTS={'Δ Overall':'Score OVERALL','Δ Squat':'Squat Max','Δ Bench':'Bench Press Max','Δ TBDL':'TBDL Max','Δ Jump':'CMJ Best (in)'};
   Object.keys(byA).forEach(function(a){
     var recs=byA[a].slice().sort(function(x,y){return (x.Date||'')<(y.Date||'')?-1:1;});
     Object.keys(LIFTS).forEach(function(dk){
@@ -1765,15 +1807,15 @@ function renderOvTable() {
   if (viewMode === 'scores') {
     colH  = '<th class="sh-col" onclick="sortOv(6)">Power</th>'+'<th class="sh-col" onclick="sortOv(7)">Strength</th>'+'<th class="sh-col" onclick="sortOv(8)">Speed</th>'+'<th class="sh-col" onclick="sortOv(9)">Cond</th>'+'<th class="sh-col" onclick="sortOv(10)">Anthro</th>'+'<th class="sh-col" onclick="sortOv(11)">Overall</th>';
     colFn = function(d) {
-      return '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+'</span></td>'
+      return '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+pflag(d,'POWER')+'</span></td>'
+           + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+pflag(d,'STRENGTH')+'</span></td>'
+           + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+pflag(d,'SPEED')+'</span></td>'
+           + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+pflag(d,'CONDITIONING')+'</span></td>'
            + '<td><span class="sp '+tc(d['Score ANTHRO'])+'">'+fmtI(d['Score ANTHRO'])+'</span></td>'
-           + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
+           + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+pflag(d,'OVERALL')+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>'+'<th class="sh-col" onclick="sortOv(25)">Reactive&#8593;</th>'+'<th class="sh-col" onclick="sortOv(26)">Grip &#916;%</th>'+'<th class="sh-col" onclick="sortOv(27)">FFMI</th>'+'<th class="sh-col" onclick="sortOv(28)">&#916;Ovr</th>'+'<th class="sh-col" onclick="sortOv(29)">&#916;Sq</th>'+'<th class="sh-col" onclick="sortOv(30)">&#916;Bn</th>'+'<th class="sh-col" onclick="sortOv(31)">&#916;TB</th>'+'<th class="sh-col" onclick="sortOv(32)">Cmpl%</th>';
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>'+'<th class="sh-col" onclick="sortOv(25)">Reactive&#8593;</th>'+'<th class="sh-col" onclick="sortOv(26)">Grip &#916;%</th>'+'<th class="sh-col" onclick="sortOv(27)">FFMI</th>'+'<th class="sh-col" onclick="sortOv(28)">&#916;Ovr</th>'+'<th class="sh-col" onclick="sortOv(29)">&#916;Sq</th>'+'<th class="sh-col" onclick="sortOv(30)">&#916;Bn</th>'+'<th class="sh-col" onclick="sortOv(31)">&#916;TB</th>'+'<th class="sh-col" onclick="sortOv(32)">&#916;CMJ</th>'+'<th class="sh-col" onclick="sortOv(33)">Cmpl%</th>';
     var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','Reactive (in)'];
     var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
@@ -1803,6 +1845,7 @@ function renderOvTable() {
            + deltaCell(d['Δ Squat'], 0)
            + deltaCell(d['Δ Bench'], 0)
            + deltaCell(d['Δ TBDL'], 0)
+           + deltaCell(d['Δ Jump'], 1)
            + bandCell(d['Complete %'], CMPL_BANDS, 0);
     };
   } else {
@@ -1827,7 +1870,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht','Reactive (in)','Grip Asym %','FFMI','Δ Overall','Δ Squat','Δ Bench','Δ TBDL','Complete %']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht','Reactive (in)','Grip Asym %','FFMI','Δ Overall','Δ Squat','Δ Bench','Δ TBDL','Δ Jump','Complete %']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -2213,13 +2256,6 @@ function renderProfile() {
     {l:'Bench Press',        k:'Bench Press Max',       u:'lbs', hi:350},
     {l:'TBDL Max',           k:'TBDL Max',              u:'lbs', hi:650},
     {l:'Pull-up 1RM',        k:'Pull-ups',              u:'lbs',hi:100},
-    {l:'Squat / BW',    calc:function(cv){var s=cv('Squat Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},       u:'', hi:2.5, dec:2},
-    {l:'Bench / BW',    calc:function(cv){var s=cv('Bench Press Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;}, u:'', hi:1.8, dec:2},
-    {l:'Trap Bar / BW', calc:function(cv){var s=cv('TBDL Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},        u:'', hi:3.0, dec:2},
-    {l:'BW / Height',   calc:function(cv){var b=cv('Bodyweight'),h=cv('Height (inches)');return(b&&h)?b/h:null;}, u:'', mid:2.5, dec:2},
-    {l:'Reactive (CMJ-NCMJ)',k:'Reactive (in)',        u:'in',hi:6, lo:0, dec:1},
-    {l:'Grip L/R Asym',      k:'Grip Asym %',           u:'%', hi:20, lb:true, dec:1},
-    {l:'FFMI (D1 avg 21.5)', k:'FFMI',                  u:'', hi:26, lo:18, dec:1},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:220},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:220},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
@@ -2227,7 +2263,6 @@ function renderProfile() {
     {l:'CMJ',                k:'CMJ Best (in)',          u:'"',  hi:45},
     {l:'Broad Jump',         k:'Broad Jump Best (in)',  u:'"',  hi:130},
     {l:'Power Metric',       k:'Peak Power (W)',        u:'W',  hi:8500},
-    {l:'Power Quotient',     k:'Power Quotient',        u:'',   hi:40},
     {l:'10 yd',              k:'10 yd Best (s)',         u:'s',  hi:1.8, lo:1.4, lb:true},
     {l:'Pro Agility',        k:'Pro Agility Best (s)',  u:'s',  hi:4.5, lo:3.8, lb:true},
     {l:'Beep Test',          k:'Beep Test',             u:'',   hi:15},
@@ -2269,11 +2304,19 @@ function renderProfile() {
       + '<td class="mn '+(d['10 yd Best (s)']<1.54?'te':d['10 yd Best (s)']<1.63?'tg':'')+'">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Pro Agility Best (s)']!=null?fmt(d['Pro Agility Best (s)'],2):'—')+'</td>'
       + '<td class="mn">'+(d['Beep Test']!=null?fmt(d['Beep Test'],2):'—')+'</td>'
-      + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+'</span></td>'
-      + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+'</span></td>'
-      + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+'</span></td>'
-      + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+'</span></td>'
-      + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700">'+fmtI(d['Score OVERALL'])+'</span></td>'
+      + '<td class="mn">'+(d['Squat/BW']!=null?fmt(d['Squat/BW'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['Bench/BW']!=null?fmt(d['Bench/BW'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['TBDL/BW']!=null?fmt(d['TBDL/BW'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['BW/Ht']!=null?fmt(d['BW/Ht'],2):'—')+'</td>'
+      + '<td class="mn">'+(d['FFMI']!=null?fmt(d['FFMI'],1):'—')+'</td>'
+      + '<td class="mn">'+(d['Reactive (in)']!=null?fmt(d['Reactive (in)'],1):'—')+'</td>'
+      + '<td class="mn">'+(d['Grip Asym %']!=null?fmt(d['Grip Asym %'],1):'—')+'</td>'
+      + '<td class="mn">'+(d['Power Quotient']!=null?fmt(d['Power Quotient'],1):'—')+'</td>'
+      + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+pflag(d,'POWER')+'</span></td>'
+      + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+pflag(d,'STRENGTH')+'</span></td>'
+      + '<td><span class="sp '+tc(d['Score SPEED'])+'">'+fmtI(d['Score SPEED'])+pflag(d,'SPEED')+'</span></td>'
+      + '<td><span class="sp '+tc(d['Score CONDITIONING'])+'">'+fmtI(d['Score CONDITIONING'])+pflag(d,'CONDITIONING')+'</span></td>'
+      + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700">'+fmtI(d['Score OVERALL'])+pflag(d,'OVERALL')+'</span></td>'
       + '</tr>';
   }).join('');
 }
@@ -3757,6 +3800,13 @@ function renderDeltaTable(athlete) {
     {l:'Strength',      k:'Score STRENGTH',     u:'',    hi:true},
     {l:'Speed',         k:'Score SPEED',        u:'',    hi:true},
     {l:'Conditioning',  k:'Score CONDITIONING', u:'',    hi:true},
+    {l:'Squat Max',     k:'Squat Max',          u:' lbs',hi:true},
+    {l:'Bench Press',   k:'Bench Press Max',    u:' lbs',hi:true},
+    {l:'Trap Bar DL',   k:'TBDL Max',           u:' lbs',hi:true},
+    {l:'Pull-up 1RM',   k:'Pull-ups',           u:' lbs',hi:true},
+    {l:'CMJ',           k:'CMJ Best (in)',      u:'"',   hi:true},
+    {l:'NCMJ',          k:'NCMJ Mat Best (in)', u:'"',   hi:true},
+    {l:'10 yd',         k:'10 yd Best (s)',     u:'s',   hi:false},
     {l:'Lean Mass',     k:'Lean Mass',          u:' lbs',hi:true},
     {l:'Body Fat %',    k:'Bodyfat',            u:'%',   hi:false},
   ];
