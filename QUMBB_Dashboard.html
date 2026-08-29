@@ -1253,7 +1253,28 @@ input,select,textarea{font-size:16px!important;}
   <div class="tw"><table><thead><tr>
     <th style="text-align:left">Athlete</th><th>Pos</th><th>PQ</th><th>Direction</th><th style="text-align:left">Prescribe</th><th>Beep</th><th>Bike</th><th style="text-align:left">Conditioning Need</th>
   </tr></thead><tbody id="compassBody"></tbody></table></div>
-  <div class="note">PQ bands are sex-specific (M: High&gt;25 &middot; Mod 21&ndash;25 &middot; Low&lt;21 &nbsp;|&nbsp; F: High&gt;28 &middot; Mod 24&ndash;28 &middot; Low&lt;24). Beep &amp; Bike graded Elite/Good/Average/Poor vs PTS standards. Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged.</div>
+  <div class="note">PQ bands are sex-specific (M: High&gt;25 &middot; Mod 21&ndash;25 &middot; Low&lt;21 &nbsp;|&nbsp; F: High&gt;28 &middot; Mod 24&ndash;28 &middot; Low&lt;24). Beep &amp; Bike graded Elite/Good/Average/Poor vs PTS standards.</div>
+  <div class="note" style="margin-top:10px;background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:10px 12px">
+    <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--tx);font-size:12px;margin-bottom:6px">&#129517; How to read the Compass</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="color:var(--gold);font-weight:700;font-size:11px;margin-bottom:3px">What the tests measure</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--tm)">
+          <b style="color:var(--tx)">Beep test = aerobic BASE</b> &mdash; long progressive shuttle; aerobic capacity, repeatability &amp; running economy.<br>
+          <b style="color:var(--tx)">5-min Bike (W/kg) = aerobic CEILING</b> &mdash; short maximal effort; top-end aerobic power.
+        </div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div style="color:var(--gold);font-weight:700;font-size:11px;margin-bottom:3px">Training zones (% HRmax)</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--tm)">
+          <b style="color:var(--tx)">Z2 &mdash; Cardiac Output</b> (~65&ndash;75%): long easy aerobic &mdash; builds the base.<br>
+          <b style="color:var(--tx)">Z3 &mdash; HRCT</b> (just under threshold): heart-rate cardiac training, steady moderate.<br>
+          <b style="color:var(--tx)">Z4 &mdash; Threshold</b> (~85&ndash;90%): sustainable hard &mdash; raises lactate threshold.<br>
+          <b style="color:var(--tx)">Z5 &mdash; Cardiac Power / VO&#8322;max</b> (~90&ndash;100%): hard intervals &mdash; raises the ceiling.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </main>
@@ -1647,7 +1668,7 @@ function renderKPIs() {
     {l:'Avg Approach',     v:fmt(avgVal(fd,'Approach Jump Best (in)'),1),   u:'in', s:'team average',           a:'#4FC3F7'},
     {l:'Avg Lane Agility', v:fmt(avgVal(fd,'Lane Agility Best (s)'),2),      u:'s',  s:'lower is faster',        a:'var(--elite)'},
     {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),                 u:'',   s:'team average',           a:'var(--blow)'},
-    {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),                 u:'W/kg',s:'5-min watts/kg',        a:'var(--blue)'},
+    {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),                 u:'W/kg',s:'5-min watts/kg',        a:'var(--good)'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),            u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Pull-up 1RM',  v:fmtI(avgVal(fd,'Pull-ups')),                   u:'lbs',s:'team average',           a:'var(--gold)'},
@@ -1684,6 +1705,73 @@ function addRatios(){
     d['Bench/BW']=(d['Bench Press Max']&&bw)?Math.round(d['Bench Press Max']/bw*100)/100:null;
     d['TBDL/BW']=(d['TBDL Max']&&bw)?Math.round(d['TBDL Max']/bw*100)/100:null;
     d['BW/Ht']=(bw&&ht)?Math.round(bw/ht*100)/100:null;
+    // Approach lift (run-up contribution / reactive) = Approach - Standing Vertical
+    var vj=d['VJ Vertec Best (in)'], aj=d['Approach Jump Best (in)'];
+    d['Reactive (in)']=(vj!=null&&aj!=null)?Math.round((aj-vj)*10)/10:null;
+    // Grip L/R asymmetry %
+    var gr=d['Grip R'], gl=d['Grip L'];
+    d['Grip Asym %']=(gr&&gl)?Math.round(Math.abs(gr-gl)/Math.max(gr,gl)*1000)/10:null;
+    // Fat-Free Mass Index = lean(kg) / height(m)^2  (D1 male avg 21.5±1.9)
+    var lm=d['Lean Mass'];
+    d['FFMI']=(lm&&ht)?Math.round(lm*0.453592/Math.pow(ht*0.0254,2)*10)/10:null;
+  });
+  bballPower();
+  addTrends(['Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Grip R','Bodyweight']);
+}
+// Δ vs previous test (Overall + key lifts) and test-completeness % (carry-forward within season)
+function addTrends(CORE){
+  var byA={}; DATA.forEach(function(d){ (byA[d['Athlete Name']]=byA[d['Athlete Name']]||[]).push(d); });
+  var LIFTS={'Δ Overall':'Score OVERALL','Δ Squat':'Squat Max','Δ Bench':'Bench Press Max','Δ TBDL':'TBDL Max'};
+  Object.keys(byA).forEach(function(a){
+    var recs=byA[a].slice().sort(function(x,y){return (x.Date||'')<(y.Date||'')?-1:1;});
+    Object.keys(LIFTS).forEach(function(dk){
+      var src=LIFTS[dk], prev=null;
+      recs.forEach(function(d){ var v=d[src];
+        if(v!=null&&!isNaN(v)){ d[dk]=(prev!=null)?Math.round((v-prev)*10)/10:null; prev=v; } else d[dk]=null; });
+    });
+    var bySea={}; recs.forEach(function(d){ (bySea[d.Season]=bySea[d.Season]||[]).push(d); });
+    Object.keys(bySea).forEach(function(sea){
+      var rs=bySea[sea], have={};
+      rs.forEach(function(d){ CORE.forEach(function(k){ if(d[k]!=null) have[k]=1; }); });
+      var pct=Math.round(Object.keys(have).length/CORE.length*100);
+      rs.forEach(function(d){ d['Complete %']=pct; });
+    });
+  });
+}
+function deltaCell(v,dec){
+  if(v==null||isNaN(v)) return '<td class="mn" style="color:var(--td)">—</td>';
+  var col=v>0.05?'#00C896':(v<-0.05?'#EF5350':'var(--tm)');
+  return '<td class="mn" style="color:'+col+'">'+(v>0?'+':'')+fmt(v,dec)+'</td>';
+}
+var CMPL_BANDS=[[59,'#EF5350'],[79,'#E8A900'],[99,'#4FC3F7'],[Infinity,'#00C896']];
+// Fixed-band conditional cell: bands = ascending [maxInclusive,color]; last = [Infinity,color]
+function bandCell(v,bands,dec){
+  if(v==null||isNaN(v)) return '<td class="mn" style="color:var(--td)">—</td>';
+  var col='var(--td)';
+  for(var i=0;i<bands.length;i++){ if(v<=bands[i][0]){ col=bands[i][1]; break; } }
+  return '<td class="mn" style="color:'+col+'">'+fmt(v,dec)+'</td>';
+}
+var ASYM_BANDS=[[5,'#00C896'],[10,'#E8A900'],[Infinity,'#EF5350']];
+var FFMI_BANDS=[[20,'#EF5350'],[22,'#E8A900'],[24,'#4FC3F7'],[Infinity,'#00C896']];
+// Basketball Power Quotient: Peak Power (Sayers) from Standing Vertical (VJ Vertec), then / Squat Max.
+// VJ, Bodyweight and Squat are often logged on different dates, so carry BW & Squat forward to the jump-test record.
+function bballPower(){
+  var byA={};
+  DATA.forEach(function(d){ (byA[d['Athlete Name']]=byA[d['Athlete Name']]||[]).push(d); });
+  Object.keys(byA).forEach(function(a){
+    var recs=byA[a].slice().sort(function(x,y){return (x.Date||'')<(y.Date||'')?-1:1;});
+    var lastBW=null, lastSq=null;
+    recs.forEach(function(d){
+      if(d.Bodyweight!=null) lastBW=d.Bodyweight;
+      if(d['Squat Max']!=null) lastSq=d['Squat Max'];
+      var vj=d['VJ Vertec Best (in)'], bw=(d.Bodyweight!=null?d.Bodyweight:lastBW);
+      if(vj!=null && bw!=null){
+        var pw=Math.round(60.7*(vj*2.54)+45.3*(bw*0.453592)-2055);
+        d['Peak Power (W)']=pw;
+        var sq=(d['Squat Max']!=null?d['Squat Max']:lastSq);
+        if(sq) d['Power Quotient']=Math.round(pw/sq*10)/10;
+      }
+    });
   });
 }
 function renderOvTable() {
@@ -1706,8 +1794,8 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">VJ</th>'+'<th class="sh-col" onclick="sortOv(12)">Appr</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>';
-    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW'];
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">VJ</th>'+'<th class="sh-col" onclick="sortOv(12)">Appr</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">Lane Ag</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>'+'<th class="sh-col" onclick="sortOv(25)">Appr Lift&#8593;</th>'+'<th class="sh-col" onclick="sortOv(26)">Grip &#916;%</th>'+'<th class="sh-col" onclick="sortOv(27)">FFMI</th>'+'<th class="sh-col" onclick="sortOv(28)">&#916;Ovr</th>'+'<th class="sh-col" onclick="sortOv(29)">&#916;Sq</th>'+'<th class="sh-col" onclick="sortOv(30)">&#916;Bn</th>'+'<th class="sh-col" onclick="sortOv(31)">&#916;TB</th>'+'<th class="sh-col" onclick="sortOv(32)">Cmpl%</th>';
+    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','Reactive (in)'];
     var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1728,7 +1816,15 @@ function renderOvTable() {
            + mCell(d['Squat/BW'], mPool['Squat/BW'], false, 2)
            + mCell(d['Bench/BW'], mPool['Bench/BW'], false, 2)
            + mCell(d['TBDL/BW'], mPool['TBDL/BW'], false, 2)
-           + midCell(d['BW/Ht'], 2.5, 2);
+           + midCell(d['BW/Ht'], 2.5, 2)
+           + mCell(d['Reactive (in)'], mPool['Reactive (in)'], false, 1)
+           + bandCell(d['Grip Asym %'], ASYM_BANDS, 1)
+           + bandCell(d['FFMI'], FFMI_BANDS, 1)
+           + deltaCell(d['Δ Overall'], 1)
+           + deltaCell(d['Δ Squat'], 0)
+           + deltaCell(d['Δ Bench'], 0)
+           + deltaCell(d['Δ TBDL'], 0)
+           + bandCell(d['Complete %'], CMPL_BANDS, 0);
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">Hand</th>'+'<th class="sh-col" onclick="sortOv(10)">Reach</th>'+'<th class="sh-col" onclick="sortOv(11)">Tibia</th>'+'<th class="sh-col" onclick="sortOv(12)">BF%</th>'+'<th class="sh-col" onclick="sortOv(13)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(14)">Lean Mass</th>';
@@ -1752,7 +1848,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','VJ Vertec Best (in)','Approach Jump Best (in)','10 yd Best (s)','Lane Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht','Reactive (in)','Grip Asym %','FFMI','Δ Overall','Δ Squat','Δ Bench','Δ TBDL','Complete %']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -1924,19 +2020,21 @@ function ptsGrade(v,t){ if(v==null||isNaN(v))return null; return v>=t[0]?'Elite'
 function ptsBeep(v){ if(v==null||isNaN(v))return null; return ptsGrade(Math.floor(v), PTS_SEX==='M'?[13,12,11]:[11,10,9]); }  // beep is level.shuttle — grade by level reached (e.g. 11.05 = L11 sh5 is Elite; a decimal 11.1 cutoff wrongly demoted it)
 function ptsBike(v){ return ptsGrade(v, PTS_SEX==='M'?[4.8,4.0,3.3]:[4.2,3.4,2.8]); }
 function ptsCompass(beep,bike){
-  var bg=ptsBeep(beep), kg=ptsBike(bike);
+  var bg=ptsBeep(beep), kg=ptsBike(bike);   // bg = Beep = aerobic BASE (long progressive test) ; kg = Bike = aerobic CEILING (short max power)
   var weak=function(g){return g==='Poor'||g==='Average';}, solid=function(g){return g==='Good'||g==='Elite';};
   var out={beep:bg,bike:kg,need:'',zone:''};
   if(bg==null&&kg==null){ out.need='No conditioning KPI this period — run Beep or a 5-min bike'; return out; }
   if(bg!=null&&kg!=null){
-    if(weak(bg)&&weak(kg)){ out.need='Base is thin — build Cardiac Output first, then Cardiac Power'; out.zone='Z2'; }
-    else if(weak(bg)&&solid(kg)){ out.need='Ceiling is the limiter — Cardiac Power Intervals + Threshold'; out.zone='Z5'; }
-    else if(solid(bg)&&weak(kg)){ out.need='Ceiling fine, base thin — Cardiac Output volume'; out.zone='Z2–4'; }
+    if(weak(bg)&&weak(kg)){ out.need='Base & ceiling both thin — build Cardiac Output base first, then Cardiac Power'; out.zone='Z2'; }
+    else if(weak(bg)&&solid(kg)){ out.need='Base is the limiter — Cardiac Output volume + HRCT'; out.zone='Z2–3'; }   // beep(base) weak, bike(ceiling) solid
+    else if(solid(bg)&&weak(kg)){ out.need='Ceiling is the limiter — Cardiac Power Intervals (VO₂max)'; out.zone='Z5'; }  // beep(base) solid, bike(ceiling) weak
     else { out.need='Well-conditioned aerobically — maintain, add sport-specific work'; out.zone='hold'; }
   } else {
     var g=bg!=null?bg:kg;
-    if(weak(g)){ out.need='Aerobic power is the limiter — Cardiac Power Intervals + Threshold/HRCT'; out.zone='Z5'; }
-    else { out.need='Aerobic engine solid — maintain; verify with the other KPI'; out.zone='hold'; }
+    if(weak(g)){
+      if(bg!=null){ out.need='Aerobic base is the limiter — Cardiac Output volume + HRCT'; out.zone='Z2–3'; }
+      else { out.need='Aerobic ceiling is the limiter — Cardiac Power Intervals (VO₂max)'; out.zone='Z5'; }
+    } else { out.need='Aerobic engine solid — maintain; verify with the other KPI'; out.zone='hold'; }
   }
   return out;
 }
@@ -2210,6 +2308,9 @@ function renderProfile() {
     {l:'Bench / BW',    calc:function(cv){var s=cv('Bench Press Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;}, u:'', hi:1.8, dec:2},
     {l:'Trap Bar / BW', calc:function(cv){var s=cv('TBDL Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},        u:'', hi:3.0, dec:2},
     {l:'BW / Height',   calc:function(cv){var b=cv('Bodyweight'),h=cv('Height (inches)');return(b&&h)?b/h:null;}, u:'', mid:2.5, dec:2},
+    {l:'Approach Lift (Appr-VJ)',k:'Reactive (in)',    u:'in',hi:8, lo:0, dec:1},
+    {l:'Grip L/R Asym',      k:'Grip Asym %',           u:'%', hi:20, lb:true, dec:1},
+    {l:'FFMI (D1 avg 21.5)', k:'FFMI',                  u:'', hi:26, lo:18, dec:1},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:220},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:220},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
@@ -2320,8 +2421,8 @@ function renderLB() {
     var rs    = i===0?'color:var(--gold);font-weight:800':i===1?'color:#C0C0C0':i===2?'color:#CD7F32':'color:var(--td)';
     var dec   = lb||metric.indexOf('Beep')>=0?2:metric.indexOf('Score')>=0||metric.indexOf('Max')>=0?0:1;
     var pc    = pct; // 'below' already accounts for direction (lower=better), so pct is the true percentile
-    var posC  = d.Position==='Defenseman'?'D':d.Position==='Forward'?'F':'G';
-    var posL  = d.Position==='Defenseman'?'DEF':d.Position==='Forward'?'FWD':'GK';
+    var posC  = d.Position==='Guard'?'G':d.Position==='Forward'?'F':(d.Position?d.Position[0]:'');
+    var posL  = d.Position==='Guard'?'GRD':d.Position==='Forward'?'FWD':(d.Position||'').toUpperCase();
     return '<tr>'
       + '<td style="'+rs+';font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700">'+(i+1)+'</td>'
       + '<td><div class="ac"><div class="av" style="background:'+gc(d['Athlete Name'])+'">'+ini(d['Athlete Name'])+'</div><span>'+dn(d['Athlete Name'])+'</span></div></td>'
@@ -2411,7 +2512,7 @@ function renderPos() {
   var s=ge('posSeason')?ge('posSeason').value:'All', p=ge('posPeriod')?ge('posPeriod').value:'All';
   var fd=DATA.slice(); if(s!=='All')fd=fd.filter(function(d){return d.Season===s;}); if(p!=='All')fd=fd.filter(function(d){return d['Time Period']===p;});
   var pm=[{l:'Squat Max',k:'Squat Max',u:'lbs'},{l:'Bench Press',k:'Bench Press Max',u:'lbs'},{l:'VJ Vertec',k:'VJ Vertec Best (in)',u:'"'},{l:'Approach Jump',k:'Approach Jump Best (in)',u:'"'},{l:'10 yd',k:'10 yd Best (s)',u:'s',lb:true},{l:'Lane Agility',k:'Lane Agility Best (s)',u:'s',lb:true}];
-  ge('posGrid').innerHTML = ['Forward','Defenseman','Goalie'].map(function(pos) {
+  ge('posGrid').innerHTML = ['Guard','Forward'].map(function(pos) {
     var g=fd.filter(function(d){return d.Position===pos;}); if(!g.length)return'';
     var tc2={e:0,g2:0,a:0,b:0,d:0};
     g.filter(function(d){return d['Score OVERALL']>0;}).forEach(function(d){var sc=d['Score OVERALL'];if(sc>=80)tc2.e++;else if(sc>=60)tc2.g2++;else if(sc>=40)tc2.a++;else if(sc>=20)tc2.b++;else tc2.d++;});
@@ -2419,7 +2520,7 @@ function renderPos() {
     var avgSc=tested?(g.filter(function(d){return d['Score OVERALL']>0;}).map(function(d){return d['Score OVERALL'];}).reduce(function(a,b){return a+b;},0)/tested).toFixed(0):'—';
     var cols2={e:'var(--elite)',g2:'var(--good)',a:'var(--gold)',b:'var(--blow)',d:'var(--dev)'};
     var dist=Object.keys(tc2).map(function(t){return'<div style="width:'+(tested?(tc2[t]/tested*100).toFixed(0):0)+'%;background:'+cols2[t]+';height:100%;min-width:'+(tc2[t]>0?3:0)+'px"></div>';}).join('');
-    var pc=pos==='Forward'?'#4FC3F7':pos==='Defenseman'?'#E8A900':'#00C896';
+    var pc=pos==='Guard'?'#4FC3F7':'#E8A900';
     var rows=pm.map(function(m){
       var sorted=g.filter(function(d){return d[m.k]!=null&&!isNaN(d[m.k])&&d[m.k]>0;});
       sorted.sort(function(a,b){return m.lb?a[m.k]-b[m.k]:b[m.k]-a[m.k];});
@@ -3873,7 +3974,7 @@ function downloadDataCSV(){
   var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
   a.download=TEAM_ID+'_fitness_data_'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
 }
-window.downloadDataCSV=downloadDataCSV;
+window.downloadDataCSV=downloadDataCSV;window.exportDashboard=downloadDataCSV;window.loadFitnessFromDB=loadFitnessFromDB;window.loadWLog=loadWLog;window.updateSyncStatus=updateSyncStatus;
 function loadFitnessFromDB(force) {
   var badge = ge('fitCloud');
   if (badge) { badge.innerHTML = '&#9729; Syncing&hellip;'; }

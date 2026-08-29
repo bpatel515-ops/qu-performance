@@ -390,7 +390,6 @@ input,select,textarea{font-size:16px!important;}
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 0 6px"><div style="font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tm)">Training Direction &amp; Conditioning</div><button class="pbtn" onclick="printPlayerCompass()" title="Print / save this athlete's direction as a branded PDF">&#128424; Direction PDF</button></div>
   <div id="ptsCards" class="ptsg"></div>
-  <div id="ptsRSA"></div>
   <div class="rtabs" id="radarTabs"></div>
   <div class="pgrid">
     <div>
@@ -1252,7 +1251,28 @@ input,select,textarea{font-size:16px!important;}
   <div class="tw"><table><thead><tr>
     <th style="text-align:left">Athlete</th><th>Pos</th><th>PQ</th><th>Direction</th><th style="text-align:left">Prescribe</th><th>Beep</th><th>Bike</th><th style="text-align:left">Conditioning Need</th>
   </tr></thead><tbody id="compassBody"></tbody></table></div>
-  <div class="note">PQ bands are sex-specific (M: High&gt;25 &middot; Mod 21&ndash;25 &middot; Low&lt;21 &nbsp;|&nbsp; F: High&gt;28 &middot; Mod 24&ndash;28 &middot; Low&lt;24). Beep &amp; Bike graded Elite/Good/Average/Poor vs PTS standards. Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged.</div>
+  <div class="note">PQ bands are sex-specific (M: High&gt;25 &middot; Mod 21&ndash;25 &middot; Low&lt;21 &nbsp;|&nbsp; F: High&gt;28 &middot; Mod 24&ndash;28 &middot; Low&lt;24). Beep &amp; Bike graded Elite/Good/Average/Poor vs PTS standards.</div>
+  <div class="note" style="margin-top:10px;background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:10px 12px">
+    <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--tx);font-size:12px;margin-bottom:6px">&#129517; How to read the Compass</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="color:var(--gold);font-weight:700;font-size:11px;margin-bottom:3px">What the tests measure</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--tm)">
+          <b style="color:var(--tx)">Beep test = aerobic BASE</b> &mdash; long progressive shuttle; aerobic capacity, repeatability &amp; running economy.<br>
+          <b style="color:var(--tx)">5-min Bike (W/kg) = aerobic CEILING</b> &mdash; short maximal effort; top-end aerobic power.
+        </div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div style="color:var(--gold);font-weight:700;font-size:11px;margin-bottom:3px">Training zones (% HRmax)</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--tm)">
+          <b style="color:var(--tx)">Z2 &mdash; Cardiac Output</b> (~65&ndash;75%): long easy aerobic &mdash; builds the base.<br>
+          <b style="color:var(--tx)">Z3 &mdash; HRCT</b> (just under threshold): heart-rate cardiac training, steady moderate.<br>
+          <b style="color:var(--tx)">Z4 &mdash; Threshold</b> (~85&ndash;90%): sustainable hard &mdash; raises lactate threshold.<br>
+          <b style="color:var(--tx)">Z5 &mdash; Cardiac Power / VO&#8322;max</b> (~90&ndash;100%): hard intervals &mdash; raises the ceiling.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </main>
@@ -1647,7 +1667,7 @@ function renderKPIs() {
     {l:'Avg NCMJ',         v:fmt(avgVal(fd,'NCMJ Mat Best (in)'),1),     u:'in', s:'team average',           a:'#4FC3F7'},
     {l:'Avg Pro Agility',  v:fmt(avgVal(fd,'Pro Agility Best (s)'),2),   u:'s',  s:'lower is faster',        a:'var(--elite)'},
     {l:'Avg Beep Test',    v:fmt(avgVal(fd,'Beep Test'),2),              u:'',   s:'team average',           a:'var(--blow)'},
-    {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),              u:'W/kg',s:'5-min watts/kg',        a:'var(--blue)'},
+    {l:'Avg Bike W/kg',    v:fmt(avgVal(fd,'Bike W/kg'),2),              u:'W/kg',s:'5-min watts/kg',        a:'var(--good)'},
     {l:'Avg Squat Max',    v:fmtI(avgVal(fd,'Squat Max')),               u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg TBDL Max',     v:fmtI(avgVal(fd,'TBDL Max')),                u:'lbs',s:'team average',           a:'var(--gold)'},
     {l:'Avg Bench Press',  v:fmtI(avgVal(fd,'Bench Press Max')),         u:'lbs',s:'team average',           a:'var(--gold)'},
@@ -1686,8 +1706,53 @@ function addRatios(){
     d['Bench/BW']=(d['Bench Press Max']&&bw)?Math.round(d['Bench Press Max']/bw*100)/100:null;
     d['TBDL/BW']=(d['TBDL Max']&&bw)?Math.round(d['TBDL Max']/bw*100)/100:null;
     d['BW/Ht']=(bw&&ht)?Math.round(bw/ht*100)/100:null;
+    // Reactive strength (elastic/SSC contribution) = CMJ - NCMJ
+    var cmj=d['CMJ Best (in)'], ncmj=d['NCMJ Mat Best (in)'];
+    d['Reactive (in)']=(cmj!=null&&ncmj!=null)?Math.round((cmj-ncmj)*10)/10:null;
+    // Grip L/R asymmetry % (injury-monitor flag)
+    var gr=d['Grip R'], gl=d['Grip L'];
+    d['Grip Asym %']=(gr&&gl)?Math.round(Math.abs(gr-gl)/Math.max(gr,gl)*1000)/10:null;
+    // Fat-Free Mass Index = lean(kg) / height(m)^2  (D1 male avg 21.5±1.9)
+    var lm=d['Lean Mass'];
+    d['FFMI']=(lm&&ht)?Math.round(lm*0.453592/Math.pow(ht*0.0254,2)*10)/10:null;
+  });
+  addTrends(['Squat Max','Bench Press Max','TBDL Max','Pull-ups','CMJ Best (in)','NCMJ Mat Best (in)','10 yd Best (s)','Pro Agility Best (s)','Bike W/kg','Grip R','Bodyweight']);
+}
+// Δ vs previous test (Overall + key lifts) and test-completeness % (carry-forward within season)
+function addTrends(CORE){
+  var byA={}; DATA.forEach(function(d){ (byA[d['Athlete Name']]=byA[d['Athlete Name']]||[]).push(d); });
+  var LIFTS={'Δ Overall':'Score OVERALL','Δ Squat':'Squat Max','Δ Bench':'Bench Press Max','Δ TBDL':'TBDL Max'};
+  Object.keys(byA).forEach(function(a){
+    var recs=byA[a].slice().sort(function(x,y){return (x.Date||'')<(y.Date||'')?-1:1;});
+    Object.keys(LIFTS).forEach(function(dk){
+      var src=LIFTS[dk], prev=null;
+      recs.forEach(function(d){ var v=d[src];
+        if(v!=null&&!isNaN(v)){ d[dk]=(prev!=null)?Math.round((v-prev)*10)/10:null; prev=v; } else d[dk]=null; });
+    });
+    var bySea={}; recs.forEach(function(d){ (bySea[d.Season]=bySea[d.Season]||[]).push(d); });
+    Object.keys(bySea).forEach(function(sea){
+      var rs=bySea[sea], have={};
+      rs.forEach(function(d){ CORE.forEach(function(k){ if(d[k]!=null) have[k]=1; }); });
+      var pct=Math.round(Object.keys(have).length/CORE.length*100);
+      rs.forEach(function(d){ d['Complete %']=pct; });
+    });
   });
 }
+function deltaCell(v,dec){
+  if(v==null||isNaN(v)) return '<td class="mn" style="color:var(--td)">—</td>';
+  var col=v>0.05?'#00C896':(v<-0.05?'#EF5350':'var(--tm)');
+  return '<td class="mn" style="color:'+col+'">'+(v>0?'+':'')+fmt(v,dec)+'</td>';
+}
+var CMPL_BANDS=[[59,'#EF5350'],[79,'#E8A900'],[99,'#4FC3F7'],[Infinity,'#00C896']];
+// Fixed-band conditional cell: bands = ascending [maxInclusive,color]; last should be [Infinity,color]
+function bandCell(v,bands,dec){
+  if(v==null||isNaN(v)) return '<td class="mn" style="color:var(--td)">—</td>';
+  var col='var(--td)';
+  for(var i=0;i<bands.length;i++){ if(v<=bands[i][0]){ col=bands[i][1]; break; } }
+  return '<td class="mn" style="color:'+col+'">'+fmt(v,dec)+'</td>';
+}
+var ASYM_BANDS=[[5,'#00C896'],[10,'#E8A900'],[Infinity,'#EF5350']];   // grip L/R %: lower better
+var FFMI_BANDS=[[20,'#EF5350'],[22,'#E8A900'],[24,'#4FC3F7'],[Infinity,'#00C896']];  // D1 male norms
 function renderOvTable() {
   var fd = filterData('ovSeason','ovPeriod','ovDate');
   var s  = ge('ovSeason') ? ge('ovSeason').value : 'All';
@@ -1708,8 +1773,8 @@ function renderOvTable() {
            + '<td><span class="sp '+tc(d['Score OVERALL'])+'" style="font-weight:700;min-width:38px">'+fmtI(d['Score OVERALL'])+'</span></td>';
     };
   } else if (viewMode === 'metrics') {
-    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>';
-    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW'];
+    colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Squat</th>'+'<th class="sh-col" onclick="sortOv(8)">Bench</th>'+'<th class="sh-col" onclick="sortOv(9)">TBDL</th>'+'<th class="sh-col" onclick="sortOv(10)">Pull-ups</th>'+'<th class="sh-col" onclick="sortOv(11)">NCMJ</th>'+'<th class="sh-col" onclick="sortOv(12)">CMJ</th>'+'<th class="sh-col" onclick="sortOv(13)">10yd</th>'+'<th class="sh-col" onclick="sortOv(14)">ProAg</th>'+'<th class="sh-col" onclick="sortOv(15)">Beep</th>'+'<th class="sh-col" onclick="sortOv(16)">Bike W/kg</th>'+'<th class="sh-col" onclick="sortOv(17)">Grip R</th>'+'<th class="sh-col" onclick="sortOv(18)">Grip L</th>'+'<th class="sh-col" onclick="sortOv(19)">PQ</th>'+'<th class="sh-col" onclick="sortOv(20)">Power Metric</th>'+'<th class="sh-col" onclick="sortOv(21)">Squat/BW</th>'+'<th class="sh-col" onclick="sortOv(22)">Bench/BW</th>'+'<th class="sh-col" onclick="sortOv(23)">Trap/BW</th>'+'<th class="sh-col" onclick="sortOv(24)">BW/Ht</th>'+'<th class="sh-col" onclick="sortOv(25)">Reactive&#8593;</th>'+'<th class="sh-col" onclick="sortOv(26)">Grip &#916;%</th>'+'<th class="sh-col" onclick="sortOv(27)">FFMI</th>'+'<th class="sh-col" onclick="sortOv(28)">&#916;Ovr</th>'+'<th class="sh-col" onclick="sortOv(29)">&#916;Sq</th>'+'<th class="sh-col" onclick="sortOv(30)">&#916;Bn</th>'+'<th class="sh-col" onclick="sortOv(31)">&#916;TB</th>'+'<th class="sh-col" onclick="sortOv(32)">Cmpl%</th>';
+    var mKeys=['Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','Reactive (in)'];
     var mPool={}; mKeys.forEach(function(k){ mPool[k]=fd.map(function(x){return x[k];}).filter(function(v){return v!=null&&!isNaN(v);}); });
     colFn = function(d) {
       return '<td class="mn">'+fmt(d.Bodyweight)+'</td>'
@@ -1730,7 +1795,15 @@ function renderOvTable() {
            + mCell(d['Squat/BW'], mPool['Squat/BW'], false, 2)
            + mCell(d['Bench/BW'], mPool['Bench/BW'], false, 2)
            + mCell(d['TBDL/BW'], mPool['TBDL/BW'], false, 2)
-           + midCell(d['BW/Ht'], 2.5, 2);
+           + midCell(d['BW/Ht'], 2.5, 2)
+           + mCell(d['Reactive (in)'], mPool['Reactive (in)'], false, 1)
+           + bandCell(d['Grip Asym %'], ASYM_BANDS, 1)
+           + bandCell(d['FFMI'], FFMI_BANDS, 1)
+           + deltaCell(d['Δ Overall'], 1)
+           + deltaCell(d['Δ Squat'], 0)
+           + deltaCell(d['Δ Bench'], 0)
+           + deltaCell(d['Δ TBDL'], 0)
+           + bandCell(d['Complete %'], CMPL_BANDS, 0);
     };
   } else {
     colH  = '<th class="sh-col" onclick="sortOv(6)">BW</th>'+'<th class="sh-col" onclick="sortOv(7)">Height</th>'+'<th class="sh-col" onclick="sortOv(8)">Wingspan</th>'+'<th class="sh-col" onclick="sortOv(9)">Hand</th>'+'<th class="sh-col" onclick="sortOv(10)">Reach</th>'+'<th class="sh-col" onclick="sortOv(11)">Tibia</th>'+'<th class="sh-col" onclick="sortOv(12)">BF%</th>'+'<th class="sh-col" onclick="sortOv(13)">Fat Mass</th>'+'<th class="sh-col" onclick="sortOv(14)">Lean Mass</th>';
@@ -1754,7 +1827,7 @@ function renderOvTable() {
   if (ovSortCol >= 0) {
     var _keys=['Athlete Name','Position','Group','Season','Time Period','Date'];
     if(viewMode==='scores') _keys=_keys.concat(['Score POWER','Score STRENGTH','Score SPEED','Score CONDITIONING','Score ANTHRO','Score OVERALL']);
-    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht']);
+    else if(viewMode==='metrics') _keys=_keys.concat(['Bodyweight','Squat Max','Bench Press Max','TBDL Max','Pull-ups','NCMJ Mat Best (in)','CMJ Best (in)','10 yd Best (s)','Pro Agility Best (s)','Beep Test','Bike W/kg','Grip R','Grip L','Power Quotient','Peak Power (W)','Squat/BW','Bench/BW','TBDL/BW','BW/Ht','Reactive (in)','Grip Asym %','FFMI','Δ Overall','Δ Squat','Δ Bench','Δ TBDL','Complete %']);
     else if(viewMode==='anthro') _keys=_keys.concat(['Bodyweight','Height (inches)','Wingspan','Hand Size','Standing Reach','Tibia','Bodyfat','Fat Mass','Lean Mass']);
     var _sk=_keys[ovSortCol]||'';
     if(_sk) fd=fd.slice().sort(function(a,b){var av=a[_sk],bv=b[_sk];if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;var cmp=(typeof av==='string')?av.localeCompare(bv):av-bv;return ovSortAsc?cmp:-cmp;});
@@ -1928,19 +2001,21 @@ function ptsGrade(v,t){ if(v==null||isNaN(v))return null; return v>=t[0]?'Elite'
 function ptsBeep(v){ if(v==null||isNaN(v))return null; return ptsGrade(Math.floor(v), PTS_SEX==='M'?[13,12,11]:[11,10,9]); }  // beep is level.shuttle — grade by level reached (e.g. 11.05 = L11 sh5 is Elite; a decimal 11.1 cutoff wrongly demoted it)
 function ptsBike(v){ return ptsGrade(v, PTS_SEX==='M'?[4.8,4.0,3.3]:[4.2,3.4,2.8]); }
 function ptsCompass(beep,bike){
-  var bg=ptsBeep(beep), kg=ptsBike(bike);
+  var bg=ptsBeep(beep), kg=ptsBike(bike);   // bg = Beep = aerobic BASE (long progressive test) ; kg = Bike = aerobic CEILING (short max power)
   var weak=function(g){return g==='Poor'||g==='Average';}, solid=function(g){return g==='Good'||g==='Elite';};
   var out={beep:bg,bike:kg,need:'',zone:''};
   if(bg==null&&kg==null){ out.need='No conditioning KPI this period — run Beep or a 5-min bike'; return out; }
   if(bg!=null&&kg!=null){
-    if(weak(bg)&&weak(kg)){ out.need='Base is thin — build Cardiac Output first, then Cardiac Power'; out.zone='Z2'; }
-    else if(weak(bg)&&solid(kg)){ out.need='Ceiling is the limiter — Cardiac Power Intervals + Threshold'; out.zone='Z5'; }
-    else if(solid(bg)&&weak(kg)){ out.need='Ceiling fine, base thin — Cardiac Output volume'; out.zone='Z2–4'; }
+    if(weak(bg)&&weak(kg)){ out.need='Base & ceiling both thin — build Cardiac Output base first, then Cardiac Power'; out.zone='Z2'; }
+    else if(weak(bg)&&solid(kg)){ out.need='Base is the limiter — Cardiac Output volume + HRCT'; out.zone='Z2–3'; }   // beep(base) weak, bike(ceiling) solid
+    else if(solid(bg)&&weak(kg)){ out.need='Ceiling is the limiter — Cardiac Power Intervals (VO₂max)'; out.zone='Z5'; }  // beep(base) solid, bike(ceiling) weak
     else { out.need='Well-conditioned aerobically — maintain, add sport-specific work'; out.zone='hold'; }
   } else {
     var g=bg!=null?bg:kg;
-    if(weak(g)){ out.need='Aerobic power is the limiter — Cardiac Power Intervals + Threshold/HRCT'; out.zone='Z5'; }
-    else { out.need='Aerobic engine solid — maintain; verify with the other KPI'; out.zone='hold'; }
+    if(weak(g)){
+      if(bg!=null){ out.need='Aerobic base is the limiter — Cardiac Output volume + HRCT'; out.zone='Z2–3'; }
+      else { out.need='Aerobic ceiling is the limiter — Cardiac Power Intervals (VO₂max)'; out.zone='Z5'; }
+    } else { out.need='Aerobic engine solid — maintain; verify with the other KPI'; out.zone='hold'; }
   }
   return out;
 }
@@ -2035,7 +2110,7 @@ function printCompass(){
     +'<div class="sub"><b>'+(teamName||'')+'</b><br>'+(sv!=='All'?sv:'All Seasons')+' &middot; '+(pv!=='All'?pv:'All Periods')+'</div></div>'
     +'<div class="pr-sec">Training Direction &amp; Energy-System Needs</div>'
     +'<table class="pr-t"><thead><tr><th>Athlete</th><th>Pos</th><th style="text-align:center">PQ</th><th style="text-align:center">Direction</th><th>Prescribe (strength)</th><th style="text-align:center">Beep</th><th style="text-align:center">Bike</th><th>Conditioning Need</th></tr></thead><tbody>'+rows+'</tbody></table>'
-    +'<div style="font-size:8.5px;color:#666;margin-top:8px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. '+sexBands+'. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic.</div>';
+    +'<div style="font-size:8.5px;color:#666;margin-top:8px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. '+sexBands+'. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic.</div>';
   printReport(html);
 }
 window.printCompass=printCompass;
@@ -2070,81 +2145,10 @@ function printPlayerCompass(){
     +'<div class="pc-cat"><div class="pc-h">&#9889; Power Quotient — Training Direction</div>'+pqBox+'</div>'
     +'<div class="pc-cat"><div class="pc-h">&#129517; Conditioning Compass — Conditioning Need</div>'+cmpBox+'</div>'
     +'</div>'
-    +'<div style="font-size:8.5px;color:#666;margin-top:10px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass; RSA (Reed / 200-shuttle) plotted on the profile &amp; PDF wherever a repeat-sprint test was logged. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic. Values carried forward to the latest test in the selected season/period.</div>';
-  html+=ptsRSAprintHTML(recs);
+    +'<div style="font-size:8.5px;color:#666;margin-top:10px;line-height:1.5">Power Quotient = Peak Power (Sayers) ÷ Squat Max, in W/lb. Beep &amp; Bike W/kg graded vs PTS standards (Elite / Good / Average / Poor). Aerobic diagnosis follows the Conditioning Compass. Breathing gears: Z2 aerobic base &middot; Z4 threshold &middot; Z5 anaerobic. Values carried forward to the latest test in the selected season/period.</div>';
   printReport(html);
 }
 window.printPlayerCompass=printPlayerCompass;
-function ptsCohort(key){
-  var v=DATA.map(function(d){return d[key];}).filter(function(x){return x!=null&&!isNaN(x);});
-  if(!v.length) return null;
-  return {mn:Math.min.apply(null,v), mx:Math.max.apply(null,v)};
-}
-function ptsRoute(goodSpeed, highDrop){
-  if(goodSpeed&&!highDrop) return {t:'Well-conditioned — maintain & sport-specific', z:''};
-  if(goodSpeed&&highDrop)  return {t:'Aerobic recovery + PCr — Explosive Repeat / Oxidative / Alactic Capacity', z:'Z3–4'};
-  if(!goodSpeed&&!highDrop) return {t:'Speed / power limited → Power Quotient (Alactic Power · Max Effort · Complex)', z:''};
-  return {t:'Base + power — build aerobic base first → then Power Quotient', z:'Z2'};
-}
-var PTS_RSA_SCR={box:'rgba(255,255,255,.12)',grid:'rgba(255,255,255,.10)',axis:'#7A8299',dotStroke:'#0b1020',reed:'#E8A900',sh:'#4FC3F7',qBase:'#d1584f',qAero:'#c99a2e',qSpeed:'#5a90ea',qWell:'#3aa869',line10:'#E8A900',zone:'#E8A900'};
-var PTS_RSA_PRN={box:'#b0b0b0',grid:'#dddddd',axis:'#555555',dotStroke:'#333333',reed:'#b8860b',sh:'#2158c4',qBase:'#c0392b',qAero:'#a9791a',qSpeed:'#3a6fd0',qWell:'#2f9e57',line10:'#b8860b',zone:'#00205B'};
-function ptsRSAbuild(recs, P){
-  var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
-  var tests=[
-    {id:'Reed', lab:'Reed', best:'Reed Best (s)', drop:'Reed Drop-off (%)', col:P.reed},
-    {id:'200 Shuttle', lab:'200', best:'Shuttle Best (s)', drop:'Shuttle Drop-off (%)', col:P.sh}
-  ];
-  var L=72,R=344,T=26,B=250,W=R-L,H=B-T,midX=(L+R)/2,maxD=16;
-  var yOf=function(d){ return B - Math.max(0,Math.min(maxD,d))/maxD*H; };
-  var splitY=yOf(10), s='';
-  s+='<rect x="'+L+'" y="'+T+'" width="'+(midX-L)+'" height="'+(splitY-T)+'" fill="rgba(210,60,60,.10)"/>';
-  s+='<rect x="'+midX+'" y="'+T+'" width="'+(R-midX)+'" height="'+(splitY-T)+'" fill="rgba(232,169,0,.10)"/>';
-  s+='<rect x="'+L+'" y="'+splitY+'" width="'+(midX-L)+'" height="'+(B-splitY)+'" fill="rgba(45,120,220,.10)"/>';
-  s+='<rect x="'+midX+'" y="'+splitY+'" width="'+(R-midX)+'" height="'+(B-splitY)+'" fill="rgba(46,160,87,.12)"/>';
-  s+='<line x1="'+midX+'" y1="'+T+'" x2="'+midX+'" y2="'+B+'" stroke="'+P.grid+'"/>';
-  s+='<line x1="'+L+'" y1="'+splitY+'" x2="'+R+'" y2="'+splitY+'" stroke="'+P.line10+'" stroke-dasharray="4 3" opacity=".6"/>';
-  s+='<rect x="'+L+'" y="'+T+'" width="'+W+'" height="'+H+'" fill="none" stroke="'+P.box+'"/>';
-  var qs=[[L+6,T+14,'start','BASE + POWER',P.qBase],[R-6,T+14,'end','AEROBIC RECOVERY',P.qAero],
-          [L+6,B-8,'start','SPEED/POWER → PQ',P.qSpeed],[R-6,B-8,'end','WELL-CONDITIONED',P.qWell]];
-  qs.forEach(function(q){ s+='<text x="'+q[0]+'" y="'+q[1]+'" text-anchor="'+q[2]+'" font-size="9" font-weight="700" fill="'+q[4]+'">'+q[3]+'</text>'; });
-  s+='<text x="'+(R-3)+'" y="'+(splitY-3)+'" text-anchor="end" font-size="8" fill="'+P.axis+'">10% drop-off</text>';
-  s+='<text x="'+((L+R)/2)+'" y="'+(B+16)+'" text-anchor="middle" font-size="9" fill="'+P.axis+'">&#8592; slower &#183; BEST-SPRINT SPEED (vs team) &#183; faster &#8594;</text>';
-  s+='<text transform="translate('+(L-14)+','+((T+B)/2)+') rotate(-90)" text-anchor="middle" font-size="9" fill="'+P.axis+'">&#8592; low &#183; % DROP-OFF &#183; high &#8594;</text>';
-  var routes='';
-  tests.forEach(function(tt){
-    var bv=cv(tt.best), dv=cv(tt.drop);
-    if(bv==null||dv==null) return;
-    var co=ptsCohort(tt.best);
-    var xf=(co&&co.mx>co.mn)?1-(bv-co.mn)/(co.mx-co.mn):0.5;
-    var x=L+xf*W, y=yOf(dv), good=xf>=0.5, high=dv>=10;
-    var lx=Math.max(L+16,Math.min(R-16,x));
-    s+='<circle cx="'+x+'" cy="'+y+'" r="6" fill="'+tt.col+'" stroke="'+P.dotStroke+'" stroke-width="1.5"/>';
-    s+='<text x="'+lx+'" y="'+(y-9)+'" text-anchor="middle" font-size="8" font-weight="700" fill="'+tt.col+'">'+tt.lab+'</text>';
-    var rt=ptsRoute(good,high);
-    routes+='<div style="font-size:11.5px;margin-top:5px"><b style="color:'+tt.col+'">'+tt.id+'</b> &middot; best '+fmt(bv,1)+'s &middot; drop-off '+fmt(dv,1)+'% &rarr; '+rt.t+(rt.z?' <b style="color:'+P.zone+'">('+rt.z+')</b>':'')+'</div>';
-  });
-  return {svg:s, routes:routes, W:R+10, Hh:B+28};
-}
-function ptsRSApanel(recs){
-  var el=ge('ptsRSA'); if(!el) return;
-  var r=ptsRSAbuild(recs, PTS_RSA_SCR);
-  var routes=r.routes || '<div style="font-size:11px;color:var(--tm);margin-top:6px">No repeat-sprint test (Reed / 200-shuttle) recorded for this season/period &mdash; the grid shows the four athlete types. Log the reps to plot this athlete.</div>';
-  el.innerHTML='<div class="ptsc" style="border-left-color:var(--good)"><div class="ph">&#127919; Repeat-Sprint Ability (RSA) &mdash; read the pattern, not the number</div>'
-    +'<svg viewBox="0 0 '+r.W+' '+r.Hh+'" style="width:100%;max-width:440px;display:block;margin:2px auto 0">'+r.svg+'</svg>'
-    +'<div style="font-size:10px;color:var(--tm);margin-top:4px">Decrement bands: Elite &lt;5% &middot; Good &lt;10% &middot; Poor &gt;12%. A high drop-off off fast sprints is an aerobic problem (PCr resynthesis is O&#8322;-dependent) &mdash; the fix is a bigger aerobic engine, not more sprints. Both poor-speed quadrants hand off to the Power Quotient.</div>'
-    +routes+'</div>';
-}
-function ptsRSAprintHTML(recs){
-  var r=ptsRSAbuild(recs, PTS_RSA_PRN);
-  if(!r.routes) return '';
-  return '<div class="pr-sec">Repeat-Sprint Ability (RSA)</div>'
-    +'<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">'
-    +'<svg viewBox="0 0 '+r.W+' '+r.Hh+'" style="width:352px;max-width:100%;flex:none">'+r.svg+'</svg>'
-    +'<div style="flex:1;min-width:200px">'+r.routes
-    +'<div style="font-size:8.5px;color:#666;margin-top:8px;line-height:1.5">Decrement bands: Elite &lt;5% &middot; Good &lt;10% &middot; Poor &gt;12%. A high drop-off off fast sprints is an aerobic problem &mdash; build the aerobic engine, don\'t just add sprints. Poor-speed quadrants hand off to the Power Quotient.</div>'
-    +'</div></div>';
-}
-window.ptsRSApanel=ptsRSApanel;
 window.renderCompass=renderCompass;
 
 function renderProfile() {
@@ -2160,7 +2164,6 @@ function renderProfile() {
   recs.sort(function(a, b) { return new Date(b.Date) - new Date(a.Date); });
   var rec = recs.find(function(x){return x['Score OVERALL']!=null;}) || recs[0]; if (!rec) return;
   try{ptsProfileCards(recs);}catch(e){}
-  try{ptsRSApanel(recs);}catch(e){}
   var carryVal = function(k){ var r = recs.find(function(x){ return x[k]!=null; }); return r ? r[k] : null; };
 
   // Radar season tabs — using data attributes, no inline JS
@@ -2214,6 +2217,9 @@ function renderProfile() {
     {l:'Bench / BW',    calc:function(cv){var s=cv('Bench Press Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;}, u:'', hi:1.8, dec:2},
     {l:'Trap Bar / BW', calc:function(cv){var s=cv('TBDL Max'),b=cv('Bodyweight');return(s&&b)?s/b:null;},        u:'', hi:3.0, dec:2},
     {l:'BW / Height',   calc:function(cv){var b=cv('Bodyweight'),h=cv('Height (inches)');return(b&&h)?b/h:null;}, u:'', mid:2.5, dec:2},
+    {l:'Reactive (CMJ-NCMJ)',k:'Reactive (in)',        u:'in',hi:6, lo:0, dec:1},
+    {l:'Grip L/R Asym',      k:'Grip Asym %',           u:'%', hi:20, lb:true, dec:1},
+    {l:'FFMI (D1 avg 21.5)', k:'FFMI',                  u:'', hi:26, lo:18, dec:1},
     {l:'Grip R',             k:'Grip R',                u:'lb', hi:220},
     {l:'Grip L',             k:'Grip L',                u:'lb', hi:220},
     {l:'Grip R Score',       k:'Score Grip R',          u:'',   hi:100},
@@ -3879,7 +3885,7 @@ function downloadDataCSV(){
   var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
   a.download=TEAM_ID+'_fitness_data_'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
 }
-window.downloadDataCSV=downloadDataCSV;
+window.downloadDataCSV=downloadDataCSV;window.exportDashboard=downloadDataCSV;window.loadFitnessFromDB=loadFitnessFromDB;window.loadWLog=loadWLog;window.updateSyncStatus=updateSyncStatus;
 function loadFitnessFromDB(force) {
   var badge = ge('fitCloud');
   if (badge) { badge.innerHTML = '&#9729; Syncing&hellip;'; }
