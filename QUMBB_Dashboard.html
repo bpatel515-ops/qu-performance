@@ -438,9 +438,9 @@ input,select,textarea{font-size:16px!important;}
         <option value="PostSeason">Post-Season</option>
       </select>
     </div>
-    <div class="fg"><span class="fl">Metric</span>
+    <div class="fg"><span class="fl">Date</span><select class="fs" id="lbDate" onchange="renderLB()"><option value="All">All Dates</option></select></div><div class="fg"><span class="fl">Metric</span>
       <select class="fs" id="lbMetric" onchange="renderLB()">
-        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="VJ Vertec Best (in)">VJ Vertec (in)</option><option value="Approach Jump Best (in)">Approach Jump (in)</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="20 yd Best (s)">20 yd (s) lower=better</option><option value="Lane Agility Best (s)">Lane Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Peak Power (W)">Power Metric (W)</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Grip R">Grip R (lb)</option><option value="Grip L">Grip L (lb)</option><option value="Tibia">Tibia (in)</option>
+        <option value="Score OVERALL">Overall Score</option><option value="Score POWER">Power Score</option><option value="Score STRENGTH">Strength Score</option><option value="Score SPEED">Speed Score</option><option value="Score CONDITIONING">Conditioning</option><option value="Squat Max">Squat Max</option><option value="TBDL Max">TBDL Max</option><option value="Bench Press Max">Bench Press</option><option value="Pull-ups">Pull-ups</option><option value="VJ Vertec Best (in)">VJ Vertec (in)</option><option value="Approach Jump Best (in)">Approach Jump (in)</option><option value="10 yd Best (s)">10 yd (s) lower=better</option><option value="20 yd Best (s)">20 yd (s) lower=better</option><option value="Lane Agility Best (s)">Lane Agility (s) lower=better</option><option value="Beep Test">Beep Test</option><option value="Peak Power (W)">Power Metric (W)</option><option value="Bike W/kg">5-Min Bike (W/kg)</option><option value="Grip R">Grip R (lb)</option><option value="Grip L">Grip L (lb)</option>
       </select>
     </div>
     <div class="fg"><span class="fl">Position</span>
@@ -468,7 +468,7 @@ input,select,textarea{font-size:16px!important;}
             <option value="All">All</option><option value="PreSeason">Pre</option>
             <option value="OffSeason">Off</option><option value="InSeason">In</option><option value="PostSeason">Post</option>
           </select>
-        </div>
+        </div> <div class="fg"><span class="fl">Date</span><select class="fs" id="cmpAD" onchange="renderCmp()"><option value="All">All Dates</option></select></div>
       </div>
       <div id="cmpAMeta"></div>
     </div>
@@ -482,7 +482,7 @@ input,select,textarea{font-size:16px!important;}
             <option value="All">All</option><option value="PreSeason">Pre</option>
             <option value="OffSeason">Off</option><option value="InSeason">In</option><option value="PostSeason">Post</option>
           </select>
-        </div>
+        </div> <div class="fg"><span class="fl">Date</span><select class="fs" id="cmpBD" onchange="renderCmp()"><option value="All">All Dates</option></select></div>
       </div>
       <div id="cmpBMeta"></div>
     </div>
@@ -503,7 +503,7 @@ input,select,textarea{font-size:16px!important;}
         <option value="OffSeason">Off-Season</option><option value="InSeason">In-Season</option>
         <option value="PostSeason">Post-Season</option>
       </select>
-    </div>
+    </div> <div class="fg"><span class="fl">Date</span><select class="fs" id="posDate" onchange="renderPos()"><option value="All">All Dates</option></select></div>
   </div>
   <div class="posg" id="posGrid"></div>
 </div>
@@ -1556,17 +1556,17 @@ function printReport(bodyHtml) {
       + '@media print{@page{size:letter;margin:0.4in}body.printing>*:not(#printArea){display:none!important}body.printing #printArea{display:block!important}'
       + '#printArea{font-family:Barlow,Arial,sans-serif;color:#111;background:#fff}#printArea *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}'
       + '.pr-brand{display:flex;justify-content:space-between;align-items:center;background:#00205B;color:#fff;padding:6px 14px;margin-bottom:12px;border-radius:4px;font-family:"Barlow Condensed",Arial;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.pr-brand span:last-child{color:#E8A900}'
-      + '.pr-h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #00205B;padding-bottom:8px;margin-bottom:12px}'
+      + '.pr-h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #00205B;padding-bottom:5px;margin-bottom:8px}'
       + '.pr-h h1{font-family:"Barlow Condensed",Arial;font-size:24px;color:#00205B;margin:0;letter-spacing:1px}'
       + '.pr-h .sub{font-size:11px;color:#555;text-align:right;line-height:1.5}'
-      + '.pr-sec{font-family:"Barlow Condensed",Arial;font-size:13px;color:#00205B;font-weight:700;margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px}'
+      + '.pr-sec{font-family:"Barlow Condensed",Arial;font-size:12px;color:#00205B;font-weight:700;margin:9px 0 4px;text-transform:uppercase;letter-spacing:1px}'
       + '.pr-cats{display:flex;gap:8px}.pc-cat{flex:1;border:1px solid #ccc;border-radius:6px;padding:6px 9px}'
       + '.pc-h{font-size:10px;font-weight:700;text-transform:uppercase;color:#00205B;letter-spacing:1px;margin-bottom:4px;border-bottom:1px solid #eee;padding-bottom:2px}'
       + '.pc-r{display:flex;justify-content:space-between;font-size:11px;padding:1px 0}'
       + 'table.pr-t{width:100%;border-collapse:collapse;font-size:10px}table.pr-t th{background:#00205B;color:#fff !important;padding:4px 5px;text-align:left;font-size:9px;text-transform:uppercase}'
       + 'table.pr-t td{padding:3px 5px;border-bottom:1px solid #eee}table.pr-t tr:nth-child(even) td{background:#f5f5f5}'
       + '.pbar{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:11px}.pbl{width:86px;color:#333;font-weight:600}.pbt{flex:1;height:12px;background:#eee;border-radius:6px;overflow:hidden}.pbf{display:block;height:12px}.pbv{width:30px;text-align:right;font-weight:800}'
-      + '.pm{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}.pmi{display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #eee;padding:2px 0}.pmi .l{color:#666}.pmi .v{font-weight:700;color:#111}.pmg{font-family:"Barlow Condensed",Arial;font-size:11px;font-weight:700;color:#00205B;text-transform:uppercase;letter-spacing:1px;margin:9px 0 2px;border-bottom:1px solid #ddd;padding-bottom:1px}'
+      + '.pm{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}.pmi{display:flex;justify-content:space-between;font-size:10.5px;border-bottom:1px solid #eee;padding:1px 0}.pmi .l{color:#666}.pmi .v{font-weight:700;color:#111}.pmg{font-family:"Barlow Condensed",Arial;font-size:10.5px;font-weight:700;color:#00205B;text-transform:uppercase;letter-spacing:1px;margin:6px 0 1px;border-bottom:1px solid #ddd;padding-bottom:1px}'
       + '.pr-split{display:flex;gap:18px;align-items:flex-start;margin:4px 0}.pr-split>div:first-child{flex:1}.pr-radar{width:232px;text-align:center;flex:none}.pr-radar-key{font-size:8px;color:#666;margin-top:2px}.pr-ranks{display:flex;flex-wrap:wrap;gap:5px}.prk{border:1px solid #ddd;border-radius:4px;padding:2px 8px;font-size:10px;background:#f7f7f7}.prk b{color:#00205B}'
       + '.pr-foot{margin-top:14px;font-size:8px;color:#999;text-align:center}}';
     document.head.appendChild(st);
@@ -1634,7 +1634,7 @@ function printPlayerPDF() {
   var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && isComplete(x);}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
   var trend='';
   if(hist.length>=2){
-    var W=560,H=140,L=26,R=8,T=8,B=22;
+    var W=560,H=108,L=26,R=8,T=8,B=20;
     var sx=function(i){return L+(W-L-R)*(hist.length<2?0:i/(hist.length-1));};
     var sy=function(v){return H-B-(H-T-B)*(v/100);};
     var grid='';
@@ -1643,7 +1643,7 @@ function printPlayerPDF() {
     var dots=hist.map(function(x,i){var ov=dispOverall(x);return "<circle cx='"+sx(i)+"' cy='"+sy(ov)+"' r='3' fill='#00205B'/><text x='"+sx(i)+"' y='"+(sy(ov)-6)+"' text-anchor='middle' font-size='8' font-weight='700' fill='#00205B'>"+Math.round(ov)+"</text>";}).join('');
     var step=Math.ceil(hist.length/7);
     var labs=hist.map(function(x,i){return (i%step===0||i===hist.length-1)?"<text x='"+sx(i)+"' y='"+(H-6)+"' text-anchor='middle' font-size='8' fill='#777'>"+String(x.Date||'').slice(2)+"</text>":'';}).join('');
-    trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:140px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
+    trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:108px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
   } else { trend='<div style="font-size:10px;color:#999;padding:4px 0">Not enough tests yet to plot a trend.</div>'; }
   // category-ordered, grouped metrics with CHANGE (first -> latest across all this athlete's records)
   var chron=all.slice().sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
@@ -2454,34 +2454,47 @@ function renderProfile() {
 
 function drawRadar(sc) {
   var c = ge('radarC'); if (!c) return;
-  var ctx = c.getContext('2d'), W=252, H=252, cx=126, cy=126, r=88;
-  ctx.clearRect(0,0,W,H);
+  // Logical size is wider than tall to give the side labels (STRENGTH/COND) room; the backing store is
+  // scaled by devicePixelRatio for a crisp, non-blurry render, and CSS width:100% (max 300) lets it fit
+  // whatever the profile column is without distortion.
+  var dpr = window.devicePixelRatio || 1, W=300, H=250, cx=150, cy=122, r=82;
+  c.width = Math.round(W*dpr); c.height = Math.round(H*dpr);
+  c.style.width = '100%'; c.style.maxWidth = W+'px'; c.style.height = 'auto';
+  var ctx = c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
   var cats = [{l:'POWER',v:sc.pwr},{l:'STRENGTH',v:sc.str},{l:'SPEED',v:sc.spd},{l:'COND',v:sc.cond}];
   var n = cats.length;
-  function ang(i) { return i*2*Math.PI/n - Math.PI/2; }
-  [20,40,60,80,100].forEach(function(ring) {
+  function ang(i){ return i*2*Math.PI/n - Math.PI/2; }
+  function cv(v){ return Math.max(0, Math.min(100, v||0)); }
+  [20,40,60,80,100].forEach(function(ring){
     ctx.beginPath();
-    for (var i=0; i<n; i++) { var a=ang(i), rr=r*ring/100; if(i===0) ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); else ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); }
-    ctx.closePath(); ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=1; ctx.stroke();
+    for (var i=0;i<n;i++){ var a=ang(i), rr=r*ring/100; if(i===0) ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); else ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); }
+    ctx.closePath(); ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
   });
-  for (var i=0; i<n; i++) { var a=ang(i); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a)); ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.stroke(); }
+  for (var i=0;i<n;i++){ var a=ang(i); ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a)); ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1; ctx.stroke(); }
   ctx.beginPath();
-  cats.forEach(function(c2,i) { var a=ang(i), rr=r*(c2.v/100); if(i===0) ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); else ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); });
-  ctx.closePath(); ctx.fillStyle='rgba(232,169,0,0.18)'; ctx.fill(); ctx.strokeStyle='#E8A900'; ctx.lineWidth=2; ctx.stroke();
-  cats.forEach(function(c2,i) { var a=ang(i), rr=r*(c2.v/100); ctx.beginPath(); ctx.arc(cx+rr*Math.cos(a),cy+rr*Math.sin(a),4,0,2*Math.PI); ctx.fillStyle='#E8A900'; ctx.fill(); });
-  ctx.font = 'bold 10px "Barlow Condensed",sans-serif'; ctx.fillStyle = '#7A8299';
-  cats.forEach(function(c2,i) {
-    var a=ang(i), rr=r+17, x=cx+rr*Math.cos(a), y=cy+rr*Math.sin(a);
-    ctx.textAlign = Math.cos(a)>0.1?'left':Math.cos(a)<-0.1?'right':'center';
-    ctx.textBaseline = Math.sin(a)>0.1?'top':Math.sin(a)<-0.1?'bottom':'middle';
-    ctx.fillText(c2.l, x, y);
-    ctx.font='bold 11px "JetBrains Mono"'; ctx.fillStyle=co(c2.v);
-    ctx.fillText(Math.round(c2.v), x, y+(Math.sin(a)>0?12:-12));
-    ctx.font='bold 10px "Barlow Condensed",sans-serif'; ctx.fillStyle='#7A8299';
+  cats.forEach(function(c2,i){ var a=ang(i), rr=r*cv(c2.v)/100; if(i===0) ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); else ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)); });
+  ctx.closePath(); ctx.fillStyle='rgba(232,169,0,0.20)'; ctx.strokeStyle='#E8A900'; ctx.lineWidth=2.5; ctx.lineJoin='round'; ctx.fill(); ctx.stroke();
+  cats.forEach(function(c2,i){ var a=ang(i), rr=r*cv(c2.v)/100; ctx.beginPath(); ctx.arc(cx+rr*Math.cos(a),cy+rr*Math.sin(a),3.5,0,2*Math.PI); ctx.fillStyle='#E8A900'; ctx.fill(); ctx.strokeStyle='#0b1020'; ctx.lineWidth=1.5; ctx.stroke(); });
+  cats.forEach(function(c2,i){
+    var a=ang(i), lr=r+13, x=cx+lr*Math.cos(a), y=cy+lr*Math.sin(a), side=Math.abs(Math.sin(a))<0.3;
+    ctx.textAlign = Math.cos(a)>0.3?'left':Math.cos(a)<-0.3?'right':'center';
+    ctx.textBaseline = side?'bottom':(Math.sin(a)>0?'top':'bottom');
+    ctx.font='bold 11px "Barlow Condensed",sans-serif'; ctx.fillStyle='#8b93a7';
+    ctx.fillText(c2.l, x, side?y-1:y);
+    ctx.font='bold 13px "JetBrains Mono",monospace'; ctx.fillStyle=co(c2.v==null?0:c2.v); ctx.textBaseline='top';
+    ctx.fillText(c2.v==null?'—':Math.round(c2.v), x, (side? y+2 : (Math.sin(a)>0? y+13 : y+2)));
   });
 }
 
 // ─── LEADERBOARD ─────────────────────────────────────────────────────────────
+function refreshDateSel(id, recs){
+  var el=ge(id); if(!el) return;
+  var cur=el.value||'All';
+  var dates=['All'].concat(uniq(recs.map(function(x){return x.Date;}).filter(Boolean)).sort(function(a,b){return new Date(b)-new Date(a);}));
+  el.innerHTML=dates.map(function(dt){return '<option value="'+dt+'">'+(dt==='All'?'All Dates':dt)+'</option>';}).join('');
+  el.value=(dates.indexOf(cur)>=0)?cur:'All';
+}
+
 function renderLB() {
   var metric = ge('lbMetric').value;
   var pos    = ge('lbPos').value;
@@ -2492,6 +2505,13 @@ function renderLB() {
   if (s !== 'All') fd = fd.filter(function(d) { return d.Season === s; });
   if (p !== 'All') fd = fd.filter(function(d) { return d['Time Period'] === p; });
   if (pos !== 'All') fd = fd.filter(function(d) { return d.Position === pos; });
+  var __base = DATA.slice();
+  if (s !== 'All') __base = __base.filter(function(d){ return d.Season === s; });
+  if (p !== 'All') __base = __base.filter(function(d){ return d['Time Period'] === p; });
+  if (pos !== 'All') __base = __base.filter(function(d){ return d.Position === pos; });
+  refreshDateSel('lbDate', __base);
+  var __dt = ge('lbDate') ? ge('lbDate').value : 'All';
+  if (__dt !== 'All') fd = fd.filter(function(d){ return d.Date === __dt; });
   fd.sort(function(a,b) { return lb ? a[metric]-b[metric] : b[metric]-a[metric]; });
   var vals = fd.map(function(d) { return d[metric]; });
   ge('lbBody').innerHTML = fd.map(function(d, i) {
@@ -2522,7 +2542,9 @@ function renderCmp() {
   var sA=ge('cmpAS').value, pA=ge('cmpAP').value, sB=ge('cmpBS').value, pB=ge('cmpBP').value;
   var rA = DATA.filter(function(x){return x['Athlete Name']===nA;}); if(sA!=='All')rA=rA.filter(function(x){return x.Season===sA;}); if(pA!=='All')rA=rA.filter(function(x){return x['Time Period']===pA;});
   var rB = DATA.filter(function(x){return x['Athlete Name']===nB;}); if(sB!=='All')rB=rB.filter(function(x){return x.Season===sB;}); if(pB!=='All')rB=rB.filter(function(x){return x['Time Period']===pB;});
+  refreshDateSel('cmpAD', rA); var __dtA=ge('cmpAD')?ge('cmpAD').value:'All'; if(__dtA!=='All')rA=rA.filter(function(x){return x.Date===__dtA;});
   var dA=rA.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);})[0];
+  refreshDateSel('cmpBD', rB); var __dtB=ge('cmpBD')?ge('cmpBD').value:'All'; if(__dtB!=='All')rB=rB.filter(function(x){return x.Date===__dtB;});
   var dB=rB.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);})[0];
   if (!dA||!dB) return;
   ge('cmpHA').textContent=dn(nA); ge('cmpHB').textContent=dn(nB);
@@ -2540,13 +2562,13 @@ function renderCmp() {
     {l:'Squat Max',k:'Squat Max',lb:false},{l:'Bench Press',k:'Bench Press Max',lb:false},{l:'TBDL Max',k:'TBDL Max',lb:false},{l:'Grip R (lb)',k:'Grip R',lb:false},{l:'Grip L (lb)',k:'Grip L',lb:false},{l:'Tibia (in)',k:'Tibia',lb:false},
     {l:'VJ Vertec (in)',k:'VJ Vertec Best (in)',lb:false},{l:'Approach Jump (in)',k:'Approach Jump Best (in)',lb:false},{l:'Broad Jump (in)',k:'Broad Jump Best (in)',lb:false},
     {l:'10 yd (s)',k:'10 yd Best (s)',lb:true},{l:'20 yd (s)',k:'20 yd Best (s)',lb:true},{l:'Lane Agility (s)',k:'Lane Agility Best (s)',lb:true},
-    {l:'Beep Test',k:'Beep Test',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},{l:'Power Metric',k:'Peak Power (W)',lb:false},
+    {l:'Beep Test',k:'Beep Test',lb:false},{l:'5-Min Bike (W/kg)',k:'Bike W/kg',lb:false},{l:'Body Fat %',k:'Bodyfat',lb:true},{l:'Lean Mass',k:'Lean Mass',lb:false},{l:'Power Metric',k:'Peak Power (W)',lb:false},
   ];
   ge('cmpBody').innerHTML = cm.map(function(m) {
     var va=dA[m.k], vb=dB[m.k];
     var aW=(va!=null&&vb!=null)&&(m.lb?va<vb:va>vb);
     var bW=(va!=null&&vb!=null)&&(m.lb?vb<va:vb>va);
-    var dec=m.lb||m.k.indexOf('Beep')>=0?2:m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Lean')>=0?0:1;
+    var dec=m.lb||m.k.indexOf('Beep')>=0||m.k.indexOf('W/kg')>=0?2:m.k.indexOf('Score')>=0||m.k.indexOf('Max')>=0||m.k.indexOf('Lean')>=0?0:1;
     return '<tr>'
       + '<td class="cv'+(aW?' w':'')+'" style="text-align:left">'+(va!=null?fmt(va,dec):'—')+'</td>'
       + '<td class="cl">'+m.l+'</td>'
@@ -2590,7 +2612,7 @@ function renderMovement() {
 window.renderMovement = renderMovement;
 function renderPos() {
   var s=ge('posSeason')?ge('posSeason').value:'All', p=ge('posPeriod')?ge('posPeriod').value:'All';
-  var fd=DATA.slice(); if(s!=='All')fd=fd.filter(function(d){return d.Season===s;}); if(p!=='All')fd=fd.filter(function(d){return d['Time Period']===p;});
+  var fd=DATA.slice(); if(s!=='All')fd=fd.filter(function(d){return d.Season===s;}); if(p!=='All')fd=fd.filter(function(d){return d['Time Period']===p;}); refreshDateSel('posDate', fd); var __dt=ge('posDate')?ge('posDate').value:'All'; if(__dt!=='All')fd=fd.filter(function(d){return d.Date===__dt;});
   var pm=[{l:'Squat Max',k:'Squat Max',u:'lbs'},{l:'Bench Press',k:'Bench Press Max',u:'lbs'},{l:'VJ Vertec',k:'VJ Vertec Best (in)',u:'"'},{l:'Approach Jump',k:'Approach Jump Best (in)',u:'"'},{l:'10 yd',k:'10 yd Best (s)',u:'s',lb:true},{l:'Lane Agility',k:'Lane Agility Best (s)',u:'s',lb:true}];
   ge('posGrid').innerHTML = ['Guard','Forward'].map(function(pos) {
     var g=fd.filter(function(d){return d.Position===pos;}); if(!g.length)return'';
