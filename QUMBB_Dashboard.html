@@ -692,49 +692,42 @@ input,select,textarea{font-size:16px!important;}
     <span class="pw-chip qg-bg">Game / Perform</span>
     <span class="pw-chip qo-bg">Off / Recovery</span>
   </div>
+  <style>
+    .mw-week{border:1px solid var(--br2);border-radius:var(--r);margin-bottom:14px;background:var(--s1);overflow:hidden;}
+    .mw-whead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:9px 12px;background:var(--s2);border-bottom:1px solid var(--br2);}
+    .mw-wtitle{font-family:'Barlow Condensed',Arial,sans-serif;font-size:15px;font-weight:800;letter-spacing:.5px;color:var(--gold);}
+    .mw-gdp{display:flex;gap:7px;flex-wrap:wrap;font-size:11px;color:var(--tm);align-items:center;}
+    .mw-gdp label{display:flex;align-items:center;gap:2px;cursor:pointer;}
+    .mw-toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tm);}
+    .mw-tbtn{border:1px solid var(--br2);background:var(--s1);color:var(--tm);border-radius:5px;padding:3px 10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+    .mw-tbtn.on{background:var(--gold);color:#0b1220;border-color:var(--gold);}
+    .mw-wsum{margin-left:auto;font-size:11px;color:var(--tm);}
+    .mw-wsum b{color:var(--tx);font-family:'JetBrains Mono',monospace;}
+    .mw-body{padding:10px 12px;}
+    .mw-notips .pw-qb,.mw-notips .pw-theme,.mw-notips .mw-qsel{display:none!important;}
+    .mw-qsel{width:100%;margin-top:4px;font-size:10px;padding:2px 4px;box-sizing:border-box;background:var(--s2);color:var(--tx);border:1px solid var(--br2);border-radius:4px;}
+    .mw-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:6px 0 12px;}
+    .mw-card{background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:8px 10px;}
+    .mw-card .l{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;}
+    .mw-card .v{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:var(--tx);line-height:1.1;}
+    .mw-card .s{font-size:10px;color:var(--tm);}
+    .mw-notes{width:100%;resize:vertical;font-family:inherit;box-sizing:border-box;}
+  </style>
   <div class="pw-setup">
-    <div><label class="pw-fl">Game Days This Week</label>
-      <div class="pw-gdp" id="pwGdp">
-        <label><input type="checkbox" class="pw-cb" value="0">Sun</label>
-        <label><input type="checkbox" class="pw-cb" value="1">Mon</label>
-        <label><input type="checkbox" class="pw-cb" value="2">Tue</label>
-        <label><input type="checkbox" class="pw-cb" value="3">Wed</label>
-        <label><input type="checkbox" class="pw-cb" value="4">Thu</label>
-        <label><input type="checkbox" class="pw-cb" value="5">Fri</label>
-        <label><input type="checkbox" class="pw-cb" value="6" checked>Sat</label>
-      </div>
-    </div>
-    <div><label class="pw-fl">Week Start (Sunday)</label><input type="date" class="pw-in" id="pwWeekStart" onchange="if(window.pwHead)pwHead()"></div>
-    <div><label class="pw-fl">Chronic Load (4-wk avg AU)</label><input type="number" class="pw-in" id="pwChronic" placeholder="e.g. 1800"></div>
-    <div><label class="pw-fl">Phase</label><select class="pw-in" id="pwPhase" onchange="if(window.pwHead)pwHead()"><option>Off-Season</option><option>Pre-Season</option><option selected>In-Season</option><option>Post-Season</option></select></div>
-    <div style="display:flex;align-items:flex-end;gap:6px;"><button class="pw-build" onclick="buildWeekly()">Build Week &rarr;</button><button class="ibtn" onclick="loadSavedWeek()" style="cursor:pointer;white-space:nowrap;" title="Pull a previously saved week back into the builder to edit and re-save">&#8635; Load Saved Week</button></div>
+    <div><label class="pw-fl">Block Start (Sunday)</label><input type="date" class="pw-in" id="mwStart" onchange="if(window.mwHead)mwHead()"></div>
+    <div><label class="pw-fl">Weeks in Block</label><select class="pw-in" id="mwCount" onchange="if(window.mwHead)mwHead()"><option value="4" selected>4 weeks</option><option value="3">3 weeks</option><option value="2">2 weeks</option><option value="1">1 week</option></select></div>
+    <div><label class="pw-fl">Chronic Load (4-wk avg AU)</label><input type="number" class="pw-in" id="mwChronic" placeholder="e.g. 1800" oninput="if(window.mwBlockSummary)mwBlockSummary()"></div>
+    <div><label class="pw-fl">Phase</label><select class="pw-in" id="mwPhase" onchange="if(window.mwHead)mwHead()"><option>Off-Season</option><option>Pre-Season</option><option selected>In-Season</option><option>Post-Season</option></select></div>
+    <div style="display:flex;align-items:flex-end;gap:6px;"><button class="pw-build" onclick="mwBuild()">Build Block &rarr;</button><button class="ibtn" onclick="mwLoadBlock()" style="cursor:pointer;white-space:nowrap;" title="Pull previously saved weeks in this block back in to edit">&#8635; Load Block</button></div>
   </div>
-  <div id="pwWeekHead" style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;color:var(--gold);margin:2px 0 10px;"></div>
-  <style>#pwArea.pw-notips .pw-qb,#pwArea.pw-notips .pw-theme,#pwArea.pw-notips #pwRxSection{display:none!important;}</style>
-  <div id="pwArea" style="display:none">
-    <div class="pw-acstrip">
-      <div class="pw-ac"><div class="l">Acute Load</div><div class="v" id="pwAcute">&mdash;</div><div class="s">AU (min&times;RPE)</div></div>
-      <div class="pw-ac"><div class="l">Chronic Load</div><div class="v" id="pwChron">&mdash;</div><div class="s">AU/wk (4-wk)</div></div>
-      <div class="pw-ac" id="pwRatioCard"><div class="l">A:C Ratio</div><div class="v" id="pwRatio">&mdash;</div><div class="s" id="pwZone">enter chronic</div></div>
-      <div class="pw-ac"><div class="l">Monotony</div><div class="v" id="pwMono">&mdash;</div><div class="s">mean &divide; SD</div></div>
-      <div class="pw-ac"><div class="l">Strain</div><div class="v" id="pwStrain">&mdash;</div><div class="s">load &times; monotony</div></div>
-      <div class="pw-ac"><div class="l">Total Min</div><div class="v" id="pwMin">&mdash;</div><div class="s">volume</div></div>
-      <div class="pw-ac"><div class="l">Avg RPE</div><div class="v" id="pwRpe">&mdash;</div><div class="s">training days</div></div>
-    </div>
-    <div class="pw-daygrid" id="pwDayGrid"></div>
-    <div id="pwRxSection">
-    <div class="sh"><div class="st">DAILY <span>PRESCRIPTIONS</span></div></div>
-    <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">From the Patel Training System daily objectives &mdash; edit any day above to override.</div>
-    <div style="overflow-x:auto;"><table class="pw-rx"><thead><tr><th>Day</th><th>Session</th><th>Ref</th><th>Quadrant</th><th>Daily Theme</th><th>Vol Target</th><th>RPE</th><th>Physical Focus</th></tr></thead><tbody id="pwRxBody"></tbody></table></div>
-    </div>
-    <div class="sh"><div class="st">WEEK <span>NOTES</span></div></div>
-    <textarea class="pw-in" id="pwNotes" rows="3" placeholder="Coach notes for this week — focus, travel, injuries, adjustments… (saved with the week and shown on the Yearly plan)" style="width:100%;resize:vertical;margin-bottom:12px;font-family:inherit;"></textarea>
-    <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <button class="pw-build" id="pwSaveBtn" onclick="saveWeeklyToCloud()">&#9729; Save Week to Cloud</button>
-      <button class="ibtn" onclick="downloadWeekly()" style="cursor:pointer;">&#8681; Download CSV</button>
-      <button class="ibtn" onclick="printWeekPDF()" style="cursor:pointer;" title="Print / save the built week as a PDF for a coach">&#128424; Print Week (PDF)</button>
-      <span id="pwSaveMsg" style="font-size:13px;font-weight:700;align-self:center;padding:4px 10px;border-radius:6px;"></span>
-    </div>
+  <div id="mwHeadEl" style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;color:var(--gold);margin:2px 0 8px;"></div>
+  <div class="mw-cards" id="mwCards" style="display:none"></div>
+  <div id="mwBlock"></div>
+  <div id="mwActions" style="display:none;gap:8px;margin:6px 0 14px;flex-wrap:wrap;align-items:center;">
+    <button class="pw-build" onclick="mwSaveBlock()">&#9729; Save Block to Cloud</button>
+    <button class="ibtn" onclick="mwDownloadCSV()" style="cursor:pointer;">&#8681; Download Block CSV</button>
+    <button class="ibtn" onclick="mwPrintPDF()" style="cursor:pointer;">&#128424; Print Block (PDF)</button>
+    <span id="mwMsg" style="font-size:13px;font-weight:700;align-self:center;padding:4px 10px;border-radius:6px;"></span>
   </div>
   <div class="sh"><div class="st">QUADRANT <span>REFERENCE</span></div></div>
   <div class="pw-quads">
@@ -743,8 +736,323 @@ input,select,textarea{font-size:16px!important;}
     <div class="pw-quad q3-bg"><div class="qn">3</div><div class="qname">High Vol / Low-Med Int</div><div class="qd">Largest practice of the week. Team/tactical, aerobic. Builds chronic load.</div><div class="ql">RPE 2&ndash;3 &middot; 75&ndash;120 min</div></div>
     <div class="pw-quad q4-bg"><div class="qn">4</div><div class="qname">High Vol / High Int</div><div class="qd">Game or game-like. Perform. Maximum load; high intensity, small games w/ rest.</div><div class="ql">RPE 4&ndash;5 &middot; 90&ndash;120 min</div></div>
   </div>
-  <div style="font-size:11px;color:var(--tm);margin-top:8px;"><strong>Training Load</strong> = Minutes &times; RPE (1&ndash;5) &middot; <strong>A:C sweet spot</strong> 0.8&ndash;1.3 &middot; <strong>Danger</strong> &gt;1.5 &middot; Quadrants &amp; daily themes from the Patel Training System.</div>
+  <div style="font-size:11px;color:var(--tm);margin-top:8px;"><strong>Training Load</strong> = Minutes &times; RPE (1&ndash;5) &middot; <strong>A:C sweet spot</strong> 0.8&ndash;1.3 &middot; <strong>Danger</strong> &gt;1.5 &middot; Themes auto-build from game days &mdash; toggle <strong>Themes</strong> off for a game-free week or use each day's small dropdown to override a quadrant.</div>
 </div>
+
+<script>
+/* 4-WEEK BLOCK BUILDER (Patel Load Management) - self-contained, coexists with the legacy builder IIFE */
+(function(){
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var ACTIVITIES=['Practice','Gym Training','Practice + Gym','Pre-Game','Extra Skills','Recovery','Game','Off'];
+  var RPE_LABELS={0:'0 — Off',1:'1 — Light',2:'2 — Easy',3:'3 — Average',4:'4 — Difficult',5:'5 — Very Difficult'};
+  var Q={1:{label:'Q1',cls:'q1-bg',theme:'Recovery / Re-activation',vol:'0–30',rpe:1},
+         2:{label:'Q2',cls:'q2-bg',theme:'Strength / High Intensity',vol:'60–75',rpe:4},
+         3:{label:'Q3',cls:'q3-bg',theme:'Volume / Team-Tactical',vol:'75–120',rpe:3},
+         4:{label:'Q4',cls:'q4-bg',theme:'Game-like / Perform',vol:'90–120',rpe:5},
+         'game':{label:'GAME',cls:'qg-bg',theme:'Perform',vol:'GAME',rpe:5},
+         'off':{label:'OFF',cls:'qo-bg',theme:'Off / Rest',vol:'0',rpe:0},
+         '':{label:'—',cls:'',theme:'',vol:'',rpe:0}};
+  var PATEL_BACK=[
+    {session:'Recovery',q:1,dayRef:'-6',theme:'Physical Improvement (Recovery)',vol:'0–30',rpe:1,focus:'Light movements; reciprocal alternating; dynamic warm-up; replace fluids'},
+    {session:'Practice',q:1,dayRef:'-5',theme:'Plan, Present & Prime',vol:'60–90',rpe:2,focus:'Low intensity movements; prime system for the week; review; skill development'},
+    {session:'Practice',q:3,dayRef:'-4',theme:'Priorities',vol:'90–120',rpe:4,focus:'Strength development; higher loads; eccentrics & isos; individual technical skills'},
+    {session:'Practice',q:2,dayRef:'-3',theme:'Principles',vol:'60–90',rpe:3,focus:'Alactic/aerobic development for those that need; individual needs; large-space tactical'},
+    {session:'Practice',q:3,dayRef:'-2',theme:'Precision',vol:'30–60',rpe:3,focus:'Speed/power; prioritize concentric actions; game-like execution and decision making'},
+    {session:'Practice',q:3,dayRef:'-1',theme:'Potentiate',vol:'30–45',rpe:3,focus:'Acceleration/speed; final rehearsal; execute at pace; no collision/contact'},
+    {session:'Game',q:'game',dayRef:'0',theme:'Perform',vol:'GAME',rpe:5,focus:'Execution — player led; speed to potentiate'}
+  ];
+  var DEV_WEEK=[
+    {session:'Recovery',q:1,dayRef:'—',theme:'Physical Improvement (Recovery)',vol:'0–30',rpe:1,focus:'Light movements, reciprocal alternating, dynamic warm-up'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Plan, Present & Prime',vol:'60–90',rpe:2,focus:'Low intensity movements; prime system for the week'},
+    {session:'Practice',q:4,dayRef:'—',theme:'Priorities',vol:'90–120',rpe:4,focus:'Strength development; emphasize higher loads; eccentrics & isos'},
+    {session:'Practice',q:2,dayRef:'—',theme:'Principles',vol:'60–75',rpe:3,focus:'Alactic/aerobic development for individual needs'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Precision',vol:'75–90',rpe:3,focus:'Speed/power; prioritize concentric actions; game-like execution'},
+    {session:'Practice',q:3,dayRef:'—',theme:'Potentiate',vol:'30–60',rpe:3,focus:'Acceleration/speed; final rehearsal at pace'},
+    {session:'Off',q:'off',dayRef:'Off',theme:'Physical Improvement (Recovery)',vol:'0',rpe:0,focus:'Full rest day'}
+  ];
+  var QORDER=[['','—'],['1','Q1'],['2','Q2'],['3','Q3'],['4','Q4'],['game','GAME'],['off','OFF']];
+
+  function ge(id){return document.getElementById(id);}
+  function cfg(){return window.QUCFG||{};}
+  function sbGet(path){var c=cfg();if(!c.SB_URL)return Promise.resolve([]);return fetch(c.SB_URL+'/rest/v1/'+path,{headers:{apikey:c.SB_KEY,Authorization:'Bearer '+c.SB_KEY}}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];});}
+  function mondayISO(ds){var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10);}
+  function addDaysISO(ds,n){var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+  function seasonFromDate(ds){var d=new Date(ds+'T00:00:00');var y=d.getFullYear();var anc=new Date(y,7,1);while(anc.getDay()!==0)anc.setDate(anc.getDate()+1);anc.setDate(anc.getDate()+21);var s=(d>=anc)?y:y-1;return ('0'+(s%100)).slice(-2)+'-'+('0'+((s+1)%100)).slice(-2);}
+  function seasonStartSunday(season){var y=2000+parseInt(season.split('-')[0],10);var d=new Date(y,7,1);while(d.getDay()!==0)d.setDate(d.getDate()+1);d.setDate(d.getDate()+21);return d;}
+  function weekNum(ds,season){var start=seasonStartSunday(season);var d=new Date(ds+'T00:00:00');var wk=Math.floor((d-start)/(7*864e5))+1;return Math.max(1,Math.min(52,wk));}
+  function midVol(v){if(v==null)return '';v=String(v);if(/GAME/i.test(v))return 75;if(v.indexOf('–')>=0){var p=v.split('–').map(Number);return Math.round((p[0]+p[1])/2);}var n=parseFloat(v);return isNaN(n)?'':n;}
+  function fmtRange(a,b){var da=new Date(a+'T00:00:00'),db=new Date(b+'T00:00:00');var o={month:'short',day:'numeric'};return da.toLocaleDateString('en-US',o)+' – '+db.toLocaleDateString('en-US',o);}
+
+  function backTemplate(gameDays){
+    var tpl=[];
+    for(var di=0;di<7;di++){
+      if(gameDays.indexOf(di)!==-1){var g=JSON.parse(JSON.stringify(PATEL_BACK[6]));g.dayRef='0';tpl.push(g);continue;}
+      var minDist=999;gameDays.forEach(function(gd){var d=(gd-di+7)%7;if(d>0&&d<minDist)minDist=d;});
+      var minSince=999;gameDays.forEach(function(gd){var s=(di-gd+7)%7;if(s>0&&s<minSince)minSince=s;});
+      var idx,ref;
+      if(minSince===1){idx=0;ref='-6';}
+      else if(minDist===1){idx=5;ref='-1';}
+      else if(minDist===2){idx=4;ref='-2';}
+      else if(minDist===3){idx=3;ref='-3';}
+      else if(minDist===4){idx=2;ref='-4';}
+      else{idx=1;ref='-5';}
+      var r=JSON.parse(JSON.stringify(PATEL_BACK[idx]));r.dayRef=ref;tpl.push(r);
+    }
+    return tpl;
+  }
+  function neutralTemplate(){var t=[];for(var di=0;di<7;di++)t.push({session:'Practice',q:'',dayRef:'—',theme:'',vol:'',rpe:0,focus:''});return t;}
+
+  var MW={N:4,start:null,tpl:{},themes:{},over:{}};
+
+  window.mwBuild=function(){
+    var raw=ge('mwStart').value; if(!raw){ mwMsg('Pick a Block Start (Sunday) first.','err'); return; }
+    MW.start=mondayISO(raw); if(ge('mwStart')) ge('mwStart').value=MW.start;
+    MW.N=parseInt(ge('mwCount').value,10)||4;
+    MW.tpl={};MW.themes={};MW.over={};
+    var html='';
+    for(var w=0;w<MW.N;w++){ MW.themes[w]=false; MW.over[w]={}; html+=weekShell(w, addDaysISO(MW.start,w*7)); }
+    ge('mwBlock').innerHTML=html;
+    for(var w2=0;w2<MW.N;w2++) mwRebuild(w2,true);
+    ge('mwCards').style.display='grid';
+    ge('mwActions').style.display='flex';
+    mwHead(); mwBlockSummary(); mwAutoChronic();
+  };
+
+  function weekShell(w,ws){
+    var season=seasonFromDate(ws), wk=weekNum(ws,season), rng=fmtRange(ws,addDaysISO(ws,6));
+    var cbs=SHORT.map(function(s,di){return '<label><input type="checkbox" class="mw-cb-'+w+'" value="'+di+'" onchange="mwGames('+w+')">'+s+'</label>';}).join('');
+    return '<div class="mw-week" id="mw-wk-'+w+'">'
+      +'<div class="mw-whead">'
+      +'<span class="mw-wtitle">Week '+wk+' &middot; '+rng+'</span>'
+      +'<span class="mw-gdp">Games:'+cbs+'</span>'
+      +'<span class="mw-toggle">Themes <button type="button" class="mw-tbtn" id="mw-th-'+w+'" onclick="mwThemes('+w+')">Off</button></span>'
+      +'<span class="mw-wsum" id="mw-wsum-'+w+'"></span>'
+      +'</div>'
+      +'<div class="mw-body"><div class="pw-daygrid" id="mw-grid-'+w+'"></div>'
+      +'<textarea class="pw-in mw-notes" id="mw-notes-'+w+'" rows="2" placeholder="Week '+wk+' notes — focus, travel, injuries…"></textarea></div>'
+      +'</div>';
+  }
+  function readGames(w){var arr=[];document.querySelectorAll('.mw-cb-'+w+':checked').forEach(function(c){arr.push(parseInt(c.value));});arr.sort(function(a,b){return a-b;});return arr;}
+
+  window.mwGames=function(w){var g=readGames(w);MW.themes[w]=(g.length>0);MW.over[w]={};mwRebuild(w);};
+  window.mwThemes=function(w){MW.themes[w]=!MW.themes[w];MW.over[w]={};mwRebuild(w);};
+
+  function mwRebuild(w,silent){
+    var ws=addDaysISO(MW.start,w*7), g=readGames(w);
+    var tb=ge('mw-th-'+w); if(tb){tb.textContent=MW.themes[w]?'Auto':'Off';tb.classList.toggle('on',MW.themes[w]);}
+    var wk=ge('mw-wk-'+w); if(wk) wk.classList.toggle('mw-notips',!MW.themes[w]);
+    var tpl;
+    if(MW.themes[w]) tpl=g.length?backTemplate(g):DEV_WEEK.map(function(x){return JSON.parse(JSON.stringify(x));});
+    else tpl=neutralTemplate();
+    var ov=MW.over[w]||{};
+    for(var di in ov){var qk=ov[di],qq=Q[qk];if(qq){tpl[di]=Object.assign({},tpl[di],{q:qk,theme:qq.theme,vol:qq.vol,rpe:qq.rpe,session:(qk==='game'?'Game':qk==='off'?'Off':tpl[di].session)});}}
+    MW.tpl[w]=tpl;
+    var html='';
+    DAYS.forEach(function(day,di){
+      var t=tpl[di], q=Q[t.q||''], isOff=(t.q==='off'||t.session==='Off');
+      var dd=new Date(addDaysISO(ws,di)+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      var oppVal=((ge('mw-opp-'+w+'-'+di)||{}).value||'').replace(/"/g,'&quot;');
+      html+='<div class="pw-day">';
+      html+='<div><span class="dn">'+SHORT[di]+'</span> <span class="dd">'+dd+'</span></div>';
+      html+='<select class="pw-sel" id="mw-sess-'+w+'-'+di+'" onchange="mwSess('+w+','+di+')">'+ACTIVITIES.map(function(a){return '<option'+(a===t.session?' selected':'')+'>'+a+'</option>';}).join('')+'</select>';
+      html+='<input class="pw-opp" type="text" id="mw-opp-'+w+'-'+di+'" placeholder="vs / @ Opponent" value="'+oppVal+'" style="width:100%;margin-top:4px;font-size:11px;padding:3px 6px;box-sizing:border-box;'+(t.session==='Game'?'':'display:none;')+'">';
+      html+='<select class="mw-qsel" id="mw-q-'+w+'-'+di+'" onchange="mwOverride('+w+','+di+')">'+QORDER.map(function(o){return '<option value="'+o[0]+'"'+(String(t.q||'')===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+      html+='<div class="pw-qb '+q.cls+'" id="mw-qb-'+w+'-'+di+'">'+((t.dayRef&&t.dayRef!=='—')?'Day '+t.dayRef+'<br>':'')+q.label+'</div>';
+      html+='<div class="pw-fl" style="margin:0">Volume (min)</div>';
+      html+='<input class="pw-vol" type="number" min="0" max="180" id="mw-vol-'+w+'-'+di+'" value="'+(isOff?0:midVol(t.vol))+'" placeholder="'+(t.vol||'')+'" oninput="mwCalc('+w+','+di+')">';
+      html+='<div class="pw-fl" style="margin:0">RPE (1–5)</div>';
+      html+='<select class="pw-rpe" id="mw-rpe-'+w+'-'+di+'" onchange="mwCalc('+w+','+di+')">'+[0,1,2,3,4,5].map(function(r){return '<option value="'+r+'"'+(r===(isOff?0:t.rpe)?' selected':'')+'>'+RPE_LABELS[r]+'</option>';}).join('')+'</select>';
+      html+='<div class="pw-load" id="mw-load-'+w+'-'+di+'">—</div>';
+      html+='<div class="pw-theme" id="mw-theme-'+w+'-'+di+'">'+(t.theme||'')+'</div>';
+      html+='</div>';
+    });
+    ge('mw-grid-'+w).innerHTML=html;
+    for(var di2=0;di2<7;di2++) mwCalc(w,di2,true);
+    mwWeekSummary(w);
+    if(!silent) mwBlockSummary();
+  }
+
+  window.mwSess=function(w,di){
+    var sel=ge('mw-sess-'+w+'-'+di); if(!sel)return; var val=sel.value;
+    var cb=document.querySelector('.mw-cb-'+w+'[value="'+di+'"]');
+    var opp=ge('mw-opp-'+w+'-'+di); if(opp) opp.style.display=(val==='Game')?'':'none';
+    if(val==='Game'){ if(cb&&!cb.checked){cb.checked=true;MW.themes[w]=true;MW.over[w]={};mwRebuild(w);return;} }
+    else { if(cb&&cb.checked){cb.checked=false;MW.over[w]={};mwRebuild(w);return;} }
+    mwCalc(w,di);
+  };
+  window.mwOverride=function(w,di){
+    var qk=ge('mw-q-'+w+'-'+di).value; MW.over[w]=MW.over[w]||{}; MW.over[w][di]=qk;
+    var qq=Q[qk]||Q[''];
+    var badge=ge('mw-qb-'+w+'-'+di); if(badge){badge.className='pw-qb '+qq.cls;badge.innerHTML=qq.label;}
+    var th=ge('mw-theme-'+w+'-'+di); if(th) th.textContent=qq.theme||'';
+    var vol=ge('mw-vol-'+w+'-'+di); if(vol){vol.placeholder=qq.vol||'';if(qk==='off')vol.value=0;else if(midVol(qq.vol)!=='')vol.value=midVol(qq.vol);}
+    var rpe=ge('mw-rpe-'+w+'-'+di); if(rpe) rpe.value=String(qq.rpe||0);
+    var sess=ge('mw-sess-'+w+'-'+di); if(sess){if(qk==='game')sess.value='Game';else if(qk==='off')sess.value='Off';}
+    var opp=ge('mw-opp-'+w+'-'+di); if(opp) opp.style.display=(qk==='game')?'':'none';
+    mwCalc(w,di);
+  };
+  window.mwCalc=function(w,di,silent){
+    var sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'';
+    var vol=parseFloat((ge('mw-vol-'+w+'-'+di)||{}).value)||0;
+    var rpe=parseFloat((ge('mw-rpe-'+w+'-'+di)||{}).value)||0;
+    var load=(sess==='Off')?0:Math.round(vol*rpe);
+    var el=ge('mw-load-'+w+'-'+di); if(el) el.innerHTML=load+'<span style="font-size:10px;font-weight:400;color:var(--tm)"> AU</span>';
+    if(!silent){ mwWeekSummary(w); mwBlockSummary(); }
+  };
+
+  function weekLoads(w){var arr=[];for(var di=0;di<7;di++){var sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'';var v=parseFloat((ge('mw-vol-'+w+'-'+di)||{}).value)||0;var r=parseFloat((ge('mw-rpe-'+w+'-'+di)||{}).value)||0;arr.push(sess==='Off'?0:v*r);}return arr;}
+  function weekStats(w){
+    var loads=weekLoads(w), total=loads.reduce(function(a,b){return a+b;},0), mean=total/7;
+    var sd=Math.sqrt(loads.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/7);
+    var mono=sd>0?mean/sd:(mean>0?2:0);
+    var min=0,rs=0,rn=0; for(var di=0;di<7;di++){var sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'';if(sess==='Off')continue;var v=parseFloat((ge('mw-vol-'+w+'-'+di)||{}).value)||0;var r=parseFloat((ge('mw-rpe-'+w+'-'+di)||{}).value)||0;min+=v;if(r>0){rs+=r;rn++;}}
+    return {total:total,mono:mono,strain:total*mono,min:min,rpe:rn?rs/rn:0};
+  }
+  function mwWeekSummary(w){var s=weekStats(w),el=ge('mw-wsum-'+w);if(!el)return;el.innerHTML='Load <b>'+Math.round(s.total)+'</b> AU &middot; Mono <b>'+(s.total>0?s.mono.toFixed(2):'—')+'</b> &middot; Min <b>'+Math.round(s.min)+'</b>';}
+
+  window.mwBlockSummary=function(){
+    var chronic=parseFloat(ge('mwChronic').value)||0, prior=[], html='';
+    for(var w=0;w<MW.N;w++){
+      var s=weekStats(w);
+      var base=prior.slice(Math.max(0,prior.length-4));
+      var chron=base.length>=1?base.reduce(function(a,b){return a+b;},0)/base.length:chronic;
+      var ratio=chron>0?s.total/chron:null;
+      var col=ratio==null?'var(--tx)':ratio<0.8?'#4FC3F7':ratio<=1.3?'var(--elite)':ratio<=1.5?'var(--gold)':'var(--dev)';
+      var zn=ratio==null?'set chronic':ratio<0.8?'Under':ratio<=1.3?'Optimal':ratio<=1.5?'Caution':'High Risk';
+      var wk=weekNum(addDaysISO(MW.start,w*7),seasonFromDate(addDaysISO(MW.start,w*7)));
+      html+='<div class="mw-card"><div class="l">Week '+wk+'</div><div class="v">'+Math.round(s.total)+'</div><div class="s">AU &middot; A:C <span style="color:'+col+';font-weight:700">'+(ratio==null?'—':ratio.toFixed(2))+'</span> '+zn+'</div></div>';
+      prior.push(s.total);
+    }
+    var bt=prior.reduce(function(a,b){return a+b;},0);
+    html+='<div class="mw-card" style="border-color:var(--gold)"><div class="l">Block Total</div><div class="v" style="color:var(--gold)">'+Math.round(bt)+'</div><div class="s">AU &middot; '+MW.N+' weeks</div></div>';
+    ge('mwCards').innerHTML=html;
+  };
+
+  window.mwHead=function(){
+    var el=ge('mwHeadEl'); if(!el)return;
+    var raw=ge('mwStart').value; if(!raw){el.textContent='';return;}
+    var ws=mondayISO(raw), s=seasonFromDate(ws), wk=weekNum(ws,s), N=parseInt(ge('mwCount').value,10)||4;
+    var ph=(ge('mwPhase')&&ge('mwPhase').value)||'';
+    el.innerHTML='Season '+s+' &middot; Weeks '+wk+'–'+Math.min(52,wk+N-1)+' of 52'+(ph?' &middot; '+ph:'')+' &middot; '+ws+' → '+addDaysISO(ws,N*7-1);
+  };
+
+  function mwMsg(t,kind){var m=ge('mwMsg');if(!m)return;m.textContent=t;if(kind==='ok'){m.style.color='#fff';m.style.background='var(--good)';}else if(kind==='err'){m.style.color='#fff';m.style.background='var(--dev)';}else{m.style.color='var(--tm)';m.style.background='transparent';}}
+
+  window.mwAutoChronic=function(){
+    var ch=ge('mwChronic'); if(!ch||ch.value||!MW.start)return; var c=cfg(); if(!c.TEAM_ID)return;
+    var season=seasonFromDate(MW.start);
+    sbGet('v_season_volume?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&season=eq.'+encodeURIComponent(season)+'&select=week_start,planned_au,actual_mean&order=week_start.asc').then(function(rows){
+      if(!rows||!rows.length)return;
+      var prior=rows.filter(function(r){return r.week_start<MW.start;});
+      var act=prior.filter(function(r){return r.actual_mean!=null;}).slice(-4).map(function(r){return +r.actual_mean;});
+      var use=act; if(act.length<2){var pl=prior.filter(function(r){return r.planned_au!=null;}).slice(-4).map(function(r){return +r.planned_au;});if(pl.length>=2)use=pl;}
+      if(use.length>=2){ch.value=Math.round(use.reduce(function(a,b){return a+b;},0)/use.length);mwBlockSummary();}
+    });
+  };
+
+  var MW_PASS='';
+  window.mwSaveBlock=function(){
+    if(MW.start==null){mwMsg('Build the block first.','err');return;}
+    var c=cfg(); if(!c.SB_URL){mwMsg('Config not ready — reload.','err');return;}
+    var phase=(ge('mwPhase')&&ge('mwPhase').value)||null, weeks=[];
+    for(var w=0;w<MW.N;w++){
+      var ws=addDaysISO(MW.start,w*7), season=seasonFromDate(ws), wk=weekNum(ws,season);
+      var days=[],tAU=0,tMin=0;
+      DAYS.forEach(function(day,di){
+        var sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'';
+        var mins=parseFloat((ge('mw-vol-'+w+'-'+di)||{}).value)||0, rpe=parseFloat((ge('mw-rpe-'+w+'-'+di)||{}).value)||0;
+        var load=(sess==='Off')?0:Math.round(mins*rpe); tAU+=load; if(sess!=='Off')tMin+=mins;
+        var t=(MW.tpl[w]&&MW.tpl[w][di])||{}, qk=t.q||'';
+        var opp=(sess==='Game'&&ge('mw-opp-'+w+'-'+di))?ge('mw-opp-'+w+'-'+di).value.trim():'';
+        days.push({day:day,session:sess,quadrant:String((Q[qk]||Q['']).label),dayRef:t.dayRef||'',theme:t.theme||'',mins:mins,rpe:rpe,load:load,opp:opp});
+      });
+      var wkOpp=days.filter(function(d){return d.opp;}).map(function(d){return d.opp;}).join(' / ')||null;
+      var notes=(ge('mw-notes-'+w)&&ge('mw-notes-'+w).value.trim())||null;
+      weeks.push({week_start:ws,week_label:'Week '+wk,opponent:wkOpp,phase:phase,days:days,weekly_mins:Math.round(tMin),weekly_vol:Math.round(tAU),planned_au:Math.round(tAU),notes:notes,ewma:null});
+    }
+    if(!MW_PASS){var p=window.prompt('Enter coach passcode to save this block:');if(!p)return;MW_PASS=p;}
+    var season0=seasonFromDate(MW.start);
+    mwMsg('Saving block…','');
+    fetch(c.SB_URL+'/functions/v1/save_plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({passcode:MW_PASS,team:c.TEAM_ID,season:season0,weeks:weeks})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(res.ok&&res.j&&res.j.ok){mwMsg('✓ Saved '+MW.N+' weeks ('+season0+') — now on the Yearly tab','ok');if(window.loadPlanFromDB)try{loadPlanFromDB();}catch(e){}if(window.renderYearlyAU)try{renderYearlyAU();}catch(e){}}
+        else if(res.j&&res.j.error==='unauthorized'){MW_PASS='';mwMsg('Wrong passcode — click Save and try again.','err');}
+        else mwMsg('Save failed: '+((res.j&&res.j.error)||'error'),'err');
+      }).catch(function(e){mwMsg('Save error: '+e,'err');});
+  };
+
+  window.mwLoadBlock=function(){
+    if(!ge('mwStart').value){mwMsg('Pick a Block Start (Sunday) first.','err');return;}
+    mwBuild();
+    var c=cfg(); if(!c.SB_URL)return;
+    var starts=[]; for(var w=0;w<MW.N;w++) starts.push(addDaysISO(MW.start,w*7));
+    mwMsg('Loading saved weeks…','');
+    sbGet('v_dashboard_plan?team=eq.'+encodeURIComponent(c.TEAM_ID)+'&date=in.('+starts.map(encodeURIComponent).join(',')+')&select=*').then(function(rows){
+      rows=rows||[]; var byStart={}; rows.forEach(function(r){byStart[r.date]=r;}); var found=0;
+      for(var w=0;w<MW.N;w++){
+        var ws=addDaysISO(MW.start,w*7), rec=byStart[ws]; if(!rec)continue; found++;
+        var days=rec.days||[];
+        days.forEach(function(d){var di=DAYS.indexOf(d.day);if(di<0)return;if(d.session==='Game'){var cb=document.querySelector('.mw-cb-'+w+'[value="'+di+'"]');if(cb)cb.checked=true;}});
+        MW.themes[w]=days.some(function(d){return d.session==='Game';})||days.some(function(d){return d.theme;});
+        mwRebuild(w,true);
+        days.forEach(function(d){var di=DAYS.indexOf(d.day);if(di<0)return;
+          var el=ge('mw-sess-'+w+'-'+di);if(el&&d.session)el.value=d.session;
+          el=ge('mw-vol-'+w+'-'+di);if(el)el.value=(d.mins!=null?d.mins:0);
+          el=ge('mw-rpe-'+w+'-'+di);if(el&&d.rpe!=null)el.value=String(d.rpe);
+          el=ge('mw-opp-'+w+'-'+di);if(el){el.value=d.opp||'';el.style.display=(d.session==='Game')?'':'none';}
+          mwCalc(w,di,true);
+        });
+        if(ge('mw-notes-'+w)) ge('mw-notes-'+w).value=rec.notes||'';
+        if(rec.phase&&ge('mwPhase')) ge('mwPhase').value=rec.phase;
+        mwWeekSummary(w);
+      }
+      mwBlockSummary();
+      mwMsg(found?('Loaded '+found+' saved week(s) — edit and Save Block'):'No saved weeks in this block yet — build fresh.',found?'ok':'err');
+    });
+  };
+
+  window.mwDownloadCSV=function(){
+    if(MW.start==null)return;
+    var rows=[['Week','Day','Date','Session','Opponent','Quadrant','Theme','Volume(min)','RPE','Load(AU)']];
+    for(var w=0;w<MW.N;w++){var ws=addDaysISO(MW.start,w*7),wk=weekNum(ws,seasonFromDate(ws));
+      DAYS.forEach(function(day,di){var t=(MW.tpl[w]&&MW.tpl[w][di])||{},qk=t.q||'';
+        var sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'',vol=(ge('mw-vol-'+w+'-'+di)||{}).value||'',rpe=(ge('mw-rpe-'+w+'-'+di)||{}).value||'';
+        var load=(sess==='Off')?0:(parseFloat(vol)||0)*(parseFloat(rpe)||0);
+        rows.push(['W'+wk,day,addDaysISO(ws,di),sess,(ge('mw-opp-'+w+'-'+di)||{}).value||'',(Q[qk]||Q['']).label,t.theme||'',vol,rpe,load]);
+      });
+    }
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+    var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='Block-Plan-'+MW.start+'.csv';a.click();
+  };
+
+  window.mwPrintPDF=function(){
+    if(MW.start==null||!window.printReport)return;
+    var c=cfg(), phase=(ge('mwPhase')&&ge('mwPhase').value)||'';
+    var html='<div class="pr-h"><h1>'+MW.N+'-Week Training Block</h1><div class="sub">'+(c.TEAM_ID||'')+' &middot; '+seasonFromDate(MW.start)+(phase?' &middot; '+phase:'')+'<br>'+MW.start+' → '+addDaysISO(MW.start,MW.N*7-1)+'</div></div>';
+    for(var w=0;w<MW.N;w++){var ws=addDaysISO(MW.start,w*7),wk=weekNum(ws,seasonFromDate(ws)),s=weekStats(w),notips=!MW.themes[w];
+      html+='<div class="pr-sec">Week '+wk+' &middot; '+ws+' &middot; '+Math.round(s.total)+' AU</div>';
+      var body='';
+      DAYS.forEach(function(day,di){var t=(MW.tpl[w]&&MW.tpl[w][di])||{},sess=(ge('mw-sess-'+w+'-'+di)||{}).value||'';
+        var mins=parseFloat((ge('mw-vol-'+w+'-'+di)||{}).value)||0,rpe=parseFloat((ge('mw-rpe-'+w+'-'+di)||{}).value)||0,load=(sess==='Off')?0:Math.round(mins*rpe);
+        var opp=(sess==='Game'&&ge('mw-opp-'+w+'-'+di))?ge('mw-opp-'+w+'-'+di).value.trim():'';
+        body+='<tr><td>'+day+'</td><td>'+sess+'</td><td>'+(opp||'—')+'</td>'+(notips?'':'<td>'+(Q[t.q||'']||Q['']).label+'</td><td>'+(t.theme||'')+'</td>')+'<td style="text-align:right">'+mins+'</td><td style="text-align:right">'+rpe+'</td><td style="text-align:right">'+load+'</td></tr>';
+      });
+      var notes=(ge('mw-notes-'+w)&&ge('mw-notes-'+w).value.trim())||'';
+      html+='<table class="pr-t"><thead><tr><th>Day</th><th>Session</th><th>Opp</th>'+(notips?'':'<th>Quad</th><th>Theme</th>')+'<th>Vol</th><th>RPE</th><th>Load</th></tr></thead><tbody>'+body+'</tbody></table>';
+      if(notes) html+='<div style="font-size:11px;white-space:pre-wrap;margin-top:4px"><em>Notes:</em> '+notes.replace(/</g,'&lt;')+'</div>';
+    }
+    window.printReport(html);
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){
+    var st=ge('mwStart'); if(st&&!st.value){var t=new Date();t.setDate(t.getDate()-t.getDay());st.value=t.toISOString().slice(0,10);}
+    if(ge('mwBlock')) mwBuild();
+  });
+})();
+</script>
+
 
 <div id="planYearly" style="display:none">
   <div style="background:var(--s2);border:1px solid var(--br2);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
