@@ -62,7 +62,7 @@ tbody tr:last-child{border-bottom:none;}
 tbody tr:hover{background:var(--s2);}
 /* Team Overview: scrollable box with a frozen header row + frozen athlete column */
 .tw:has(#ovTable){max-height:70vh;overflow:auto!important;}
-#ovTable thead th{position:sticky;top:0;z-index:3;background:var(--s2);}
+#ovTable thead th{position:sticky;top:0;z-index:3;background:var(--s2);}#histTbl{border-collapse:separate;border-spacing:0;}#histTbl tbody td{border-bottom:1px solid var(--br2);}#histTbl th:nth-child(-n+3),#histTbl td:nth-child(-n+3){position:sticky;background:var(--s1);}#histTbl tbody td:nth-child(-n+3){z-index:2;}#histTbl thead th:nth-child(-n+3){background:var(--s2);z-index:6;}#histTbl th:nth-child(1),#histTbl td:nth-child(1){left:0;min-width:70px;max-width:70px;}#histTbl th:nth-child(2),#histTbl td:nth-child(2){left:70px;min-width:96px;max-width:96px;}#histTbl th:nth-child(3),#histTbl td:nth-child(3){left:166px;min-width:88px;max-width:88px;box-shadow:2px 0 0 var(--br2);}
 #ovTable th:first-child,#ovTable td:first-child{position:sticky;left:0;background:var(--s1);box-shadow:2px 0 6px -3px rgba(0,0,0,.55);}
 #ovTable tbody td:first-child{z-index:2;}
 #ovTable thead th:first-child{left:0;top:0;z-index:5;background:var(--s2);}
@@ -411,8 +411,8 @@ input,select,textarea{font-size:16px!important;}
       <div class="sh" style="margin-bottom:10px;"><div class="st" style="font-size:13px;">PERFORMANCE <span>BREAKDOWN</span></div></div>
       <div class="mbars" id="profBars"></div>
       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
-      <div class="tw" style="margin-bottom:0;"><table>
-        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Bike</th><th>200yd&#8595;</th><th>200 Drop%</th><th>Reed&#8595;</th><th>Reed Drop%</th><th>Grip R</th><th>Grip L</th><th>Sq/BW</th><th>Bn/BW</th><th>TB/BW</th><th>React</th><th>Grip &#916;%</th><th>PQ</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
+      <div class="tw" style="margin-bottom:0;"><table id="histTbl">
+        <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Bike</th><th>200yd&#8595;</th><th>200 Drop%</th><th>Reed&#8595;</th><th>Reed Drop%</th><th>Grip R</th><th>Grip L</th><th>Sq/BW</th><th>Bn/BW</th><th>TB/BW</th><th>React</th><th>Grip &#916;%</th><th>Peak Pwr</th><th>PQ</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table>
   <div style="background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:14px;margin-top:12px;"><div class="st" style="margin-bottom:10px;">PRE &rarr; CURRENT <span>PROGRESS</span></div><div id="deltaTable"></div></div>
@@ -2426,6 +2426,7 @@ function renderProfile() {
       + '<td class="mn">'+(d['TBDL/BW']!=null?fmt(d['TBDL/BW'],2):'\u2014')+'</td>'
       + '<td class="mn">'+(d['Reactive (in)']!=null?fmt(d['Reactive (in)'],1):'\u2014')+'</td>'
       + '<td class="mn">'+(d['Grip Asym %']!=null?fmt(d['Grip Asym %'],1):'\u2014')+'</td>'
+      + '<td class="mn">'+(d['Peak Power (W)']!=null?fmtI(d['Peak Power (W)']):'\u2014')+'</td>'
       + '<td class="mn">'+(d['Power Quotient']!=null?fmt(d['Power Quotient'],1):'\u2014')+'</td>'
       + '<td><span class="sp '+tc(d['Score POWER'])+'">'+fmtI(d['Score POWER'])+pflag(d,'POWER')+'</span></td>'
       + '<td><span class="sp '+tc(d['Score STRENGTH'])+'">'+fmtI(d['Score STRENGTH'])+pflag(d,'STRENGTH')+'</span></td>'
