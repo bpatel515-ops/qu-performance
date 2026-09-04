@@ -384,6 +384,7 @@ input,select,textarea{font-size:16px!important;}
         <option value="PostSeason">Post-Season</option>
       </select>
     </div>
+    <div class="fg"><span class="fl">Date</span><select class="fs" id="profDate" onchange="renderProfile()"><option value="All">All Dates</option></select></div>
   </div>
   <div id="bcQuick" style="background:var(--s1);border:1px solid var(--br2);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:9px;">
@@ -1901,13 +1902,17 @@ function printTeamPDF() {
   var trs=rows.map(function(d){ return '<tr><td><b>'+dn(d['Athlete Name'])+'</b></td><td>'+(d.Position||'—')+'</td><td>'+(d.Group||'—')+'</td>'
     +scc(d['Score POWER'],pflag(d,'POWER'))+scc(d['Score STRENGTH'],pflag(d,'STRENGTH'))+scc(d['Score SPEED'],pflag(d,'SPEED'))+scc(d['Score CONDITIONING'],pflag(d,'CONDITIONING'))+scc(d['Score OVERALL'],pflag(d,'OVERALL'))
     +'<td style="text-align:center">'+fmt(d.Bodyweight)+'</td><td style="text-align:center">'+fmtI(d['Squat Max'])+'</td><td style="text-align:center">'+(d['Bench Press Max']!=null?fmtI(d['Bench Press Max']):'—')+'</td><td style="text-align:center">'+(d['CMJ Best (in)']!=null?fmt(d['CMJ Best (in)']):'—')+'</td><td style="text-align:center">'+(d['10 yd Best (s)']!=null?fmt(d['10 yd Best (s)'],2):'—')+'</td></tr>'; }).join('');
+  var M2COLS=[['BW','Bodyweight',1],['Squat','Squat Max',0],['Bench','Bench Press Max',0],['TBDL','TBDL Max',0],['Pull','Pull-ups',0],['VJ','VJ Vertec Best (in)',1],['Appr','Approach Jump Best (in)',1],['CMJ','CMJ Best (in)',1],['10yd&#8595;','10 yd Best (s)',2],['Lane&#8595;','Lane Agility Best (s)',2],['GripR','Grip R',0],['GripL','Grip L',0],['Beep','Beep Test',2],['Bike','Bike W/kg',2],['PQ','Power Quotient',1]];
+  var m2h='<tr><th>Athlete</th><th>Pos</th>'+M2COLS.map(function(c){return '<th style="text-align:center">'+c[0]+'</th>';}).join('')+'</tr>';
+  var m2b=rows.map(function(d){return '<tr><td><b>'+dn(d['Athlete Name'])+'</b></td><td>'+(d.Position||'\u2014')+'</td>'+M2COLS.map(function(c){var v=d[c[1]];return '<td style="text-align:center">'+((v==null||isNaN(v))?'\u2014':fmt(v,c[2]))+'</td>';}).join('')+'</tr>';}).join('');
+  var page2='<div style="page-break-before:always"></div><div class="pr-sec">Full Metrics &mdash; '+(s!=='All'?s:'All Seasons')+' &middot; '+(p!=='All'?p:'All Periods')+'</div><div style="font-size:8px;color:#666;margin:-2px 0 6px">Latest test per athlete in the selected filter. &#8595; = lower is better.</div><table class="pr-t" style="font-size:8px"><thead>'+m2h+'</thead><tbody>'+m2b+'</tbody></table>';
   printReport('<div class="pr-h"><h1>'+team.toUpperCase()+'</h1><div class="sub"><b>Team Performance Report</b><br>'+(s!=='All'?s:'All Seasons')+' &middot; '+(p!=='All'?p:'All Periods')+'</div></div>'
     +'<div class="pr-sec">Top Performers</div><div class="pr-cats">'+callouts+'</div>'
     +'<div class="pr-sec">Roster &middot; '+rows.length+' athletes &mdash; category scores 0&ndash;100, color-coded (green high &rarr; red low)</div>'
     +'<div style="font-size:8.5px;color:#666;margin:-4px 0 6px"><b style="color:#E8A900">*</b> category scored from an incomplete test battery &mdash; the athlete skipped a test their teammates did, so the self-normalizing score may over-credit them.</div>'
     +'<table class="pr-t"><thead>'
     +'<tr><th colspan="3" style="background:#3a4a6b"></th><th colspan="5" style="text-align:center;background:#00205B;border-left:3px solid #fff;border-right:3px solid #fff">CATEGORY SCORES (0&ndash;100)</th><th colspan="5" style="text-align:center;background:#3a4a6b">KEY METRICS</th></tr>'
-    +'<tr><th>Athlete</th><th>Pos</th><th>Yr</th><th style="border-left:3px solid #fff">PWR</th><th>STR</th><th>SPD</th><th>COND</th><th style="border-right:3px solid #fff">OVR</th><th>BW</th><th>Squat</th><th>Bench</th><th>CMJ&Prime;</th><th>10yd</th></tr></thead><tbody>'+trs+'</tbody></table>');
+    +'<tr><th>Athlete</th><th>Pos</th><th>Yr</th><th style="border-left:3px solid #fff">PWR</th><th>STR</th><th>SPD</th><th>COND</th><th style="border-right:3px solid #fff">OVR</th><th>BW</th><th>Squat</th><th>Bench</th><th>CMJ&Prime;</th><th>10yd</th></tr></thead><tbody>'+trs+'</tbody></table>'+page2);
 }
 function printPlayerPDF() {
   var name=(ge('profSel')||{}).value; if(!name){ alert('Open a player profile first.'); return; }
@@ -1917,6 +1922,7 @@ function printPlayerPDF() {
   if(ps!=='All') f=f.filter(function(d){return d.Season===ps;});
   if(pp!=='All') f=f.filter(function(d){return d['Time Period']===pp;});
   f.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  var __pdt=(ge('profDate')||{}).value||'All'; if(__pdt!=='All') f=f.filter(function(x){return x.Date<=__pdt;});
   if(!f.length){ alert('No record for this athlete in the selected season/period.'); return; }
   var d=f.filter(function(x){return x['Score OVERALL']!=null;})[0] || f.filter(function(x){return x['Squat Max']!=null||x['CMJ Best (in)']!=null||x.Bodyweight!=null;})[0] || f[0];
   var team=((document.querySelector('.ts')||{}).textContent||'').split('·')[0].trim();
@@ -1967,7 +1973,7 @@ function printPlayerPDF() {
   var metricsHtml=GROUPS.map(function(g){
     var rows=g[1].map(function(m){
       var info=firstLast(m[0]); if(info.last==null) return '';
-      var lb=(m[0].indexOf('(s)')>=0)||m[0]==='Bodyfat';
+      var lb=(m[0].indexOf('(s)')>=0)||m[0]==='Bodyfat'||m[0].indexOf('Drop-off')>=0;
       var val=(typeof info.last==='number')?(Math.round(info.last*Math.pow(10,m[3]))/Math.pow(10,m[3])):info.last;
       return '<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+val+(m[2]?' '+m[2]:'')+dChip(info.delta,lb)+'</span></div>';
     }).filter(Boolean).join('');
@@ -2529,6 +2535,7 @@ function printPlayerCompass(){
   if(ps!=='All') recs=recs.filter(function(x){return x.Season===ps;});
   if(pp!=='All') recs=recs.filter(function(x){return x['Time Period']===pp;});
   recs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);});
+  var __pdt=(ge('profDate')||{}).value||'All'; if(__pdt!=='All') recs=recs.filter(function(x){return x.Date<=__pdt;});
   if(!recs.length){ alert('No test data for this athlete in the selected season/period.'); return; }
   var rec=recs.find(function(x){return x['Score OVERALL']!=null;})||recs[0];
   var cv=function(k){var r=recs.find(function(x){return x[k]!=null;});return r?r[k]:null;};
@@ -2640,6 +2647,9 @@ function renderProfile() {
   if (ps !== 'All') recs = recs.filter(function(x) { return x.Season === ps; });
   if (pp !== 'All') recs = recs.filter(function(x) { return x['Time Period'] === pp; });
   recs.sort(function(a, b) { return new Date(b.Date) - new Date(a.Date); });
+  refreshDateSel('profDate', recs.filter(function(x){return x['Score OVERALL']!=null;}));
+  var __pdt = ge('profDate') ? ge('profDate').value : 'All';
+  if (__pdt !== 'All') recs = recs.filter(function(x){ return x.Date <= __pdt; });
   var rec = recs.find(function(x){return x['Score OVERALL']!=null;}) || recs[0]; if (!rec) return;
   try{ptsProfileCards(recs);}catch(e){}
   try{ptsRSApanel(recs);}catch(e){}
