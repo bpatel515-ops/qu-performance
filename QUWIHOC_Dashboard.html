@@ -1948,7 +1948,7 @@ function printPlayerPDF() {
   var hist=all.filter(function(x){return (x['Time Period']==='PreSeason'||x['Time Period']==='PostSeason') && isComplete(x);}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
   var trend='';
   if(hist.length>=2){
-    var W=560,H=108,L=26,R=8,T=8,B=20;
+    var W=560,H=100,L=26,R=8,T=8,B=18;
     var sx=function(i){return L+(W-L-R)*(hist.length<2?0:i/(hist.length-1));};
     var sy=function(v){return H-B-(H-T-B)*(v/100);};
     var grid='';
@@ -1957,7 +1957,7 @@ function printPlayerPDF() {
     var dots=hist.map(function(x,i){var ov=dispOverall(x);return "<circle cx='"+sx(i)+"' cy='"+sy(ov)+"' r='3' fill='#00205B'/><text x='"+sx(i)+"' y='"+(sy(ov)-6)+"' text-anchor='middle' font-size='8' font-weight='700' fill='#00205B'>"+Math.round(ov)+"</text>";}).join('');
     var step=Math.ceil(hist.length/7);
     var labs=hist.map(function(x,i){return (i%step===0||i===hist.length-1)?"<text x='"+sx(i)+"' y='"+(H-6)+"' text-anchor='middle' font-size='8' fill='#777'>"+String(x.Date||'').slice(2)+"</text>":'';}).join('');
-    trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:108px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
+    trend="<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:100px'>"+grid+"<polyline points='"+pts+"' fill='none' stroke='#E8A900' stroke-width='2.5'/>"+dots+labs+"</svg>";
   } else { trend='<div style="font-size:10px;color:#999;padding:4px 0">Not enough tests yet to plot a trend.</div>'; }
   // category-ordered, grouped metrics with CHANGE (first -> latest across all this athlete's records)
   var chron=all.slice().sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
@@ -1974,18 +1974,29 @@ function printPlayerPDF() {
     var rows=g[1].map(function(m){
       var info=firstLast(m[0]); if(info.last==null) return '';
       var lb=(m[0].indexOf('(s)')>=0)||m[0]==='Bodyfat'||m[0].indexOf('Drop-off')>=0;
-      var val=(typeof info.last==='number')?(Math.round(info.last*Math.pow(10,m[3]))/Math.pow(10,m[3])):info.last;
-      return '<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+val+(m[2]?' '+m[2]:'')+dChip(info.delta,lb)+'</span></div>';
+      var isLen=(m[0]==='Height (inches)'||m[0]==='Wingspan'||m[0]==='Standing Reach');
+      var noDelta=isLen||m[0]==='Hand Size'||m[0]==='Tibia';
+      var val=isLen?(Math.floor(info.last/12)+"'"+Math.round(info.last%12)+'\"'):((typeof info.last==='number')?(Math.round(info.last*Math.pow(10,m[3]))/Math.pow(10,m[3])):info.last);
+      return '<div class="pmi"><span class="l">'+m[1]+'</span><span class="v">'+val+(m[2]?' '+m[2]:'')+(noDelta?'':dChip(info.delta,lb))+'</span></div>';
     }).filter(Boolean).join('');
     return rows?'<div class="pmg">'+g[0]+'</div><div class="pm">'+rows+'</div>':'';
   }).join('');
-  printReport('<div class="pr-h"><h1>'+dn(name)+'</h1><div class="sub"><b>'+team+'</b><br>'+(d.Position||'')+' &middot; '+(d.Group||'')+' &middot; '+(d.Season||'')+' &middot; '+(d['Time Period']||'')+' &middot; '+(d.Date||'')+'</div></div>'
+  var _aF=function(k){var v=firstLast(k).last;return v==null?null:Math.floor(v/12)+"'"+Math.round(v%12)+'\"';};
+  var _aP=[]; var _ht=_aF('Height (inches)'); if(_ht)_aP.push('Ht '+_ht); var _ws=_aF('Wingspan'); if(_ws)_aP.push('Wing '+_ws); var _rc=_aF('Standing Reach'); if(_rc)_aP.push('Reach '+_rc); var _hd=firstLast('Hand Size').last; if(_hd!=null)_aP.push('Hand '+(Math.round(_hd*10)/10)+'\"');
+  var anthroLine=_aP.length?'<div style="font-size:10px;color:#00205B;font-weight:700;letter-spacing:.3px;margin-top:3px">'+_aP.join(' &middot; ')+'</div>':'';
+  var P2M=[['BW','Bodyweight',1],['Squat','Squat Max',0],['Bench','Bench Press Max',0],['TBDL','TBDL Max',0],['Pull','Pull-ups',0],['CMJ','CMJ Best (in)',1],['10yd','10 yd Best (s)',2],['ProAg','Pro Agility Best (s)',2],['Beep','Beep Test',2],['Bike','Bike W/kg',2],['200','Shuttle Best (s)',2],['Reed','Reed Best (s)',2]];
+  var P2S=[['PWR','Score POWER'],['STR','Score STRENGTH'],['SPD','Score SPEED'],['COND','Score CONDITIONING'],['OVR','Score OVERALL']];
+  var preRecs=all.filter(function(x){return x['Time Period']==='PreSeason' && x['Score OVERALL']!=null;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+  var p2head='<tr><th>Season</th><th>Date</th>'+P2M.map(function(c){return '<th style="text-align:center">'+c[0]+'</th>';}).join('')+P2S.map(function(c){return '<th style="text-align:center;background:#3a4a6b">'+c[0]+'</th>';}).join('')+'</tr>';
+  var p2body=preRecs.map(function(r){return '<tr><td><b>'+(r.Season||'')+'</b></td><td>'+(r.Date||'')+'</td>'+P2M.map(function(c){var v=r[c[1]];return '<td style="text-align:center">'+((v==null||isNaN(v))?'\u2014':fmt(v,c[2]))+'</td>';}).join('')+P2S.map(function(c){var v=r[c[1]];return '<td style="text-align:center;font-weight:700;color:#fff;background:'+pdfSc(v)+'">'+((v==null||isNaN(v))?'\u2014':Math.round(v))+'</td>';}).join('')+'</tr>';}).join('');
+  var page2=preRecs.length?'<div class="pr-sec" style="break-before:page;page-break-before:always;margin-top:0">Pre-Season History &mdash; score &amp; metric progression</div><div style="font-size:8px;color:#666;margin:-2px 0 5px">Every pre-season test period for this athlete, oldest &rarr; newest. Category scores 0&ndash;100, colour-coded.</div><table class="pr-t" style="font-size:7.5px"><thead>'+p2head+'</thead><tbody>'+p2body+'</tbody></table>':'';
+  printReport('<div class="pr-h"><div><h1>'+dn(name)+'</h1>'+anthroLine+'</div><div class="sub"><b>'+team+'</b><br>'+(d.Position||'')+' &middot; '+(d.Group||'')+' &middot; '+(d.Season||'')+' &middot; '+(d['Time Period']||'')+' &middot; '+(d.Date||'')+'</div></div>'
     +'<div class="pr-sec">Category Scores &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+')</div>'
     +'<div class="pr-split"><div>'+bars+'</div><div class="pr-radar">'+radarSvg+'<div class="pr-radar-key">'+radarKey+'</div></div></div>'
     +((d['__P_POWER']||d['__P_STRENGTH']||d['__P_SPEED']||d['__P_CONDITIONING'])?'<div style="font-size:8.5px;color:#666;margin-top:2px"><b style="color:#E8A900">*</b> category scored from an incomplete test battery &mdash; a test was skipped that teammates completed, so the self-normalizing score may over-credit this athlete.</div>':'')
     +(ranks?'<div class="pr-sec">Team Rank &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+'</div><div class="pr-ranks">'+ranks+'</div>':'')
     +'<div class="pr-sec">Overall Score History &mdash; all tests</div>'+trend
-    +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+') &middot; value + change vs first test</div>'+metricsHtml);
+    +'<div class="pr-sec">Metrics &mdash; '+(d.Season||'')+' '+(d['Time Period']||'')+' ('+(d.Date||'')+') &middot; value + change vs first test</div>'+metricsHtml+page2);
 }
 function pdfSc(v){ return (v==null||isNaN(v))?'#9aa0a6':v>=80?'#1e7a46':v>=65?'#2f7d9e':v>=50?'#b8860b':v>=35?'#c26a2a':'#b23c3c'; }
 // Display-overall for the athlete's OWN progression views (radar timeline / trend chart): strict Overall when
