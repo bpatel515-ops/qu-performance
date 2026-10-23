@@ -333,7 +333,7 @@ input,select,textarea{font-size:16px!important;}
   <div class="ntab" data-tab="compass">Compass</div>
   <div class="ntab" data-tab="leaderboard">Leaderboards</div>
   <div class="ntab" data-tab="compare">Compare</div>
-  <div class="ntab" data-tab="positions">Positions</div>
+  <div class="ntab" data-tab="positions">Positions</div><div class="ntab" data-tab="inseason">In-Season</div>
   <div class="ntab" data-tab="movement">Movement</div>
   <div class="ntab" data-tab="wellness">Wellness</div>
   <div class="ntab" data-tab="trends">Load &amp; Trends</div>
@@ -411,7 +411,8 @@ input,select,textarea{font-size:16px!important;}
     <div class="pc">
       <div class="sh" style="margin-bottom:10px;"><div class="st" style="font-size:13px;">PERFORMANCE <span>BREAKDOWN</span></div></div>
       <div class="mbars" id="profBars"></div>
-      <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
+      <div id="isProfPanel" style="margin-top:16px"></div>
+       <div class="sh" style="margin-top:18px;margin-bottom:10px;"><div class="st" style="font-size:13px;">HISTORICAL <span>DATA</span></div></div>
       <div class="tw" style="margin-bottom:0;"><table id="histTbl">
         <thead><tr><th>Season</th><th>Date</th><th>Period</th><th>BW</th><th>BF%</th><th>Lean</th><th>Squat</th><th>Bench</th><th>TBDL</th><th>Pull</th><th>NCMJ"</th><th>CMJ"</th><th>Broad"</th><th>10yd&#8595;</th><th>ProAg&#8595;</th><th>Beep</th><th>Bike</th><th>Sq/BW</th><th>Bn/BW</th><th>TB/BW</th><th>BW/Ht</th><th>FFMI</th><th>React</th><th>Grip &#916;%</th><th>Peak Pwr</th><th>PQ</th><th>PWR</th><th>STR</th><th>SPD</th><th>COND</th><th>OVERALL</th></tr></thead>
         <tbody id="histBody"></tbody>
@@ -506,6 +507,25 @@ input,select,textarea{font-size:16px!important;}
     </div> <div class="fg"><span class="fl">Date</span><select class="fs" id="posDate" onchange="renderPos()"><option value="All">All Dates</option></select></div>
   </div>
   <div class="posg" id="posGrid"></div>
+</div>
+
+<style>
+.is-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;}
+.is-card{background:var(--s1);border:1px solid var(--br2);border-radius:var(--r);padding:10px 12px;}
+.is-cl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tm);}
+.is-cv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--tx);line-height:1.1;}
+.is-cu{font-size:10px;color:var(--tm);font-weight:400;}
+.is-cd{font-size:11px;font-weight:700;margin-top:1px;}
+</style>
+<!-- IN-SEASON -->
+<div id="inseason" class="sec">
+  <div class="sh" style="margin-bottom:8px;"><div class="st">IN-SEASON <span>MOVERS</span></div></div>
+  <div class="fbar">
+    <div class="fg"><span class="fl">Season</span><select class="fs" id="isSeason" onchange="renderInSeason()"></select></div>
+    <div class="fg"><span class="fl">Position</span><select class="fs" id="isPos" onchange="renderInSeason()"><option value="All">All</option></select></div>
+  </div>
+  <div style="font-size:11px;color:var(--tm);margin-bottom:8px;">Change from each athlete's <strong style="color:var(--tx)">first</strong> to <strong style="color:var(--tx)">latest</strong> in-season test. <span style="color:var(--good);font-weight:700">&#9650; improving</span> &middot; <span style="color:var(--dev);font-weight:700">&#9660; declining</span> &middot; tap a metric to sort. Only metrics tested in-season appear (Power = hockey, Lean Mass = men's teams).</div>
+  <div class="tw"><table id="isTable"><thead id="isHead"></thead><tbody id="isBody"></tbody></table></div>
 </div>
 
 <!-- WELLNESS -->
@@ -1840,6 +1860,7 @@ function showTab(id, el) {
   if (id === 'leaderboard') renderLB();
   if (id === 'compare')    renderCmp();
   if (id === 'positions')  renderPos();
+  if (id === 'inseason')   renderInSeason();
   if (id === 'movement')   renderMovement();
   if (id === 'wellness')   { try{localStorage.removeItem(LOCAL_KEY);}catch(e){} loadWLog._lastFetch = 0; loadWLog(function(){ renderWLog(); renderCompliance(); }); }
   if (id === 'trends')     { renderTrends(); if(typeof checkRiskFlag==='function') checkRiskFlag(ge('trA')?ge('trA').value:'All'); if(typeof renderAnthroTrends==='function') renderAnthroTrends(ge('anthroSel')?ge('anthroSel').value:'All'); }
@@ -2558,6 +2579,74 @@ function printPlayerCompass(){
 window.printPlayerCompass=printPlayerCompass;
 window.renderCompass=renderCompass;
 
+
+  /* ===== IN-SEASON PROGRESSION (power / strength / lean over the season) ===== */
+  var ISM = [{k:'Squat Max',l:'Squat',u:'lbs',dec:0},{k:'Bench Press Max',l:'Bench',u:'lbs',dec:0},{k:'TBDL Max',l:'Trap Bar',u:'lbs',dec:0},{k:'Peak Power (W)',l:'Peak Power',u:'W',dec:0},{k:'CMJ Best (in)',l:'CMJ',u:'in',dec:1},{k:'Lean Mass',l:'Lean Mass',u:'lbs',dec:1}];
+  var isSortCol=-1, isSortAsc=false;
+  window.sortIS=function(i){ if(isSortCol===i){isSortAsc=!isSortAsc;}else{isSortCol=i;isSortAsc=false;} renderInSeason(); };
+  function isDeltaHtml(pct, up){ var col=Math.abs(pct)<1.5?'var(--tm)':up?'var(--good)':'var(--dev)'; var ar=Math.abs(pct)<1.5?'→':up?'▲':'▼'; return {col:col,ar:ar}; }
+  window.renderInSeason=function(){
+    var inAll=DATA.filter(function(d){return d['Time Period']==='InSeason';});
+    var seasons=uniq(inAll.map(function(d){return d.Season;})).filter(Boolean).sort(function(a,b){return b.localeCompare(a);});
+    var seasEl=ge('isSeason');
+    if(seasEl && seasEl.options.length===0){ seasEl.innerHTML=seasons.map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join(''); }
+    var season=seasEl&&seasEl.value?seasEl.value:seasons[0];
+    var recs=inAll.filter(function(d){return d.Season===season;});
+    var posEl=ge('isPos');
+    if(posEl && posEl.options.length<=1){ uniq(recs.map(function(d){return d.Position;}).filter(Boolean)).sort().forEach(function(p){ var o=document.createElement('option'); o.value=p; o.textContent=p; posEl.appendChild(o); }); }
+    var pos=posEl?posEl.value:'All';
+    if(pos!=='All') recs=recs.filter(function(d){return d.Position===pos;});
+    var mets=ISM.filter(function(m){ return recs.some(function(d){return d[m.k]!=null&&!isNaN(d[m.k]);}); });
+    var names=uniq(recs.map(function(d){return d['Athlete Name'];}));
+    var rows=names.map(function(n){
+      var ar=recs.filter(function(d){return d['Athlete Name']===n;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+      var cells=mets.map(function(m){
+        var vals=ar.filter(function(d){return d[m.k]!=null&&!isNaN(d[m.k]);});
+        if(!vals.length) return null;
+        var first=+vals[0][m.k], last=+vals[vals.length-1][m.k];
+        var pct=(vals.length>=2&&first)?(last-first)/first*100:null;
+        return {last:last,abs:last-first,pct:pct,n:vals.length,dec:m.dec,u:m.u};
+      });
+      return {name:n,pos:(ar[0]||{}).Position,cells:cells};
+    });
+    if(isSortCol>=0) rows.sort(function(a,b){ var av=(a.cells[isSortCol]&&a.cells[isSortCol].pct!=null)?a.cells[isSortCol].pct:-9999; var bv=(b.cells[isSortCol]&&b.cells[isSortCol].pct!=null)?b.cells[isSortCol].pct:-9999; return isSortAsc?av-bv:bv-av; });
+    else rows.sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
+    ge('isHead').innerHTML='<tr><th>Athlete</th><th>Pos</th>'+mets.map(function(m,i){return '<th class="sh-col" onclick="sortIS('+i+')" style="text-align:center;cursor:pointer">'+m.l+'</th>';}).join('')+'</tr>';
+    ge('isBody').innerHTML=rows.length?rows.map(function(r){
+      return '<tr><td><div class="ac"><div class="av" style="background:'+gc(r.name)+'">'+ini(r.name)+'</div><span>'+dn(r.name)+'</span></div></td><td style="color:var(--tm);font-size:10px">'+(r.pos||'—')+'</td>'
+        + r.cells.map(function(c){
+            if(!c) return '<td class="mn" style="text-align:center;color:var(--td)">—</td>';
+            var val=fmt(c.last,c.dec);
+            if(c.pct==null) return '<td class="mn" style="text-align:center">'+val+'<div style="font-size:9px;color:var(--td)">1 test</div></td>';
+            var s=isDeltaHtml(c.pct, c.pct>=0);
+            return '<td class="mn" style="text-align:center">'+val+'<div style="font-size:10px;font-weight:700;color:'+s.col+'">'+s.ar+' '+(c.pct>=0?'+':'')+c.pct.toFixed(1)+'%</div></td>';
+          }).join('')
+        + '</tr>';
+    }).join(''):'<tr><td colspan="'+(mets.length+2)+'" style="color:var(--tm);padding:14px">No in-season test data for '+season+' yet.</td></tr>';
+  };
+  function renderInSeasonProfile(name){
+    var host=ge('isProfPanel'); if(!host) return;
+    var athRecs=DATA.filter(function(d){return d['Athlete Name']===name;});
+    var inSeasons=uniq(athRecs.filter(function(d){return d['Time Period']==='InSeason';}).map(function(d){return d.Season;})).filter(Boolean).sort(function(a,b){return b.localeCompare(a);});
+    if(!inSeasons.length){ host.innerHTML=''; return; }
+    var ps=(ge('profSeason')&&ge('profSeason').value!=='All')?ge('profSeason').value:null;
+    var season=(ps&&inSeasons.indexOf(ps)>=0)?ps:inSeasons[0];
+    var recs=athRecs.filter(function(d){return d['Time Period']==='InSeason'&&d.Season===season;}).sort(function(a,b){return new Date(a.Date)-new Date(b.Date);});
+    var cards=ISM.map(function(m){
+      var pts=recs.filter(function(d){return d[m.k]!=null&&!isNaN(d[m.k]);}).map(function(d){return +d[m.k];});
+      if(pts.length<2) return '';
+      var first=pts[0],last=pts[pts.length-1],pct=first?(last-first)/first*100:0;
+      var s=isDeltaHtml(pct, pct>=0);
+      var mn=Math.min.apply(null,pts),mx=Math.max.apply(null,pts),rng=(mx-mn)||1,W=160,H=34,n=pts.length;
+      var pl=pts.map(function(y,i){var x=(n<=1?W/2:3+i/(n-1)*(W-6));var yy=H-4-((y-mn)/rng)*(H-8);return x.toFixed(1)+','+yy.toFixed(1);}).join(' ');
+      var dots=pts.map(function(y,i){var x=(n<=1?W/2:3+i/(n-1)*(W-6));var yy=H-4-((y-mn)/rng)*(H-8);return '<circle cx="'+x.toFixed(1)+'" cy="'+yy.toFixed(1)+'" r="1.7" fill="'+s.col+'"/>';}).join('');
+      return '<div class="is-card"><div class="is-cl">'+m.l+'</div><div class="is-cv">'+fmt(last,m.dec)+' <span class="is-cu">'+m.u+'</span></div>'
+        +'<div class="is-cd" style="color:'+s.col+'">'+s.ar+' '+(pct>=0?'+':'')+pct.toFixed(1)+'% <span style="color:var(--td);font-weight:400">('+(last-first>=0?'+':'')+fmt(last-first,m.dec)+' · '+pts.length+' tests)</span></div>'
+        +'<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:34px;margin-top:3px"><polyline points="'+pl+'" fill="none" stroke="'+s.col+'" stroke-width="1.5"/>'+dots+'</svg></div>';
+    }).filter(Boolean).join('');
+    host.innerHTML=cards?'<div class="sh" style="margin-bottom:8px"><div class="st" style="font-size:13px">IN-SEASON <span>PROGRESSION</span> &mdash; '+season+'</div></div><div style="font-size:11px;color:var(--tm);margin-bottom:8px">First &rarr; latest in-season test this season. <span style="color:var(--good);font-weight:700">Green = improving</span>, <span style="color:var(--dev);font-weight:700">red = declining</span>.</div><div class="is-grid">'+cards+'</div>':'';
+  }
+
 function renderProfile() {
   var name = ge('profSel').value;
   if(ge('bcBW')){ ge('bcBW').value=''; ge('bcBF').value=''; if(ge('bcOut')) ge('bcOut').innerHTML=''; }
@@ -2652,7 +2741,7 @@ function renderProfile() {
     return '<div class="mr"><div class="mn2">'+m.l+'</div><div class="bt"><div class="bf" style="width:'+cp+'%;background:'+bc+'"></div></div><div class="mv2" style="color:'+bc+'">'+(val!=null?fmt(val,dec)+m.u:'—')+' '+ds+'</div></div>';
   }).join('');
 
-  renderDeltaTable(name);
+  renderDeltaTable(name); try{renderInSeasonProfile(name);}catch(e){}
   ge('histBody').innerHTML = allRecs.sort(function(a,b){return new Date(b.Date)-new Date(a.Date);}).map(function(d) {
     return '<tr>'
       + '<td style="color:var(--gold);font-family:Barlow Condensed,sans-serif;font-weight:700">'+(d.Season||'—')+'</td>'
